@@ -1,0 +1,174 @@
+// SPDX-License-Identifier: Apache-2.0
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { checkContent } from '@docforge/gates';
+import { readProvenanceFromContent } from '@docforge/provenance';
+import { afterAll, describe, expect, it } from 'vitest';
+import {
+  type CommitOptions,
+  type CreatePullRequestInput,
+  draftBranchName,
+  flipToReviewed,
+  type ForgeHost,
+  ProducerEngine,
+  type PullRequestRef,
+  slugify,
+} from '../src/index.js';
+
+const CLOCK = () => new Date('2026-06-25T12:00:00Z');
+
+class FakeHost implements ForgeHost {
+  branch = 'main';
+  staged: string[] = [];
+  commits: Array<{ message: string; opts?: CommitOptions }> = [];
+  pushed: string[] = [];
+  prs: CreatePullRequestInput[] = [];
+  currentBranch = async () => this.branch;
+  headSha = async () => 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  shortSha = async () => 'aaaaaaa';
+  createBranch = async (name: string) => {
+    this.branch = name;
+  };
+  checkout = async (name: string) => {
+    this.branch = name;
+  };
+  stage = async (paths: string[]) => {
+    this.staged.push(...paths);
+  };
+  commit = async (message: string, opts?: CommitOptions) => {
+    this.commits.push({ message, opts });
+    return 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+  };
+  push = async (branch: string) => {
+    this.pushed.push(branch);
+  };
+  createPullRequest = async (input: CreatePullRequestInput): Promise<PullRequestRef> => {
+    this.prs.push(input);
+    return { number: 42, url: 'https://github.com/x/y/pull/42' };
+  };
+}
+
+const tmpRoots: string[] = [];
+function newRepo(): { rootDir: string; contentRoot: string } {
+  const rootDir = mkdtempSync(join(tmpdir(), 'forge-'));
+  tmpRoots.push(rootDir);
+  return { rootDir, contentRoot: join(rootDir, 'docs') };
+}
+
+afterAll(() => {
+  for (const r of tmpRoots) rmSync(r, { recursive: true, force: true });
+});
+
+describe('slug + branch', () => {
+  it('slugifies and names draft branches', () => {
+    expect(slugify('Guide/Intro Page!')).toBe('guide-intro-page');
+    expect(draftBranchName('guide/intro', 'abc1234')).toBe('forge/draft/guide-intro-abc1234');
+  });
+});
+
+describe('draftPage', () => {
+  it('writes a draft with seeded provenance that passes gates', async () => {
+    const { rootDir, contentRoot } = newRepo();
+    const engine = new ProducerEngine({ rootDir, contentRoot, host: new FakeHost(), clock: CLOCK });
+    const res = await engine.draftPage({
+      path: 'index',
+      title: 'Home',
+      body: 'Welcome to the docs.',
+      model: { name: 'claude-opus-4-8', vendor: 'anthropic' },
+    });
+    expect(res.ok).toBe(true);
+    expect(res.diagnostics).toEqual([]);
+    const prov = readProvenanceFromContent(readFileSync(res.filePath, 'utf8'));
+    expect(prov?.authored_by).toBe('ai');
+    expect(prov?.transitions[0]?.to).toBe('draft');
+    expect(prov?.transitions.some((t) => t.to === 'reviewed')).toBe(false);
+  });
+});
+
+describe('proposeChanges', () => {
+  it('branches, commits with a provenance trailer + signoff, pushes, and opens a PR', async () => {
+    const { rootDir, contentRoot } = newRepo();
+    const host = new FakeHost();
+    const engine = new ProducerEngine({ rootDir, contentRoot, host, clock: CLOCK });
+    await engine.draftPage({
+      path: 'index',
+      title: 'Home',
+      body: 'Welcome.',
+      model: { name: 'claude-opus-4-8' },
+    });
+    const res = await engine.proposeChanges({
+      paths: ['index'],
+      title: 'docs: add home page',
+      summary: 'Initial home page.',
+    });
+    expect(res.branch).toBe('forge/draft/index-aaaaaaa');
+    expect(host.pushed).toContain(res.branch);
+    expect(res.pullRequest.number).toBe(42);
+    expect(host.prs[0]?.labels).toContain('forge:draft');
+    const commit = host.commits[0];
+    expect(commit?.opts?.signoff).toBe(true);
+    expect(commit?.opts?.trailers?.['Forge-Provenance']).toContain('authored_by=ai');
+  });
+});
+
+describe('approve (the human-gated flip)', () => {
+  it('flips draft → reviewed and the result satisfies all gates', async () => {
+    const { rootDir, contentRoot } = newRepo();
+    const engine = new ProducerEngine({ rootDir, contentRoot, host: new FakeHost(), clock: CLOCK });
+    await engine.draftPage({
+      path: 'index',
+      title: 'Home',
+      body: 'Welcome.',
+      model: { name: 'claude-opus-4-8' },
+    });
+
+    const res = await engine.approve({
+      path: 'index',
+      reviewer: { login: 'alberto', pr: 42 },
+      commit: 'ccccccc',
+    });
+    expect(res.lastReviewed).toBe('2026-06-25');
+    expect(res.reviewBy).toBe('2026-12-22'); // +180 days
+
+    const content = readFileSync(res.filePath, 'utf8');
+    const prov = readProvenanceFromContent(content);
+    expect(prov?.reviewed_by?.login).toBe('alberto');
+    expect(prov?.transitions.at(-1)?.to).toBe('reviewed');
+
+    const result = await checkContent(rootDir, { today: CLOCK(), config: { contentDir: 'docs' } });
+    expect(result.diagnostics, JSON.stringify(result.diagnostics)).toEqual([]);
+    expect(result.ok).toBe(true);
+  });
+});
+
+describe('flipToReviewed (pure)', () => {
+  it('is a pure content transform', () => {
+    const raw = [
+      '---',
+      'title: X',
+      'status: draft',
+      'provenance:',
+      '  authored_by: ai',
+      '  model:',
+      '    name: m',
+      '  transitions:',
+      '    - to: draft',
+      '      by: ai',
+      '      ts: 2026-06-20T14:02:00Z',
+      '---',
+      '',
+      'Body.',
+      '',
+    ].join('\n');
+    const out = flipToReviewed(raw, {
+      reviewer: { login: 'alberto', pr: 7 },
+      today: new Date('2026-06-25T00:00:00Z'),
+      reviewSlaDays: 90,
+      commit: 'deadbee',
+    });
+    expect(out).toContain('status: reviewed');
+    expect(out).toContain('review_by: 2026-09-23');
+    expect(out).toContain('Body.');
+  });
+});

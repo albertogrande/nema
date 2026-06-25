@@ -1,0 +1,33 @@
+{
+  "name": "@docforge/producer",
+  "version": "0.0.0",
+  "description": "Forge producer loop: draft -> branch -> PR -> approve -> state-flip, over a ForgeHost",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@docforge/core": "workspace:*",
+    "@docforge/gates": "workspace:*",
+    "@docforge/provenance": "workspace:*",
+    "@docforge/schema": "workspace:*",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
