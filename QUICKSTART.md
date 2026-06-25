@@ -67,6 +67,12 @@ Options: `--status draft|reviewed` (default `reviewed` for status-less pages —
 are always kept), `--reviewer <login>`, `--sla-days N`. `migrate` is idempotent: pages that
 already have provenance are skipped, so it's safe to re-run.
 
+A migrated `reviewed` page records a **bulk human assertion** (`reviewed_by.method: migration`) — the
+person running `migrate` vouches for the corpus. That's intentionally distinct from per-page PR
+approval (`method: github-pr-approval`): it onboards legacy content honestly, without claiming each
+page was individually re-reviewed. Prefer `--status draft` if you'd rather have an agent re-draft and
+a human approve each page through the loop below.
+
 ## 3. See what you've got
 
 ```bash
@@ -94,6 +100,10 @@ Now new docs get written the Forge way — agents draft, you approve:
    `reviewed`.
 4. **You approve** the PR in GitHub — the only path to `reviewed`. An Action runs `forge approve`,
    flips `draft → reviewed`, stamps freshness dates, records the transition, and merges.
+
+> **Heads-up:** drafting (steps 1–2) works locally today. The PR gate (step 3) and the approval flow
+> (step 4) run as GitHub Actions, so they need the Forge workflows installed in your repo — see
+> [`@docforge/actions`](packages/actions). A one-command installer is on the roadmap.
 
 The full agent contract lives in [CLAUDE.md](CLAUDE.md).
 

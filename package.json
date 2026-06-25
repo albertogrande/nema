@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Forge — open-source, AI-native documentation platform (monorepo root)",
+  "description": "Forge — open, self-hostable governance and provenance for AI-written docs: human-gated, in plain Markdown, in your repo (monorepo root)",
   "license": "Apache-2.0",
   "packageManager": "pnpm@11.0.9",
   "engines": {
