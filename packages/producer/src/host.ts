@@ -115,3 +115,55 @@ export class GitHubHost extends LocalGitHost {
     await run('gh', ghMergeArgs(pr, opts), this.cwd);
   }
 }
+
+/**
+ * Build the `glab mr create` argv (GitLab's merge requests). `--yes` skips the
+ * interactive prompt so it runs unattended.
+ */
+export function glabMrCreateArgs(input: CreatePullRequestInput): string[] {
+  const args = [
+    'mr',
+    'create',
+    '--title',
+    input.title,
+    '--description',
+    input.body,
+    '--source-branch',
+    input.head,
+    '--target-branch',
+    input.base,
+    '--yes',
+  ];
+  for (const label of input.labels ?? []) args.push('--label', label);
+  return args;
+}
+
+/**
+ * Build the `glab mr merge` argv. Like {@link ghMergeArgs} it never force-merges
+ * past failing checks; `auto` maps to GitLab's merge-when-pipeline-succeeds.
+ */
+export function glabMergeArgs(mr: number, opts: MergeOptions = {}): string[] {
+  const args = ['mr', 'merge', String(mr), '--yes'];
+  if (opts.method === 'squash') args.push('--squash');
+  else if (opts.method === 'rebase') args.push('--rebase');
+  if (opts.auto) args.push('--when-pipeline-succeeds');
+  return args;
+}
+
+/**
+ * GitLab host: git operations plus merge-request create/merge through the `glab`
+ * CLI. Proves the producer engine is forge-agnostic — it touches only the
+ * {@link ForgeHost} interface, never a GitHub specific.
+ */
+export class GitLabHost extends LocalGitHost {
+  override async createPullRequest(input: CreatePullRequestInput): Promise<PullRequestRef> {
+    const { stdout } = await run('glab', glabMrCreateArgs(input), this.cwd);
+    const url = stdout.trim().split('\n').filter(Boolean).pop() ?? '';
+    const number = Number.parseInt(url.split('/').pop() ?? '', 10);
+    return { number: Number.isFinite(number) ? number : 0, url };
+  }
+
+  override async merge(mr: number, opts: MergeOptions = {}): Promise<void> {
+    await run('glab', glabMergeArgs(mr, opts), this.cwd);
+  }
+}
