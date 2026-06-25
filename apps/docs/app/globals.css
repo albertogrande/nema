@@ -104,6 +104,53 @@ main {
   background: #20242b;
   color: var(--muted);
 }
+.forge-badge--risk {
+  background: #301414;
+  border-color: #7a2b2b;
+  color: #f0a0a0;
+}
+.forge-badge--warn {
+  background: #2a2410;
+  border-color: #7a6a1f;
+  color: #e2cf7e;
+}
+
+.scorecard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.scorecard .stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.scorecard .stat-num {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.scorecard .stat-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.scorecard .stat--risk {
+  border-color: #7a2b2b;
+}
+.scorecard .stat--risk .stat-num {
+  color: #f0a0a0;
+}
+.scorecard .stat--warn {
+  border-color: #7a6a1f;
+}
+.scorecard .stat--warn .stat-num {
+  color: #e2cf7e;
+}
 
 .trust-table {
   width: 100%;

@@ -32,6 +32,32 @@ The result is a documentation page whose entire authorship chain — *AI-authore
 → which sources → which human reviewer → timestamps and commits* — is recorded as queryable,
 git-diffable data.
 
+## Trust posture
+
+That per-page data rolls up into a **corpus-level trust posture** — the one view that answers "how
+much of this content can I trust right now?" `forge trust` (and the [`/trust`
+dashboard](https://docforge-docs.vercel.app/trust), which renders the *same* numbers from the same
+function) reports it:
+
+```text
+docforge — trust posture (42 pages, as of 2026-06-25)
+
+  status       reviewed 31 · draft 9 · stub 1 · deprecated 1
+  authored     ai 24 · mixed 6 · human 12 · unknown 0
+  reviewed     74%  (31/42)
+  ai-authored  71%  (30/42)
+
+  ⚠ ai-authored, not human-reviewed  3      ← the headline governance risk
+  ⚠ stale (review_by passed)         2
+  review evidence: 31/31 anchored to a commit
+```
+
+The score keys off recorded review evidence (a human `reviewed_by` + a `reviewed` transition), **not
+the self-asserted `status` string** — so you can't inflate the trust score by hand-editing a page to
+`status: reviewed` (and that edit still fails `forge check`). Reviews are reported as *anchored* (the
+transition points at a commit) vs *asserted*; resolving those anchors against git history is `forge
+audit` (next). Use `forge trust --strict` in CI to fail the build on governance risk.
+
 ## Onboarding existing docs
 
 Already have a Markdown docs repo? `forge migrate` seeds `status` + an honest human-authored
@@ -52,7 +78,7 @@ a renderer. Only `adapter-fumadocs` and `apps/docs` touch React/Next.
 | Package | Responsibility |
 |---|---|
 | [`@docforge/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
-| [`@docforge/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
+| [`@docforge/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav / trust report |
 | [`@docforge/provenance`](packages/provenance) | read / merge / recordTransition / verify |
 | [`@docforge/gates`](packages/gates) | validation rules behind `forge check` |
 | [`@docforge/producer`](packages/producer) | draft → branch → PR → approve → state-flip |

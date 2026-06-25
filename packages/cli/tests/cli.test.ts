@@ -94,3 +94,34 @@ describe('forge prov --filter', () => {
     expect(listed).toContain('a — A');
   });
 });
+
+describe('forge trust', () => {
+  it('reports the posture and flags an unreviewed AI page', async () => {
+    await forge('init', rootDir);
+    await forge(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'a',
+      '--title',
+      'A',
+      '--body',
+      'Linked from [home](/index).',
+      '--model-name',
+      'claude-opus-4-8',
+    );
+
+    const human = await forge('trust', rootDir);
+    expect(human).toContain('trust posture');
+    expect(human).toContain('ai-authored, not human-reviewed');
+    expect(human).toContain('- a');
+
+    const json = JSON.parse(await forge('trust', rootDir, '--json'));
+    expect(json.aiUnreviewedCount).toBeGreaterThanOrEqual(1);
+    expect(json.reviewedCount).toBe(0);
+
+    await forge('trust', rootDir, '--strict');
+    expect(process.exitCode).toBe(1); // an unreviewed AI draft is a governance risk
+  });
+});

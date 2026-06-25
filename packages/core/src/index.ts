@@ -5,4 +5,5 @@ export * from './nav.js';
 export * from './render.js';
 export * from './search.js';
 export * from './source.js';
+export * from './trust.js';
 export * from './types.js';

@@ -70,10 +70,15 @@ already have provenance are skipped, so it's safe to re-run.
 ## 3. See what you've got
 
 ```bash
+forge trust /path/to/your-docs                          # corpus trust posture (the scorecard)
 forge check /path/to/your-docs                          # all gates
 forge prov /path/to/your-docs --status reviewed         # the provenance chain, per page
 forge prov /path/to/your-docs --filter authored_by=ai   # everything an agent wrote
 ```
+
+`forge trust` is the one-glance answer to "how much of this can I trust?" — reviewed %, AI-authored
+%, and the counts that matter: **AI-authored-but-unreviewed**, stale/overdue, and how many reviews
+are anchored to a commit. Add `--strict` to fail CI on governance risk, or `--json` to pipe it.
 
 For a reader-facing view, the reference site renders the same provenance as a trust dashboard —
 see the live demo: **[the `/trust` dashboard](https://docforge-docs.vercel.app/trust)** (and a

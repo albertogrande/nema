@@ -8,6 +8,7 @@ import { mcpCommand } from './commands/mcp.js';
 import { migrateCommand } from './commands/migrate.js';
 import { openPrCommand } from './commands/open-pr.js';
 import { provCommand } from './commands/prov.js';
+import { trustCommand } from './commands/trust.js';
 
 export const main = defineCommand({
   meta: {
@@ -23,6 +24,7 @@ export const main = defineCommand({
     'open-pr': openPrCommand,
     approve: approveCommand,
     prov: provCommand,
+    trust: trustCommand,
     mcp: mcpCommand,
   },
 });
