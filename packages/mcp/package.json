@@ -1,0 +1,39 @@
+{
+  "name": "@docforge/mcp",
+  "version": "0.0.0",
+  "description": "Forge MCP server: read tools + write tools (draft/update/propose/check/request_review)",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "docforge-mcp": "./dist/bin.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@docforge/core": "workspace:*",
+    "@docforge/gates": "workspace:*",
+    "@docforge/producer": "workspace:*",
+    "@docforge/provenance": "workspace:*",
+    "@docforge/schema": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "gray-matter": "^4.0.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
