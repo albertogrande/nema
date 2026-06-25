@@ -15,6 +15,17 @@ export interface CreatePullRequestInput {
   labels?: string[];
 }
 
+export interface MergeOptions {
+  /** Merge strategy. Defaults to 'squash'. */
+  method?: 'merge' | 'squash' | 'rebase';
+  /**
+   * Enable the forge's auto-merge: complete the merge only once required status
+   * checks pass. This is how a promotion commit merges WITHOUT bypassing branch
+   * protection — we never use an admin override.
+   */
+  auto?: boolean;
+}
+
 /**
  * The host abstraction over git + a code-forge's PR surface. v0.1 ships a
  * local git host and a GitHub (`gh`) host; a GitHub-App / GitLab / Gitea host
@@ -30,6 +41,12 @@ export interface NemaHost {
   commit(message: string, opts?: CommitOptions): Promise<string>;
   push(branch: string, opts?: { setUpstream?: boolean }): Promise<void>;
   createPullRequest(input: CreatePullRequestInput): Promise<PullRequestRef>;
+  /**
+   * Merge a pull request through the forge, respecting branch protection.
+   * Never bypasses required checks (no admin override); pair with `auto` when
+   * the merge must wait for a freshly-triggered CI run on the latest commit.
+   */
+  merge(pr: number, opts?: MergeOptions): Promise<void>;
 }
 
 /** Git-only host. PR creation is unsupported — use {@link GitHubHost}. */
@@ -52,9 +69,26 @@ export class LocalGitHost implements NemaHost {
       new Error('LocalGitHost cannot open pull requests; use GitHubHost (requires the `gh` CLI)'),
     );
   }
+
+  merge(_pr: number, _opts?: MergeOptions): Promise<void> {
+    return Promise.reject(
+      new Error('LocalGitHost cannot merge pull requests; use GitHubHost (requires the `gh` CLI)'),
+    );
+  }
 }
 
-/** GitHub host: git operations plus PR creation through the `gh` CLI. */
+/**
+ * Build the `gh pr merge` argv. Deliberately never emits `--admin`: a promotion
+ * merge must satisfy the same required checks as any other PR.
+ */
+export function ghMergeArgs(pr: number, opts: MergeOptions = {}): string[] {
+  const method = opts.method ?? 'squash';
+  const args = ['pr', 'merge', String(pr), `--${method}`];
+  if (opts.auto) args.push('--auto');
+  return args;
+}
+
+/** GitHub host: git operations plus PR creation/merge through the `gh` CLI. */
 export class GitHubHost extends LocalGitHost {
   override async createPullRequest(input: CreatePullRequestInput): Promise<PullRequestRef> {
     const args = [
@@ -75,5 +109,9 @@ export class GitHubHost extends LocalGitHost {
     const url = stdout.trim().split('\n').filter(Boolean).pop() ?? '';
     const number = Number.parseInt(url.split('/').pop() ?? '', 10);
     return { number: Number.isFinite(number) ? number : 0, url };
+  }
+
+  override async merge(pr: number, opts: MergeOptions = {}): Promise<void> {
+    await run('gh', ghMergeArgs(pr, opts), this.cwd);
   }
 }

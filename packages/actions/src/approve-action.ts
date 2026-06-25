@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { createContentSource, resolveConfig } from '@nema/core';
 import {
-  LocalGitHost,
+  GitHubHost,
   PROVENANCE_TRAILER_KEY,
   ProducerEngine,
   formatProvenanceTrailer,
@@ -65,7 +65,7 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
     return;
   }
 
-  const host = new LocalGitHost(repoRoot);
+  const host = new GitHubHost(repoRoot);
   const engine = new ProducerEngine({
     rootDir: repoRoot,
     contentRoot: config.contentRoot,
@@ -90,13 +90,13 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
 
   const branch = event.pull_request?.head?.ref ?? (await host.currentBranch());
   await host.push(branch);
-  // --admin bypasses required status checks on the promotion commit: the push above
-  // is authenticated with GITHUB_TOKEN, which does NOT re-trigger CI, so the new commit
-  // has no check runs and a normal merge would be blocked under branch protection.
-  // Requires branch protection with enforce_admins=false. (Fast-follow: use a PAT so
-  // the promotion commit re-runs CI, then drop --admin.)
-  await run('gh', ['pr', 'merge', String(pr), '--squash', '--admin'], repoRoot);
-  log(`merged PR #${pr}`);
+  // The promotion commit is pushed under FORGE_PROMOTE_TOKEN (a PAT/App token), so —
+  // unlike a GITHUB_TOKEN-authored push — it re-triggers CI. We then enable auto-merge,
+  // which completes the squash merge through normal branch protection once those required
+  // checks pass. No `--admin`, no bypass: a human approval AND a green promotion build are
+  // both required for a page to reach `reviewed`.
+  await host.merge(pr, { method: 'squash', auto: true });
+  log(`enabled auto-merge for PR #${pr} — it merges once the promotion build passes`);
 }
 
 // Entry point when executed as the action's main script.

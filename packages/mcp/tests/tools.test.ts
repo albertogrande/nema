@@ -5,7 +5,8 @@ import { join } from 'node:path';
 import type {
   CommitOptions,
   CreatePullRequestInput,
-  NemaHost,
+  ForgeHost,
+  MergeOptions,
   PullRequestRef,
 } from '@nema/producer';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -27,6 +28,7 @@ class FakeHost implements NemaHost {
     this.prs.push(input);
     return { number: 7, url: 'https://github.com/x/y/pull/7' };
   };
+  merge = async (_pr: number, _opts?: MergeOptions) => {};
 }
 
 let rootDir: string;

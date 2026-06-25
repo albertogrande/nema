@@ -8,7 +8,8 @@ import { afterAll, describe, expect, it } from 'vitest';
 import {
   type CommitOptions,
   type CreatePullRequestInput,
-  type NemaHost,
+  type ForgeHost,
+  type MergeOptions,
   ProducerEngine,
   type PullRequestRef,
   draftBranchName,
@@ -46,6 +47,10 @@ class FakeHost implements NemaHost {
   createPullRequest = async (input: CreatePullRequestInput): Promise<PullRequestRef> => {
     this.prs.push(input);
     return { number: 42, url: 'https://github.com/x/y/pull/42' };
+  };
+  merged: Array<{ pr: number; opts?: MergeOptions }> = [];
+  merge = async (pr: number, opts?: MergeOptions) => {
+    this.merged.push({ pr, opts });
   };
 }
 
