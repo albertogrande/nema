@@ -1,6 +1,6 @@
+import { getSource, slugToPath } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
 import { provenanceHeaders, provenanceView } from '@docforge/core';
-import { getSource, slugToPath } from '@/lib/source';
 
 export async function generateStaticParams() {
   const source = await getSource();

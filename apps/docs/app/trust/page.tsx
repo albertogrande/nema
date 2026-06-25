@@ -11,9 +11,9 @@ export default async function TrustPage() {
   });
 
   return (
-    <article>
+    <main style={{ maxWidth: 920, margin: '0 auto', padding: '2.5rem 1.5rem' }}>
       <h1>Provenance dashboard</h1>
-      <p style={{ color: 'var(--muted)' }}>
+      <p style={{ color: 'var(--color-fd-muted-foreground)' }}>
         Every page&rsquo;s authorship chain — who/what authored it, which model, and whether a human
         has reviewed it — read straight from the provenance the gates validate.
       </p>
@@ -45,6 +45,9 @@ export default async function TrustPage() {
           ))}
         </tbody>
       </table>
-    </article>
+      <p style={{ marginTop: '2rem', fontSize: '0.85rem' }}>
+        <Link href="/docs">← Back to docs</Link>
+      </p>
+    </main>
   );
 }

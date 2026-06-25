@@ -1,5 +1,5 @@
-import { Sidebar } from '@/components/Sidebar';
 // SPDX-License-Identifier: Apache-2.0
+import { RootProvider } from 'fumadocs-ui/provider';
 import type { ReactNode } from 'react';
 import './globals.css';
 
@@ -10,12 +10,9 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <div className="layout">
-          <Sidebar />
-          <main>{children}</main>
-        </div>
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );

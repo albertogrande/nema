@@ -1,93 +1,15 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-:root {
-  --bg: #0b0d10;
-  --fg: #e6e9ee;
-  --muted: #9aa4b2;
-  --accent: #6ea8fe;
-  --border: #232830;
-  --card: #12151a;
-}
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font: 16px / 1.6 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-}
-
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  min-height: 100vh;
-}
-
-.sidebar {
-  border-right: 1px solid var(--border);
-  padding: 1.5rem 1rem;
-  background: var(--card);
-}
-.sidebar h1 {
-  font-size: 1.1rem;
-  margin: 0 0 1rem;
-}
-.sidebar nav a {
-  display: block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  color: var(--fg);
-}
-.sidebar nav a:hover {
-  background: #1b2027;
-  text-decoration: none;
-}
-.sidebar .section {
-  color: var(--muted);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 1rem 0 0.25rem;
-}
-
-main {
-  padding: 2rem 3rem;
-  max-width: 860px;
-}
-
-.content pre {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 1rem;
-  border-radius: 8px;
-  overflow: auto;
-}
-.content code {
-  background: #1b2027;
-  padding: 0.1rem 0.3rem;
-  border-radius: 4px;
-}
-.content pre code {
-  background: none;
-  padding: 0;
-}
-
-.nema-badge {
+/* Forge provenance badge + trust dashboard — carried over from the hand-rolled site. */
+.forge-badge {
   display: inline-block;
   font-size: 0.75rem;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-fd-border);
   margin-bottom: 1rem;
 }
 .nema-badge--reviewed {
@@ -102,7 +24,7 @@ main {
 }
 .nema-badge--draft {
   background: #20242b;
-  color: var(--muted);
+  color: var(--color-fd-muted-foreground);
 }
 
 .trust-table {
@@ -113,10 +35,9 @@ main {
 .trust-table td {
   text-align: left;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-fd-border);
   font-size: 0.9rem;
 }
 .trust-table th {
-  color: var(--muted);
-  font-weight: 600;
+  color: var(--color-fd-muted-foreground);
 }
