@@ -66,6 +66,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      # Dogfood: validate the example corpus and the docs site with our own gates.
-      - run: pnpm --filter @docforge/cli exec forge check ../../examples/minimal
-        continue-on-error: false
+      # Dogfood: validate the example corpus with our own gates (run the built CLI directly).
+      - run: node packages/cli/dist/index.js check examples/minimal
+      - run: node packages/cli/dist/index.js check apps/docs
