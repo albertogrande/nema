@@ -71,6 +71,24 @@ export function createNemaMcpServer(cfg: NemaToolsConfig): McpServer {
   );
 
   server.registerTool(
+    'get_provenance',
+    {
+      title: 'Get page provenance',
+      description:
+        'Return the trust metadata for a page as JSON: who authored it (ai/human/mixed), the model, ' +
+        'the human reviewer, cited sources, and the status/freshness dates. Complements get_page, ' +
+        'which returns the prose.',
+      inputSchema: { path: z.string().describe('Page path, e.g. guide/intro') },
+    },
+    async ({ path }) => {
+      const { found, view } = await tools.getProvenance(path);
+      return found && view
+        ? text(JSON.stringify(view, null, 2))
+        : text(`No page found for "${path}". Use list_pages to see valid paths.`, true);
+    },
+  );
+
+  server.registerTool(
     'search',
     {
       title: 'Search the docs',

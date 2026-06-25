@@ -61,6 +61,14 @@ describe('read tools', () => {
     const hits = await tools.search('widgets', 5);
     expect(hits[0]?.path).toBe('index');
   });
+
+  it('exposes provenance via get_provenance, separate from get_page prose', async () => {
+    const { found, view } = await tools.getProvenance('index');
+    expect(found).toBe(true);
+    expect(view?.status).toBe('draft');
+    expect(view?.provenance?.authored_by).toBe('ai');
+    expect(view?.provenance?.model?.name).toBe('claude-opus-4-8');
+  });
 });
 
 describe('check', () => {

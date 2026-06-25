@@ -3,8 +3,10 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import {
   type ContentSource,
   type Page,
+  type ProvenanceView,
   type SearchHit,
   createContentSource,
+  provenanceView,
   resolveConfig,
 } from '@nema/core';
 import { type GateResult, checkContent } from '@nema/gates';
@@ -101,6 +103,18 @@ export class NemaTools {
     return page
       ? { found: true, markdown: source.renderMarkdown(page) }
       : { found: false, markdown: null };
+  }
+
+  /**
+   * The trust metadata for a page — kept separate from {@link getPage} so the
+   * `get_page` markdown stays byte-identical to the `.md` route (the parity the
+   * conformance suite guards).
+   */
+  async getProvenance(path: string): Promise<{ found: boolean; view: ProvenanceView | null }> {
+    const source = await this.source();
+    const page = source.getPage(path);
+    if (!page) return { found: false, view: null };
+    return { found: true, view: provenanceView(page, source.provenanceOf(page.path)) };
   }
 
   async search(query: string, limit = 8): Promise<SearchHit[]> {
