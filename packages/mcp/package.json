@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/mcp",
+  "name": "@nema/mcp",
   "version": "0.1.0-alpha.0",
-  "description": "Forge MCP server: read tools + write tools (draft/update/propose/check/request_review)",
+  "description": "Nema MCP server: read tools + write tools (draft/update/propose/check/request_review)",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -20,7 +20,7 @@
   },
   "sideEffects": false,
   "bin": {
-    "docforge-mcp": "./dist/bin.js"
+    "nema-mcp": "./dist/bin.js"
   },
   "exports": {
     ".": {
@@ -37,11 +37,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/core": "workspace:*",
-    "@docforge/gates": "workspace:*",
-    "@docforge/producer": "workspace:*",
-    "@docforge/provenance": "workspace:*",
-    "@docforge/schema": "workspace:*",
+    "@nema/core": "workspace:*",
+    "@nema/gates": "workspace:*",
+    "@nema/producer": "workspace:*",
+    "@nema/provenance": "workspace:*",
+    "@nema/schema": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "gray-matter": "^4.0.3",
     "zod": "^3.24.1"

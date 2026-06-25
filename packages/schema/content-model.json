@@ -1,5 +1,5 @@
 {
-  "_comment": "SSOT content model for Forge. Domain-neutral. Consumed by buildSchema() (Zod) and by the gates. Do not re-declare these enums inline anywhere else.",
+  "_comment": "SSOT content model for Nema. Domain-neutral. Consumed by buildSchema() (Zod) and by the gates. Do not re-declare these enums inline anywhere else.",
   "required": ["title", "status"],
   "enums": {
     "status": ["stub", "draft", "reviewed", "deprecated"],

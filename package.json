@@ -1,9 +1,9 @@
 {
-  "name": "@docforge/monorepo",
+  "name": "@nema/monorepo",
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Forge — open-source, AI-native documentation platform (monorepo root)",
+  "description": "Nema — open-source, AI-native documentation platform (monorepo root)",
   "license": "Apache-2.0",
   "packageManager": "pnpm@11.0.9",
   "engines": {

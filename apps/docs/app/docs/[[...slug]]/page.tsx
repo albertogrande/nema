@@ -1,6 +1,6 @@
 import { getSource, slugToPath } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
-import { ProvenanceBadge } from '@docforge/adapter-fumadocs';
+import { ProvenanceBadge } from '@nema/adapter-fumadocs';
 import { marked } from 'marked';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

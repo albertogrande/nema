@@ -2,8 +2,8 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { checkContent } from '@docforge/gates';
-import { readProvenanceFromContent } from '@docforge/provenance';
+import { checkContent } from '@nema/gates';
+import { readProvenanceFromContent } from '@nema/provenance';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { migrateCorpus } from '../src/index.js';
 
@@ -13,10 +13,10 @@ let root: string;
 let contentRoot: string;
 
 beforeAll(() => {
-  root = mkdtempSync(join(tmpdir(), 'forge-migrate-'));
+  root = mkdtempSync(join(tmpdir(), 'nema-migrate-'));
   contentRoot = join(root, 'docs');
   mkdirSync(contentRoot, { recursive: true });
-  // A legacy corpus with no Forge frontmatter at all.
+  // A legacy corpus with no Nema frontmatter at all.
   writeFileSync(join(contentRoot, 'index.md'), '# Home\n\nSee the [Guide](guide.md).\n');
   writeFileSync(
     join(contentRoot, 'guide.md'),
@@ -54,7 +54,7 @@ describe('migrateCorpus', () => {
   });
 
   it('can migrate to draft instead of reviewed', async () => {
-    const draftRoot = mkdtempSync(join(tmpdir(), 'forge-migrate-draft-'));
+    const draftRoot = mkdtempSync(join(tmpdir(), 'nema-migrate-draft-'));
     const dc = join(draftRoot, 'docs');
     mkdirSync(dc, { recursive: true });
     writeFileSync(join(dc, 'index.md'), '# Notes\n\nA legacy note.\n');
@@ -72,7 +72,7 @@ describe('migrateCorpus', () => {
   });
 
   it('respects an existing valid status', async () => {
-    const r = mkdtempSync(join(tmpdir(), 'forge-migrate-existing-'));
+    const r = mkdtempSync(join(tmpdir(), 'nema-migrate-existing-'));
     const dc = join(r, 'docs');
     mkdirSync(dc, { recursive: true });
     writeFileSync(join(dc, 'index.md'), '---\ntitle: WIP\nstatus: draft\n---\n\nDraft body.\n');

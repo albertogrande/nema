@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync } from 'node:fs';
-import { createContentSource, resolveConfig } from '@docforge/core';
+import { createContentSource, resolveConfig } from '@nema/core';
 import {
   LocalGitHost,
   PROVENANCE_TRAILER_KEY,
   ProducerEngine,
   formatProvenanceTrailer,
   run,
-} from '@docforge/producer';
-import { readProvenance } from '@docforge/provenance';
+} from '@nema/producer';
+import { readProvenance } from '@nema/provenance';
 import { fileToRoute, planApprovals } from './plan.js';
 
 function log(message: string): void {
-  process.stdout.write(`[forge-approve] ${message}\n`);
+  process.stdout.write(`[nema-approve] ${message}\n`);
 }
 
 interface ReviewEvent {
@@ -102,7 +102,7 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
 // Entry point when executed as the action's main script.
 if (import.meta.url === `file://${process.argv[1]}`) {
   runApproveAction().catch((error: unknown) => {
-    process.stderr.write(`[forge-approve] failed: ${String(error)}\n`);
+    process.stderr.write(`[nema-approve] failed: ${String(error)}\n`);
     process.exit(1);
   });
 }

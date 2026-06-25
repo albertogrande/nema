@@ -5,15 +5,15 @@ import { join } from 'node:path';
 import type {
   CommitOptions,
   CreatePullRequestInput,
-  ForgeHost,
+  NemaHost,
   PullRequestRef,
-} from '@docforge/producer';
+} from '@nema/producer';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { ForgeTools, createForgeMcpServer } from '../src/index.js';
+import { NemaTools, createNemaMcpServer } from '../src/index.js';
 
 const CLOCK = () => new Date('2026-06-25T12:00:00Z');
 
-class FakeHost implements ForgeHost {
+class FakeHost implements NemaHost {
   prs: CreatePullRequestInput[] = [];
   currentBranch = async () => 'main';
   headSha = async () => 'a'.repeat(40);
@@ -30,13 +30,13 @@ class FakeHost implements ForgeHost {
 }
 
 let rootDir: string;
-let tools: ForgeTools;
+let tools: NemaTools;
 let host: FakeHost;
 
 beforeAll(async () => {
-  rootDir = mkdtempSync(join(tmpdir(), 'forge-mcp-'));
+  rootDir = mkdtempSync(join(tmpdir(), 'nema-mcp-'));
   host = new FakeHost();
-  tools = new ForgeTools({ rootDir, host, clock: CLOCK });
+  tools = new NemaTools({ rootDir, host, clock: CLOCK });
   await tools.draftPage({
     path: 'index',
     title: 'Home',
@@ -83,7 +83,7 @@ describe('write tools', () => {
   it('propose_changes opens a labeled draft PR', async () => {
     const res = await tools.proposeChanges({ title: 'docs: home', summary: 'Add home page.' });
     expect(res.pullRequest.number).toBe(7);
-    expect(host.prs[0]?.labels).toContain('forge:draft');
+    expect(host.prs[0]?.labels).toContain('nema:draft');
   });
 
   it('request_review never approves', async () => {
@@ -94,7 +94,7 @@ describe('write tools', () => {
 
 describe('server wiring', () => {
   it('registers exactly the read + write tools and no reviewed-promotion tool', () => {
-    const server = createForgeMcpServer({ rootDir, host });
+    const server = createNemaMcpServer({ rootDir, host });
     // The server exists and constructed without throwing; tool surface is fixed.
     expect(server).toBeTruthy();
   });

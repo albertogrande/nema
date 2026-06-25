@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
-# Contributing to Forge
+# Contributing to Nema
 
 Thanks for your interest in contributing. This document covers the legal and mechanical basics.
 
@@ -37,7 +37,7 @@ tier. Do not contribute code to `ee/`; PRs touching it will be declined.
 Documentation under `apps/docs/` is authored **through the producer loop** — an agent drafts,
 CI gates, a human approves. When you change docs, the PR template asks:
 
-- Did `forge check` pass?
+- Did `nema check` pass?
 - Is this page `draft` (not self-promoted to `reviewed`)?
 
 ## Local development

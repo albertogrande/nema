@@ -1,30 +1,29 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
-# Forge
+# Nema
 
 > **Alpha — source-only.** Clone and build it (`pnpm install && pnpm build`); not yet published
-> to npm. The name (`Forge` / `docforge` / the `@docforge/*` package scope) is **provisional** and
-> may change before 0.1.0. APIs are unstable. Feedback and issues very welcome.
+> to npm. APIs are unstable and may change before 0.1.0. Feedback and issues very welcome.
 
-**Forge is an open-source, AI-native documentation platform** where agents are the primary
+**Nema is an open-source, AI-native documentation platform** where agents are the primary
 producers and consumers of content and **humans are the approval gate**. Docs-as-product:
 structured, versioned, provenance-tracked, in plain Markdown, in your own repo.
 
-The market has solved letting an agent *read* your docs. Forge is the open, self-hostable
+The market has solved letting an agent *read* your docs. Nema is the open, self-hostable
 pipeline that makes agent-*written* docs **safe to ship**: structured + provenance-tracked +
 human-gated. That trust/governance layer is the point.
 
 **→ [Quickstart: your existing docs, governed in 10 minutes](QUICKSTART.md)**
-&nbsp;·&nbsp; **[Live demo](https://docforge-docs.vercel.app/docs)** ([trust dashboard](https://docforge-docs.vercel.app/trust))
+&nbsp;·&nbsp; **[Live demo](https://nema-docs.vercel.app/docs)** ([trust dashboard](https://nema-docs.vercel.app/trust))
 
 ## The producer loop
 
 ```
 1. An agent drafts a page through the MCP write-tools (status: draft, seeded provenance).
-2. It opens a PR on a forge/draft/* branch with a Forge-Provenance commit trailer.
-3. CI runs `forge check` — all gates pass; a PR may not self-promote to `reviewed`.
+2. It opens a PR on a nema/draft/* branch with a Nema-Provenance commit trailer.
+3. CI runs `nema check` — all gates pass; a PR may not self-promote to `reviewed`.
 4. A human approves the PR in GitHub.  ← the approval gate
-5. An Action runs `forge approve`: flips draft→reviewed, stamps freshness dates,
+5. An Action runs `nema approve`: flips draft→reviewed, stamps freshness dates,
    appends a provenance transition, and merges.
 ```
 
@@ -34,13 +33,13 @@ git-diffable data.
 
 ## Onboarding existing docs
 
-Already have a Markdown docs repo? `forge migrate` seeds `status` + an honest human-authored
+Already have a Markdown docs repo? `nema migrate` seeds `status` + an honest human-authored
 `provenance` block on every page (keeping existing status and freshness dates), then runs the
 gates so you can see what needs attention:
 
 ```bash
-forge migrate ./my-docs --dry-run     # preview
-forge migrate ./my-docs               # write provenance + report remaining gate issues
+nema migrate ./my-docs --dry-run     # preview
+nema migrate ./my-docs               # write provenance + report remaining gate issues
 ```
 
 ## Architecture
@@ -51,16 +50,16 @@ a renderer. Only `adapter-fumadocs` and `apps/docs` touch React/Next.
 
 | Package | Responsibility |
 |---|---|
-| [`@docforge/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
-| [`@docforge/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
-| [`@docforge/provenance`](packages/provenance) | read / merge / recordTransition / verify |
-| [`@docforge/gates`](packages/gates) | validation rules behind `forge check` |
-| [`@docforge/producer`](packages/producer) | draft → branch → PR → approve → state-flip |
-| [`@docforge/mcp`](packages/mcp) | MCP server: read tools + write tools |
-| [`@docforge/cli`](packages/cli) | the `forge` binary |
-| [`@docforge/adapter-kit`](packages/adapter-kit) | core↔adapter contract + conformance suite |
-| [`@docforge/adapter-fumadocs`](packages/adapter-fumadocs) | reference renderer (Next/React) |
-| [`@docforge/actions`](packages/actions) | composite GitHub Actions |
+| [`@nema/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
+| [`@nema/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
+| [`@nema/provenance`](packages/provenance) | read / merge / recordTransition / verify |
+| [`@nema/gates`](packages/gates) | validation rules behind `nema check` |
+| [`@nema/producer`](packages/producer) | draft → branch → PR → approve → state-flip |
+| [`@nema/mcp`](packages/mcp) | MCP server: read tools + write tools |
+| [`@nema/cli`](packages/cli) | the `nema` binary |
+| [`@nema/adapter-kit`](packages/adapter-kit) | core↔adapter contract + conformance suite |
+| [`@nema/adapter-fumadocs`](packages/adapter-fumadocs) | reference renderer (Next/React) |
+| [`@nema/actions`](packages/actions) | composite GitHub Actions |
 
 ## Status
 

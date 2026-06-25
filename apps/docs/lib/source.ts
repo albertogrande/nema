@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { type ContentSource, createContentSource } from '@docforge/core';
+import { type ContentSource, createContentSource } from '@nema/core';
 
 let cached: Promise<ContentSource> | null = null;
 

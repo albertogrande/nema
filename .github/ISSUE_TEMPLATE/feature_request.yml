@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 name: Feature request
-description: Propose a capability or change for Forge
+description: Propose a capability or change for Nema
 labels: ["enhancement", "triage"]
 body:
   - type: textarea
@@ -14,7 +14,7 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: What would you like Forge to do?
+      description: What would you like Nema to do?
     validations:
       required: true
   - type: textarea

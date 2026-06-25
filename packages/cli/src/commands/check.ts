@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { checkContent, formatGateResult } from '@docforge/gates';
+import { checkContent, formatGateResult } from '@nema/gates';
 import { defineCommand } from 'citty';
 import { out } from '../util.js';
 

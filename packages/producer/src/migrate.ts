@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 import { writeFileSync } from 'node:fs';
-import { type Page, loadPages } from '@docforge/core';
-import { composeContent, recordTransition, seedProvenance } from '@docforge/provenance';
-import { type LifecycleState, isLifecycleState } from '@docforge/schema';
+import { type Page, loadPages } from '@nema/core';
+import { composeContent, recordTransition, seedProvenance } from '@nema/provenance';
+import { type LifecycleState, isLifecycleState } from '@nema/schema';
 import { run } from './exec.js';
 import { addDays, toISODate } from './transitions.js';
 
@@ -61,7 +61,7 @@ async function gitLastCommitISO(filePath: string, repoRoot: string): Promise<str
 }
 
 /**
- * Import an existing Markdown corpus into the Forge model: for every page that
+ * Import an existing Markdown corpus into the Nema model: for every page that
  * lacks a `provenance` block, infer a title, assign a lifecycle status (keeping
  * any valid existing one), and seed an honest human-authored provenance block —
  * stamping `reviewed` pages with a `migration` review record and freshness dates.

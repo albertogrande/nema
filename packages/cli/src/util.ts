@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import { createContentSource, resolveConfig } from '@docforge/core';
-import { type ForgeHost, ProducerEngine } from '@docforge/producer';
+import { createContentSource, resolveConfig } from '@nema/core';
+import { type NemaHost, ProducerEngine } from '@nema/producer';
 
 export function out(message: string): void {
   process.stdout.write(`${message}\n`);
@@ -12,7 +12,7 @@ export function errOut(message: string): void {
 
 export async function makeEngine(
   rootDir: string,
-  host: ForgeHost,
+  host: NemaHost,
   opts: { reviewSlaDays?: number } = {},
 ): Promise<ProducerEngine> {
   const config = await resolveConfig(rootDir);

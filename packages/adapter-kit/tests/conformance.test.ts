@@ -6,7 +6,7 @@ import {
   type Page,
   type ResolvedConfig,
   contentSourceFromConfig,
-} from '@docforge/core';
+} from '@nema/core';
 import { describe, expect, it } from 'vitest';
 import {
   type NavRoute,

@@ -11,7 +11,7 @@ export function slugify(input: string): string {
   return slug || 'page';
 }
 
-/** The conventional draft branch name: `forge/draft/<slug>-<shortsha>`. */
+/** The conventional draft branch name: `nema/draft/<slug>-<shortsha>`. */
 export function draftBranchName(path: string, shortSha: string): string {
-  return `forge/draft/${slugify(path)}-${shortSha}`;
+  return `nema/draft/${slugify(path)}-${shortSha}`;
 }

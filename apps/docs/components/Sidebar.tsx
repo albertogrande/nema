@@ -1,6 +1,6 @@
 import { getSource } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
-import type { NavNode } from '@docforge/core';
+import type { NavNode } from '@nema/core';
 import Link from 'next/link';
 
 function NavList({ nodes }: { nodes: NavNode[] }) {
@@ -38,7 +38,7 @@ export async function Sidebar() {
   return (
     <aside className="sidebar">
       <h1>
-        <Link href="/docs">Forge Docs</Link>
+        <Link href="/docs">Nema Docs</Link>
       </h1>
       <nav>
         <NavList nodes={source.nav} />

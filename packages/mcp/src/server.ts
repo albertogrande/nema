@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: Apache-2.0
-import { formatGateResult } from '@docforge/gates';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+// SPDX-License-Identifier: Apache-2.0
+import { formatGateResult } from '@nema/gates';
 import { z } from 'zod';
 import { formatDraftResult, formatPageList, formatSearchHits } from './format.js';
 import {
   type DraftPageInput,
-  ForgeTools,
-  type ForgeToolsConfig,
+  NemaTools,
+  type NemaToolsConfig,
   type UpdatePageInput,
 } from './tools.js';
 
@@ -36,13 +36,13 @@ const modelShape = z.object({
 });
 
 /**
- * Build the Forge MCP server. Read tools expose the corpus; write tools drive
+ * Build the Nema MCP server. Read tools expose the corpus; write tools drive
  * the producer loop. Crucially, there is NO tool that promotes a page to
  * `reviewed` — that authority belongs to the human PR approval alone.
  */
-export function createForgeMcpServer(cfg: ForgeToolsConfig): McpServer {
-  const tools = new ForgeTools(cfg);
-  const server = new McpServer({ name: 'forge', version: '0.1.0' });
+export function createNemaMcpServer(cfg: NemaToolsConfig): McpServer {
+  const tools = new NemaTools(cfg);
+  const server = new McpServer({ name: 'nema', version: '0.1.0' });
 
   server.registerTool(
     'list_pages',
@@ -88,7 +88,7 @@ export function createForgeMcpServer(cfg: ForgeToolsConfig): McpServer {
   server.registerTool(
     'check',
     {
-      title: 'Run forge check',
+      title: 'Run nema check',
       description: 'Validate the whole corpus against all gates and return diagnostics.',
       inputSchema: {},
     },
@@ -103,7 +103,7 @@ export function createForgeMcpServer(cfg: ForgeToolsConfig): McpServer {
     {
       title: 'Draft a new page',
       description:
-        'Create a NEW page with status: draft and a seeded provenance block, then run forge check ' +
+        'Create a NEW page with status: draft and a seeded provenance block, then run nema check ' +
         'and return diagnostics so you can self-correct. You may only create drafts — never reviewed.',
       inputSchema: {
         path: z.string().describe('Route path without .md, e.g. guide/intro'),
@@ -125,7 +125,7 @@ export function createForgeMcpServer(cfg: ForgeToolsConfig): McpServer {
     {
       title: 'Update a draft page',
       description:
-        'Update an existing DRAFT page body/frontmatter and re-run forge check. Cannot set status: reviewed.',
+        'Update an existing DRAFT page body/frontmatter and re-run nema check. Cannot set status: reviewed.',
       inputSchema: {
         path: z.string(),
         title: z.string().optional(),
@@ -148,8 +148,8 @@ export function createForgeMcpServer(cfg: ForgeToolsConfig): McpServer {
     {
       title: 'Open a draft PR',
       description:
-        'Open a PR for the draft pages: create a forge/draft/* branch, commit with a Forge-Provenance ' +
-        'trailer (signed off), push, and open a PR labeled forge:draft. Requires the gh CLI.',
+        'Open a PR for the draft pages: create a nema/draft/* branch, commit with a Nema-Provenance ' +
+        'trailer (signed off), push, and open a PR labeled nema:draft. Requires the gh CLI.',
       inputSchema: {
         title: z.string(),
         summary: z.string(),
@@ -183,8 +183,8 @@ export function createForgeMcpServer(cfg: ForgeToolsConfig): McpServer {
   return server;
 }
 
-/** Start the Forge MCP server over stdio. */
-export async function startStdioServer(cfg: ForgeToolsConfig): Promise<void> {
-  const server = createForgeMcpServer(cfg);
+/** Start the Nema MCP server over stdio. */
+export async function startStdioServer(cfg: NemaToolsConfig): Promise<void> {
+  const server = createNemaMcpServer(cfg);
   await server.connect(new StdioServerTransport());
 }

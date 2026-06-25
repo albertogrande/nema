@@ -32,13 +32,13 @@ importers:
 
   apps/docs:
     dependencies:
-      '@docforge/adapter-fumadocs':
+      '@nema/adapter-fumadocs':
         specifier: workspace:*
         version: link:../../packages/adapter-fumadocs
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../../packages/schema
       marked:
@@ -54,7 +54,7 @@ importers:
         specifier: ^19.0.0
         version: 19.2.7(react@19.2.7)
     devDependencies:
-      '@docforge/cli':
+      '@nema/cli':
         specifier: workspace:*
         version: link:../../packages/cli
       '@types/node':
@@ -72,7 +72,7 @@ importers:
 
   examples/minimal:
     devDependencies:
-      '@docforge/gates':
+      '@nema/gates':
         specifier: workspace:*
         version: link:../../packages/gates
       vitest:
@@ -81,19 +81,19 @@ importers:
 
   packages/actions:
     dependencies:
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../core
-      '@docforge/gates':
+      '@nema/gates':
         specifier: workspace:*
         version: link:../gates
-      '@docforge/producer':
+      '@nema/producer':
         specifier: workspace:*
         version: link:../producer
-      '@docforge/provenance':
+      '@nema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -109,13 +109,13 @@ importers:
 
   packages/adapter-fumadocs:
     dependencies:
-      '@docforge/adapter-kit':
+      '@nema/adapter-kit':
         specifier: workspace:*
         version: link:../adapter-kit
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../core
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -137,10 +137,10 @@ importers:
 
   packages/adapter-kit:
     dependencies:
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../core
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -156,22 +156,22 @@ importers:
 
   packages/cli:
     dependencies:
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../core
-      '@docforge/gates':
+      '@nema/gates':
         specifier: workspace:*
         version: link:../gates
-      '@docforge/mcp':
+      '@nema/mcp':
         specifier: workspace:*
         version: link:../mcp
-      '@docforge/producer':
+      '@nema/producer':
         specifier: workspace:*
         version: link:../producer
-      '@docforge/provenance':
+      '@nema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
       citty:
@@ -190,7 +190,7 @@ importers:
 
   packages/core:
     dependencies:
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
       github-slugger:
@@ -221,13 +221,13 @@ importers:
 
   packages/gates:
     dependencies:
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../core
-      '@docforge/provenance':
+      '@nema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -243,24 +243,24 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@docforge/core':
-        specifier: workspace:*
-        version: link:../core
-      '@docforge/gates':
-        specifier: workspace:*
-        version: link:../gates
-      '@docforge/producer':
-        specifier: workspace:*
-        version: link:../producer
-      '@docforge/provenance':
-        specifier: workspace:*
-        version: link:../provenance
-      '@docforge/schema':
-        specifier: workspace:*
-        version: link:../schema
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.29.0(zod@3.25.76)
+      '@nema/core':
+        specifier: workspace:*
+        version: link:../core
+      '@nema/gates':
+        specifier: workspace:*
+        version: link:../gates
+      '@nema/producer':
+        specifier: workspace:*
+        version: link:../producer
+      '@nema/provenance':
+        specifier: workspace:*
+        version: link:../provenance
+      '@nema/schema':
+        specifier: workspace:*
+        version: link:../schema
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -280,16 +280,16 @@ importers:
 
   packages/producer:
     dependencies:
-      '@docforge/core':
+      '@nema/core':
         specifier: workspace:*
         version: link:../core
-      '@docforge/gates':
+      '@nema/gates':
         specifier: workspace:*
         version: link:../gates
-      '@docforge/provenance':
+      '@nema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
       gray-matter:
@@ -308,7 +308,7 @@ importers:
 
   packages/provenance:
     dependencies:
-      '@docforge/schema':
+      '@nema/schema':
         specifier: workspace:*
         version: link:../schema
       gray-matter:

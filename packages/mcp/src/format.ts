@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { SearchHit } from '@docforge/core';
-import type { DraftResult } from '@docforge/producer';
+import type { SearchHit } from '@nema/core';
+import type { DraftResult } from '@nema/producer';
 import type { PageSummary } from './tools.js';
 
 export function formatPageList(pages: PageSummary[]): string {
@@ -25,7 +25,7 @@ export function formatSearchHits(hits: SearchHit[], query: string): string {
 export function formatDraftResult(res: DraftResult): string {
   const head = `Drafted ${res.path} (${res.filePath}).`;
   if (res.ok) {
-    return `${head}\n✓ forge check passed for this page. You can now propose_changes.`;
+    return `${head}\n✓ nema check passed for this page. You can now propose_changes.`;
   }
   const lines = res.diagnostics.map((d) => `  ✗ [${d.rule}] ${d.message}`);
   return `${head}\nforge check found issues to fix before proposing:\n${lines.join('\n')}`;

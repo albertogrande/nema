@@ -13,9 +13,9 @@ agent. Do not hand-edit `status: reviewed` or write `reviewed` provenance.
 
 ## Quick reference
 
-- **Author** with the MCP write-tools or `forge draft`; **propose** with `propose_changes` /
-  `forge open-pr`. Both seed and respect the `provenance` block.
-- **Self-check** with `forge check` before opening a PR — green-before-PR is expected.
+- **Author** with the MCP write-tools or `nema draft`; **propose** with `propose_changes` /
+  `nema open-pr`. Both seed and respect the `provenance` block.
+- **Self-check** with `nema check` before opening a PR — green-before-PR is expected.
 - Fill `provenance` honestly: `authored_by`, `model`, structured `sources`. Leave `reviewed`
   transitions to the approval Action.
 - Engine packages are renderer-agnostic — no React/Next outside `adapter-fumadocs` and

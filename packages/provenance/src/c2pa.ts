@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@docforge/schema';
+import type { Provenance } from '@nema/schema';
 
 /**
  * Minimal C2PA manifest shape (a typed subset). This is a MAPPING STUB: it
@@ -45,22 +45,22 @@ export function toC2PAManifest(prov: Provenance, opts: C2PAOptions = {}): C2PAMa
     action: 'c2pa.created',
     digitalSourceType,
     softwareAgent: prov.model?.name,
-    'com.forge.authored_by': prov.authored_by,
+    'com.nema.authored_by': prov.authored_by,
   });
 
   if (prov.reviewed_by) {
     actions.push({
       action: 'c2pa.reviewed',
-      'com.forge.reviewer': prov.reviewed_by.login,
-      'com.forge.method': prov.reviewed_by.method,
-      'com.forge.pr': prov.reviewed_by.pr,
+      'com.nema.reviewer': prov.reviewed_by.login,
+      'com.nema.method': prov.reviewed_by.method,
+      'com.nema.pr': prov.reviewed_by.pr,
     });
   }
 
   const assertions: C2PAAssertion[] = [
     { label: 'c2pa.actions', data: { actions } },
-    // Carry the raw Forge provenance as a custom assertion for round-tripping.
-    { label: 'com.forge.provenance', data: { ...prov } },
+    // Carry the raw Nema provenance as a custom assertion for round-tripping.
+    { label: 'com.nema.provenance', data: { ...prov } },
   ];
 
   const ingredients: C2PAIngredient[] = prov.sources.map((s) => ({
@@ -70,7 +70,7 @@ export function toC2PAManifest(prov: Provenance, opts: C2PAOptions = {}): C2PAMa
   }));
 
   return {
-    claim_generator: opts.claimGenerator ?? 'forge/0.1.0',
+    claim_generator: opts.claimGenerator ?? 'nema/0.1.0',
     title: opts.title,
     assertions,
     ingredients,

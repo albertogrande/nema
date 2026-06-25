@@ -15,6 +15,6 @@
 
 ## If this PR changes docs (the producer loop)
 
-- [ ] `forge check` passed
+- [ ] `nema check` passed
 - [ ] Pages are **`draft`**, not self-promoted to `reviewed` (promotion happens on human approval)
 - [ ] The `provenance` block is filled honestly (`authored_by`, `model`, structured `sources`)

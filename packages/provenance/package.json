@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/provenance",
+  "name": "@nema/provenance",
   "version": "0.1.0-alpha.0",
-  "description": "Forge provenance: read / seed / recordTransition / verify / write + C2PA mapping stub",
+  "description": "Nema provenance: read / seed / recordTransition / verify / write + C2PA mapping stub",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -34,7 +34,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/schema": "workspace:*",
+    "@nema/schema": "workspace:*",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0"
   },

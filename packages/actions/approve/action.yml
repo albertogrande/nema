@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-name: Forge Approve
+name: Nema Approve
 description: >
   On an approved pull_request_review, promote the PR's draft pages to reviewed
   (freshness dates, reviewed_by, a reviewed transition + provenance trailer) and

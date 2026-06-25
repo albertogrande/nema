@@ -121,7 +121,7 @@ describe('toC2PAManifest', () => {
   it('projects provenance into an unsigned manifest', () => {
     const prov = readProvenanceFromContent(DRAFT)!;
     const manifest = toC2PAManifest(prov, { title: 'Widgets' });
-    expect(manifest.claim_generator).toContain('forge');
+    expect(manifest.claim_generator).toContain('nema');
     expect(manifest.ingredients[0]?.title).toBe('Spec');
     const created = manifest.assertions.find((a) => a.label === 'c2pa.actions');
     expect(created).toBeTruthy();

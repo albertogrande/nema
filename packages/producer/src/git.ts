@@ -4,7 +4,7 @@ import { run } from './exec.js';
 export interface CommitOptions {
   /** Add a DCO `Signed-off-by` trailer. */
   signoff?: boolean;
-  /** Extra git trailers (e.g. `Forge-Provenance`). */
+  /** Extra git trailers (e.g. `Nema-Provenance`). */
   trailers?: Record<string, string>;
 }
 

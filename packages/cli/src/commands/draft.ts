@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync } from 'node:fs';
-import { LocalGitHost } from '@docforge/producer';
+import { LocalGitHost } from '@nema/producer';
 import { defineCommand } from 'citty';
 import { errOut, makeEngine, out } from '../util.js';
 
@@ -54,9 +54,9 @@ export const draftCommand = defineCommand({
     });
     out(`Drafted ${res.path} -> ${res.filePath}`);
     if (res.ok) {
-      out('✓ forge check passed for this page. Next: forge open-pr');
+      out('✓ nema check passed for this page. Next: nema open-pr');
     } else {
-      out('forge check found issues:');
+      out('nema check found issues:');
       for (const d of res.diagnostics) out(`  ✗ [${d.rule}] ${d.message}`);
       process.exitCode = 1;
     }

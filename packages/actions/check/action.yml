@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
-name: Forge Check
-description: Run all Forge gates (forge check) against a docs corpus.
+name: Nema Check
+description: Run all Nema gates (nema check) against a docs corpus.
 inputs:
   path:
     description: Repo root or content root to check
@@ -9,6 +9,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: forge check
+    - name: nema check
       shell: bash
-      run: npx --yes @docforge/cli check "${{ inputs.path }}"
+      run: npx --yes @nema/cli check "${{ inputs.path }}"

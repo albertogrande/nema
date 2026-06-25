@@ -82,7 +82,7 @@ main {
   padding: 0;
 }
 
-.forge-badge {
+.nema-badge {
   display: inline-block;
   font-size: 0.75rem;
   padding: 0.15rem 0.55rem;
@@ -90,17 +90,17 @@ main {
   border: 1px solid var(--border);
   margin-bottom: 1rem;
 }
-.forge-badge--reviewed {
+.nema-badge--reviewed {
   background: #10301c;
   border-color: #1f7a44;
   color: #7ee2a8;
 }
-.forge-badge--ai {
+.nema-badge--ai {
   background: #2a2410;
   border-color: #7a6a1f;
   color: #e2cf7e;
 }
-.forge-badge--draft {
+.nema-badge--draft {
   background: #20242b;
   color: var(--muted);
 }

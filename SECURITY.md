@@ -15,11 +15,11 @@ unless you prefer to remain anonymous.
 
 ## Supported versions
 
-Forge is pre-1.0. Security fixes land on `main` and the latest published `0.x` line.
+Nema is pre-1.0. Security fixes land on `main` and the latest published `0.x` line.
 
 ## Scope notes
 
-- Forge runs `git` and `gh` as subprocesses on the producer path. Reports about command
+- Nema runs `git` and `gh` as subprocesses on the producer path. Reports about command
   construction, argument injection, or untrusted-input handling on that path are in scope.
 - The MCP server exposes **write** tools. Reports about path traversal, writes outside the
   configured content root, or provenance forgery are especially welcome.
