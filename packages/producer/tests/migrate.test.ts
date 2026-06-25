@@ -58,7 +58,12 @@ describe('migrateCorpus', () => {
     const dc = join(draftRoot, 'docs');
     mkdirSync(dc, { recursive: true });
     writeFileSync(join(dc, 'index.md'), '# Notes\n\nA legacy note.\n');
-    const res = await migrateCorpus({ contentRoot: dc, repoRoot: draftRoot, status: 'draft', clock: CLOCK });
+    const res = await migrateCorpus({
+      contentRoot: dc,
+      repoRoot: draftRoot,
+      status: 'draft',
+      clock: CLOCK,
+    });
     const prov = readProvenanceFromContent(readFileSync(join(dc, 'index.md'), 'utf8'));
     expect(res.migrated[0]?.status).toBe('draft');
     expect(prov?.reviewed_by).toBeUndefined();
@@ -71,7 +76,12 @@ describe('migrateCorpus', () => {
     const dc = join(r, 'docs');
     mkdirSync(dc, { recursive: true });
     writeFileSync(join(dc, 'index.md'), '---\ntitle: WIP\nstatus: draft\n---\n\nDraft body.\n');
-    const res = await migrateCorpus({ contentRoot: dc, repoRoot: r, status: 'reviewed', clock: CLOCK });
+    const res = await migrateCorpus({
+      contentRoot: dc,
+      repoRoot: r,
+      status: 'reviewed',
+      clock: CLOCK,
+    });
     expect(res.migrated[0]?.status).toBe('draft'); // kept, not forced to reviewed
     rmSync(r, { recursive: true, force: true });
   });
