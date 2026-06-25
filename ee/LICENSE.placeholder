@@ -1,0 +1,12 @@
+FORGE ENTERPRISE EDITION — LICENSE PLACEHOLDER
+
+This directory is reserved for a future source-available commercial tier of Forge.
+
+It is empty in the v0.x release line. No license is granted for the contents of this
+directory. When functionality lands here it will be published under a separate
+source-available license (to be determined); it will NOT be covered by the Apache-2.0
+license that governs the rest of this repository, and adding it will not relicense any
+existing Apache-2.0 core code.
+
+Nothing in this file grants any rights. SPDX identifier for files under ee/:
+LicenseRef-Forge-EE-Placeholder

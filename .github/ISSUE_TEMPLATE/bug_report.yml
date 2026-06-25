@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Bug report
+description: Report a defect in Forge
+labels: ["bug", "triage"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps, ideally with the failing `forge` command and its output.
+    validations:
+      required: true
+  - type: input
+    id: package
+    attributes:
+      label: Affected package
+      placeholder: "@docforge/core, @docforge/gates, cli, ..."
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Forge version, Node version, OS.
+    validations:
+      required: true

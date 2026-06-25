@@ -1,0 +1,11 @@
+{
+  "_comment": "SSOT content model for Forge. Domain-neutral. Consumed by buildSchema() (Zod) and by the gates. Do not re-declare these enums inline anywhere else.",
+  "required": ["title", "status"],
+  "enums": {
+    "status": ["stub", "draft", "reviewed", "deprecated"],
+    "diataxis": ["tutorial", "how-to", "reference", "explanation", "overview"]
+  },
+  "dates": ["last_reviewed", "review_by"],
+  "reviewedRequires": ["last_reviewed", "review_by"],
+  "boundary": []
+}

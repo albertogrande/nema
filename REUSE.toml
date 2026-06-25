@@ -1,0 +1,26 @@
+version = 1
+SPDX-PackageName = "forge"
+SPDX-PackageSupplier = "The Forge Authors"
+SPDX-PackageDownloadLocation = "https://github.com/docforge/forge"
+
+[[annotations]]
+path = [
+  "**/package.json",
+  "**/tsconfig.json",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml",
+  "turbo.json",
+  "biome.json",
+  "tsconfig.base.json",
+  ".changeset/**",
+  ".github/**",
+  "**/*.md",
+  "**/*.yaml",
+  "**/*.yml",
+  "**/*.json",
+  ".gitignore",
+  ".npmrc",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 The Forge Authors"
+SPDX-License-Identifier = "Apache-2.0"
