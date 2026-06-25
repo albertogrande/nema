@@ -29,6 +29,17 @@ The result is a documentation page whose entire authorship chain — *AI-authore
 → which sources → which human reviewer → timestamps and commits* — is recorded as queryable,
 git-diffable data.
 
+## Onboarding existing docs
+
+Already have a Markdown docs repo? `forge migrate` seeds `status` + an honest human-authored
+`provenance` block on every page (keeping existing status and freshness dates), then runs the
+gates so you can see what needs attention:
+
+```bash
+forge migrate ./my-docs --dry-run     # preview
+forge migrate ./my-docs               # write provenance + report remaining gate issues
+```
+
 ## Architecture
 
 A pnpm + Turborepo monorepo. The engine is **renderer-agnostic**: the moat packages
