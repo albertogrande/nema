@@ -5,8 +5,8 @@ import {
   readProvenanceFromFrontmatter,
   recordTransition,
   seedProvenance,
-} from '@docforge/provenance';
-import type { ReviewMethod } from '@docforge/schema';
+} from '@nema/provenance';
+import type { ReviewMethod } from '@nema/schema';
 import matter from 'gray-matter';
 
 export function addDays(date: Date, days: number): Date {
@@ -37,7 +37,7 @@ export interface FlipOptions {
  * Pure transform: flip a page's content from `draft` to `reviewed`. Sets
  * `status`, freshness dates (`last_reviewed = today`, `review_by = today + SLA`),
  * the `reviewed_by` record, and appends a `reviewed` transition. This is what
- * `forge approve` writes after a human approves the PR — never an agent.
+ * `nema approve` writes after a human approves the PR — never an agent.
  */
 export function flipToReviewed(raw: string, opts: FlipOptions): string {
   const { data, content } = matter(raw, MATTER_OPTIONS);

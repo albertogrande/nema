@@ -11,9 +11,9 @@ import { provCommand } from './commands/prov.js';
 
 export const main = defineCommand({
   meta: {
-    name: 'forge',
+    name: 'nema',
     version: '0.1.0',
-    description: 'Forge — open-source, AI-native documentation platform',
+    description: 'Nema — open-source, AI-native documentation platform',
   },
   subCommands: {
     init: initCommand,

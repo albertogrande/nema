@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Page, ResolvedConfig } from '@docforge/core';
-import type { ContentModel } from '@docforge/schema';
+import type { Page, ResolvedConfig } from '@nema/core';
+import type { ContentModel } from '@nema/schema';
 
 export type Severity = 'error' | 'warning';
 

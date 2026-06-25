@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
-import { type Diagnostic, checkContent } from '@docforge/gates';
-import {
-  composeContent,
-  readProvenance,
-  recordTransition,
-  seedProvenance,
-} from '@docforge/provenance';
-import type { AuthoredBy, ModelInfo, Source } from '@docforge/schema';
-import type { ForgeHost, PullRequestRef } from './host.js';
+import { type Diagnostic, checkContent } from '@nema/gates';
+import { composeContent, readProvenance, recordTransition, seedProvenance } from '@nema/provenance';
+import type { AuthoredBy, ModelInfo, Source } from '@nema/schema';
+import type { NemaHost, PullRequestRef } from './host.js';
 import { draftBranchName } from './slug.js';
 import { PROVENANCE_TRAILER_KEY, formatProvenanceTrailer } from './trailer.js';
 import { type ReviewerRef, addDays, flipToReviewed, toISODate } from './transitions.js';
@@ -18,7 +13,7 @@ export interface ProducerConfig {
   rootDir: string;
   /** Absolute path to the content directory (where `.md` pages live). */
   contentRoot: string;
-  host: ForgeHost;
+  host: NemaHost;
   /** Freshness SLA in days. Default 180. */
   reviewSlaDays?: number;
   /** Injectable clock for deterministic behavior. Default `() => new Date()`. */
@@ -42,7 +37,7 @@ export interface DraftInput {
 export interface DraftResult {
   path: string;
   filePath: string;
-  /** Diagnostics for THIS page from an in-process `forge check`. */
+  /** Diagnostics for THIS page from an in-process `nema check`. */
   diagnostics: Diagnostic[];
   ok: boolean;
 }
@@ -153,7 +148,7 @@ export class ProducerEngine {
       body: input.summary,
       base: input.base ?? this.cfg.base ?? 'main',
       head: branch,
-      labels: input.labels ?? ['forge:draft'],
+      labels: input.labels ?? ['nema:draft'],
     });
 
     return { branch, commit, pullRequest };

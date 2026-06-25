@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/producer",
+  "name": "@nema/producer",
   "version": "0.1.0-alpha.0",
-  "description": "Forge producer loop: draft -> branch -> PR -> approve -> state-flip, over a ForgeHost",
+  "description": "Nema producer loop: draft -> branch -> PR -> approve -> state-flip, over a NemaHost",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -34,10 +34,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/core": "workspace:*",
-    "@docforge/gates": "workspace:*",
-    "@docforge/provenance": "workspace:*",
-    "@docforge/schema": "workspace:*",
+    "@nema/core": "workspace:*",
+    "@nema/gates": "workspace:*",
+    "@nema/provenance": "workspace:*",
+    "@nema/schema": "workspace:*",
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {

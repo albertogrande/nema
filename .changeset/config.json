@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@docforge/monorepo", "@docforge/docs", "@docforge/example-minimal"]
+  "ignore": []
 }

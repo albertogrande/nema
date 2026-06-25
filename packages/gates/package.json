@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/gates",
+  "name": "@nema/gates",
   "version": "0.1.0-alpha.0",
-  "description": "Forge validation gates: frontmatter, freshness, footnotes, links, reachability, provenance",
+  "description": "Nema validation gates: frontmatter, freshness, footnotes, links, reachability, provenance",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -34,9 +34,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/core": "workspace:*",
-    "@docforge/provenance": "workspace:*",
-    "@docforge/schema": "workspace:*"
+    "@nema/core": "workspace:*",
+    "@nema/provenance": "workspace:*",
+    "@nema/schema": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5",

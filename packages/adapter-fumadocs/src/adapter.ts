@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { NavRoute, RendererAdapter } from '@docforge/adapter-kit';
-import type { ContentSource, NavNode, Page } from '@docforge/core';
+import type { NavRoute, RendererAdapter } from '@nema/adapter-kit';
+import type { ContentSource, NavNode, Page } from '@nema/core';
 import { type ProvenanceBadgeProps, provenanceBadgeProps } from './badge.js';
 
 /** A page shaped for Fumadocs' page tree. */

@@ -1,6 +1,6 @@
 import { getSource } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
-import { provenanceBadgeProps } from '@docforge/adapter-fumadocs';
+import { provenanceBadgeProps } from '@nema/adapter-fumadocs';
 import Link from 'next/link';
 
 export default async function TrustPage() {
@@ -36,9 +36,7 @@ export default async function TrustPage() {
                 </Link>
               </td>
               <td>
-                <span className={`forge-badge forge-badge--${badge.tone}`}>
-                  {page.status || '—'}
-                </span>
+                <span className={`nema-badge nema-badge--${badge.tone}`}>{page.status || '—'}</span>
               </td>
               <td>{prov?.authored_by ?? '—'}</td>
               <td>{prov?.model?.name ?? '—'}</td>

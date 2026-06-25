@@ -2,7 +2,7 @@
 
 # Governance
 
-Forge is in its **founding phase**. Governance is intentionally lightweight and will formalize
+Nema is in its **founding phase**. Governance is intentionally lightweight and will formalize
 as the contributor base grows.
 
 ## Roles

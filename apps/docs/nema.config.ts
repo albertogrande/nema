@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { ForgeConfig } from '@docforge/core';
+import type { NemaConfig } from '@nema/core';
 
-const config: ForgeConfig = {
+const config: NemaConfig = {
   contentDir: 'docs',
   reviewSlaDays: 180,
 };

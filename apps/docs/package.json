@@ -1,27 +1,27 @@
 {
-  "name": "@docforge/docs",
+  "name": "@nema/docs",
   "version": "0.0.0",
   "private": true,
-  "description": "Forge dogfood docs site (Next.js) — authored through the producer loop",
+  "description": "Nema dogfood docs site (Next.js) — authored through the producer loop",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "check-docs": "forge check ."
+    "check-docs": "nema check ."
   },
   "dependencies": {
-    "@docforge/adapter-fumadocs": "workspace:*",
-    "@docforge/core": "workspace:*",
-    "@docforge/schema": "workspace:*",
+    "@nema/adapter-fumadocs": "workspace:*",
+    "@nema/core": "workspace:*",
+    "@nema/schema": "workspace:*",
     "marked": "^14.1.4",
     "next": "^15.1.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@docforge/cli": "workspace:*",
+    "@nema/cli": "workspace:*",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",

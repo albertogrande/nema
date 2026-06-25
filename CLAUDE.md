@@ -1,8 +1,8 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
-# CLAUDE.md — working in the Forge monorepo
+# CLAUDE.md — working in the Nema monorepo
 
-Forge is an AI-native documentation platform. **You (an agent) are a primary author of content
+Nema is an AI-native documentation platform. **You (an agent) are a primary author of content
 in this repo, but you are never the approver.** Read this before drafting or changing docs.
 
 ## The one invariant you must never violate
@@ -16,14 +16,14 @@ gate and the approval-triggered Action own that transition. A PR that self-promo
 
 ## The producer loop
 
-1. **Draft** via the MCP write-tools (or `forge draft`): writes `path.md` with `status: draft`
-   and a seeded `provenance` block, then runs `forge check` in-process so you can self-correct
+1. **Draft** via the MCP write-tools (or `nema draft`): writes `path.md` with `status: draft`
+   and a seeded `provenance` block, then runs `nema check` in-process so you can self-correct
    *before* opening a PR.
-2. **Propose** (`propose_changes` / `forge open-pr`): creates a `forge/draft/<slug>-<sha>` branch,
-   commits with a `Forge-Provenance:` trailer, pushes, and opens a PR labeled `forge:draft`.
-3. **CI** runs `forge check` — all gates plus `draft-pages-not-reviewed`.
+2. **Propose** (`propose_changes` / `nema open-pr`): creates a `nema/draft/<slug>-<sha>` branch,
+   commits with a `Nema-Provenance:` trailer, pushes, and opens a PR labeled `nema:draft`.
+3. **CI** runs `nema check` — all gates plus `draft-pages-not-reviewed`.
 4. **A human approves** the PR in GitHub. ← the gate. Not you.
-5. The approval Action runs `forge approve`, which flips `draft → reviewed`, stamps freshness
+5. The approval Action runs `nema approve`, which flips `draft → reviewed`, stamps freshness
    dates, appends a `reviewed` transition, and merges.
 
 ## Provenance rules (what you ARE responsible for)
@@ -49,7 +49,7 @@ The `provenance-consistency` gate checks: `reviewed ⇒ reviewed_by + a reviewed
 - **Links**: internal links and `#anchors` must resolve.
 - **Reachability**: non-root pages must be linked from somewhere (no orphans).
 
-Run `forge check` (or the `check` MCP tool) yourself before proposing. Green-before-PR is the
+Run `nema check` (or the `check` MCP tool) yourself before proposing. Green-before-PR is the
 norm.
 
 ## Repo mechanics

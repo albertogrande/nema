@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import { type ContentSource, type ForgeConfig, createContentSource } from '@docforge/core';
-import { CONTENT_MODEL, type ContentModel } from '@docforge/schema';
+import { type ContentSource, type NemaConfig, createContentSource } from '@nema/core';
+import { CONTENT_MODEL, type ContentModel } from '@nema/schema';
 import { draftNotReviewedRules } from './rules/draft-not-reviewed.js';
 import { footnoteRules } from './rules/footnotes.js';
 import { freshnessRules } from './rules/freshness.js';
@@ -54,7 +54,7 @@ export function runGates(ctx: GateContext, rules: Rule[] = ALL_RULES): GateResul
 /** Convenience: load a repo's content and run all gates against it. */
 export async function checkContent(
   rootDir: string,
-  opts: GateOptions & { config?: ForgeConfig } = {},
+  opts: GateOptions & { config?: NemaConfig } = {},
 ): Promise<GateResult> {
   const source = await createContentSource(rootDir, opts.config);
   return runGates(createGateContext(source, opts));

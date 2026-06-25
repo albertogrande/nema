@@ -4,7 +4,7 @@ import { findPage, loadPages } from './load.js';
 import { buildNav } from './nav.js';
 import { renderMarkdown } from './render.js';
 import { search } from './search.js';
-import type { ContentSource, ForgeConfig, ResolvedConfig } from './types.js';
+import type { ContentSource, NemaConfig, ResolvedConfig } from './types.js';
 
 /** Build a `ContentSource` from an already-resolved config (synchronous load). */
 export function contentSourceFromConfig(config: ResolvedConfig): ContentSource {
@@ -27,13 +27,13 @@ export function contentSourceFromConfig(config: ResolvedConfig): ContentSource {
 }
 
 /**
- * Load a `ContentSource` for a repo: resolve config (incl. `docforge.config.*`),
+ * Load a `ContentSource` for a repo: resolve config (incl. `nema.config.*`),
  * then load and index every page. This is the main entry point for adapters,
  * the MCP server, and the CLI.
  */
 export async function createContentSource(
   rootDir: string,
-  overrides?: ForgeConfig,
+  overrides?: NemaConfig,
 ): Promise<ContentSource> {
   const config = await resolveConfig(rootDir, overrides);
   return contentSourceFromConfig(config);

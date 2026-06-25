@@ -4,8 +4,8 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata = {
-  title: 'Forge Docs',
-  description: 'Dogfood docs site authored through the Forge producer loop.',
+  title: 'Nema Docs',
+  description: 'Dogfood docs site authored through the Nema producer loop.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

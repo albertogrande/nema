@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
-name: Forge Freshness
+name: Nema Freshness
 description: >
-  Freshness watch — runs forge check on a schedule so that overdue reviewed
+  Freshness watch — runs nema check on a schedule so that overdue reviewed
   pages (review_by < today) fail loudly and can be re-reviewed.
 inputs:
   path:
@@ -11,6 +11,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: forge check (freshness SLA enforced)
+    - name: nema check (freshness SLA enforced)
       shell: bash
-      run: npx --yes @docforge/cli check "${{ inputs.path }}"
+      run: npx --yes @nema/cli check "${{ inputs.path }}"

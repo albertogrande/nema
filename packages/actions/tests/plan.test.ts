@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { join } from 'node:path';
-import type { Page } from '@docforge/core';
+import type { Page } from '@nema/core';
 import { describe, expect, it } from 'vitest';
 import { fileToRoute, planApprovals } from '../src/index.js';
 

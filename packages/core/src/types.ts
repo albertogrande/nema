@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@docforge/schema';
+import type { Provenance } from '@nema/schema';
 
 /** A loaded documentation page. Domain-neutral. */
 export interface Page {
@@ -51,8 +51,8 @@ export interface ContentSource {
   config: ResolvedConfig;
 }
 
-/** User-facing configuration (from `docforge.config.{ts,js,mjs,json}`). */
-export interface ForgeConfig {
+/** User-facing configuration (from `nema.config.{ts,js,mjs,json}`). */
+export interface NemaConfig {
   /** Directory holding `.md` content, relative to repo root. Default `docs`. */
   contentDir?: string;
   /** Freshness SLA in days — how far ahead `review_by` is set on approval. Default 180. */

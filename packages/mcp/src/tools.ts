@@ -6,23 +6,23 @@ import {
   type SearchHit,
   createContentSource,
   resolveConfig,
-} from '@docforge/core';
-import { type GateResult, checkContent } from '@docforge/gates';
+} from '@nema/core';
+import { type GateResult, checkContent } from '@nema/gates';
 import {
   type DraftResult,
-  type ForgeHost,
   GitHubHost,
+  type NemaHost,
   ProducerEngine,
   type ProposeResult,
-} from '@docforge/producer';
-import { MATTER_OPTIONS, composeContent } from '@docforge/provenance';
-import type { ModelInfo, Source } from '@docforge/schema';
+} from '@nema/producer';
+import { MATTER_OPTIONS, composeContent } from '@nema/provenance';
+import type { ModelInfo, Source } from '@nema/schema';
 import matter from 'gray-matter';
 
-export interface ForgeToolsConfig {
+export interface NemaToolsConfig {
   rootDir: string;
   /** Host for PR operations. Defaults to a GitHub (`gh`) host on the repo. */
-  host?: ForgeHost;
+  host?: NemaHost;
   reviewSlaDays?: number;
   clock?: () => Date;
 }
@@ -57,12 +57,12 @@ export interface ProposeInput {
 }
 
 /**
- * The Forge tool surface — read tools and the write tools that make up the moat.
+ * The Nema tool surface — read tools and the write tools that make up the moat.
  * Pure async methods returning structured data; the MCP server is a thin
  * adapter over this class (which keeps it unit-testable without a transport).
  */
-export class ForgeTools {
-  constructor(private readonly cfg: ForgeToolsConfig) {}
+export class NemaTools {
+  constructor(private readonly cfg: NemaToolsConfig) {}
 
   private now(): Date {
     return (this.cfg.clock ?? (() => new Date()))();
@@ -172,7 +172,7 @@ export class ForgeTools {
       pr: input.pr,
       message:
         `Human review requested${where}. A human must approve the PR in GitHub; on approval the ` +
-        'Forge Action runs `forge approve` to promote draft→reviewed. Agents cannot self-approve.' +
+        'Nema Action runs `nema approve` to promote draft→reviewed. Agents cannot self-approve.' +
         (input.note ? `\nNote: ${input.note}` : ''),
     };
   }

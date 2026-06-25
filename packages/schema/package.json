@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/schema",
+  "name": "@nema/schema",
   "version": "0.1.0-alpha.0",
-  "description": "Forge SSOT content model + Zod schema + provenance shapes",
+  "description": "Nema SSOT content model + Zod schema + provenance shapes",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",

@@ -1,6 +1,6 @@
 version = 1
-SPDX-PackageName = "forge"
-SPDX-PackageSupplier = "The Forge Authors"
+SPDX-PackageName = "nema"
+SPDX-PackageSupplier = "The Nema Authors"
 SPDX-PackageDownloadLocation = "https://github.com/albertogrande/docforge"
 
 [[annotations]]
@@ -29,5 +29,5 @@ path = [
   "NOTICE",
 ]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 The Forge Authors"
+SPDX-FileCopyrightText = "2026 The Nema Authors"
 SPDX-License-Identifier = "Apache-2.0"

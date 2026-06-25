@@ -9,7 +9,7 @@ import { main } from '../src/main.js';
 let rootDir: string;
 let captured: string;
 
-async function forge(...rawArgs: string[]): Promise<string> {
+async function nema(...rawArgs: string[]): Promise<string> {
   captured = '';
   const original = process.stdout.write.bind(process.stdout);
   process.exitCode = 0;
@@ -26,28 +26,28 @@ async function forge(...rawArgs: string[]): Promise<string> {
 }
 
 beforeEach(() => {
-  rootDir = mkdtempSync(join(tmpdir(), 'forge-cli-'));
+  rootDir = mkdtempSync(join(tmpdir(), 'nema-cli-'));
 });
 afterEach(() => {
   rmSync(rootDir, { recursive: true, force: true });
   process.exitCode = 0;
 });
 
-describe('forge init + check', () => {
+describe('nema init + check', () => {
   it('scaffolds a repo and the starter passes check', async () => {
-    const init = await forge('init', rootDir);
-    expect(init).toContain('docforge.config.ts');
+    const init = await nema('init', rootDir);
+    expect(init).toContain('nema.config.ts');
 
-    const check = await forge('check', rootDir);
+    const check = await nema('check', rootDir);
     expect(check).toContain('all gates passed');
     expect(process.exitCode).toBe(0);
   });
 });
 
-describe('forge draft + prov', () => {
+describe('nema draft + prov', () => {
   it('drafts a page and prints its provenance chain', async () => {
-    await forge('init', rootDir);
-    const draft = await forge(
+    await nema('init', rootDir);
+    const draft = await nema(
       'draft',
       '--dir',
       rootDir,
@@ -66,7 +66,7 @@ describe('forge draft + prov', () => {
     );
     expect(draft).toContain('Drafted guide/intro');
 
-    const prov = await forge('prov', 'guide/intro', '--dir', rootDir);
+    const prov = await nema('prov', 'guide/intro', '--dir', rootDir);
     expect(prov).toContain('authored_by: ai');
     expect(prov).toContain('model claude-opus-4-8/anthropic');
     expect(prov).toContain('draft');
@@ -74,10 +74,10 @@ describe('forge draft + prov', () => {
   });
 });
 
-describe('forge prov --filter', () => {
+describe('nema prov --filter', () => {
   it('lists AI-authored pages', async () => {
-    await forge('init', rootDir);
-    await forge(
+    await nema('init', rootDir);
+    await nema(
       'draft',
       '--dir',
       rootDir,
@@ -90,7 +90,7 @@ describe('forge prov --filter', () => {
       '--model-name',
       'claude-opus-4-8',
     );
-    const listed = await forge('prov', '--dir', rootDir, '--filter', 'authored_by=ai');
+    const listed = await nema('prov', '--dir', rootDir, '--filter', 'authored_by=ai');
     expect(listed).toContain('a — A');
   });
 });

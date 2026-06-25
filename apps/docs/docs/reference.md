@@ -17,7 +17,7 @@ provenance:
 
 # Reference
 
-Forge is licensed under Apache-2.0.[^apache2] The engine packages are renderer-agnostic; only the
+Nema is licensed under Apache-2.0.[^apache2] The engine packages are renderer-agnostic; only the
 adapter and this site touch React.
 
 See [Getting Started](getting-started.md) for the loop.

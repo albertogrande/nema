@@ -1,5 +1,5 @@
 ---
-title: Forge Docs
+title: Nema Docs
 status: reviewed
 diataxis: overview
 last_reviewed: 2024-01-01
@@ -25,10 +25,10 @@ provenance:
       pr: 1
 ---
 
-# Forge Docs
+# Nema Docs
 
-This very site is **dogfooding** Forge: each page is authored by an agent, carries a provenance
-block, and is gated by `forge check` — and the badge above shows its trust state.
+This very site is **dogfooding** Nema: each page is authored by an agent, carries a provenance
+block, and is gated by `nema check` — and the badge above shows its trust state.
 
 Start with [Getting Started](getting-started.md), or see the [Reference](reference.md).
 

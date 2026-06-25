@@ -1,15 +1,15 @@
 {
-  "name": "@docforge/example-minimal",
+  "name": "@nema/example-minimal",
   "version": "0.0.0",
   "private": true,
-  "description": "Minimal content-only Forge corpus — an end-to-end gate fixture (no renderer)",
+  "description": "Minimal content-only Nema corpus — an end-to-end gate fixture (no renderer)",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "test": "vitest run"
   },
   "devDependencies": {
-    "@docforge/gates": "workspace:*",
+    "@nema/gates": "workspace:*",
     "vitest": "^2.1.8"
   }
 }

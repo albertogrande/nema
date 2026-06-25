@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { fileURLToPath } from 'node:url';
-import { assertAdapterConformance, runAdapterConformance } from '@docforge/adapter-kit';
-import { type ContentSource, type ResolvedConfig, contentSourceFromConfig } from '@docforge/core';
+import { assertAdapterConformance, runAdapterConformance } from '@nema/adapter-kit';
+import { type ContentSource, type ResolvedConfig, contentSourceFromConfig } from '@nema/core';
 import { describe, expect, it } from 'vitest';
 import { fumadocsAdapter, provenanceBadgeProps } from '../src/index.js';
 

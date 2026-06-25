@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@docforge/schema';
+import type { Provenance } from '@nema/schema';
 
-export const PROVENANCE_TRAILER_KEY = 'Forge-Provenance';
+export const PROVENANCE_TRAILER_KEY = 'Nema-Provenance';
 
 /**
  * Compact, single-line summary of a provenance state for a git commit trailer.
@@ -20,7 +20,7 @@ export function formatProvenanceTrailer(prov: Provenance): string {
   return parts.join('; ');
 }
 
-/** Parse a `Forge-Provenance` trailer value back into key/value pairs. */
+/** Parse a `Nema-Provenance` trailer value back into key/value pairs. */
 export function parseProvenanceTrailer(value: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const segment of value.split(';')) {

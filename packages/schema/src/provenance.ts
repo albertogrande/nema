@@ -14,7 +14,7 @@ export type SourceKind = (typeof SOURCE_KINDS)[number];
 /**
  * How a human review was recorded. `github-pr-approval` is the standard loop;
  * `migration` marks a page that a human asserted as reviewed when importing an
- * existing corpus with `forge migrate` (no PR — the migrating human is the gate).
+ * existing corpus with `nema migrate` (no PR — the migrating human is the gate).
  */
 export const REVIEW_METHODS = ['github-pr-approval', 'migration'] as const;
 export type ReviewMethod = (typeof REVIEW_METHODS)[number];

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { type ContentSource, headingSlugs } from '@docforge/core';
+import { type ContentSource, headingSlugs } from '@nema/core';
 import type { RendererAdapter } from './contract.js';
 
 export interface ConformanceResult {

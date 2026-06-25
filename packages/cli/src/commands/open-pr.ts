@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { GitHubHost } from '@docforge/producer';
+import { GitHubHost } from '@nema/producer';
 import { defineCommand } from 'citty';
 import { draftPaths, errOut, makeEngine, out } from '../util.js';
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { ContentSource, Page } from '@docforge/core';
-import type { Provenance } from '@docforge/schema';
+import type { ContentSource, Page } from '@nema/core';
+import type { Provenance } from '@nema/schema';
 
 /** A flattened nav entry an adapter exposes to its renderer. */
 export interface NavRoute {

@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/core",
+  "name": "@nema/core",
   "version": "0.1.0-alpha.0",
-  "description": "Forge renderer-agnostic engine: load / getPage / search / renderMarkdown / nav",
+  "description": "Nema renderer-agnostic engine: load / getPage / search / renderMarkdown / nav",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -34,7 +34,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/schema": "workspace:*",
+    "@nema/schema": "workspace:*",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "jiti": "^2.4.2",

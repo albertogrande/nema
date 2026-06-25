@@ -20,7 +20,7 @@ export interface CreatePullRequestInput {
  * local git host and a GitHub (`gh`) host; a GitHub-App / GitLab / Gitea host
  * can be added later without touching the producer engine.
  */
-export interface ForgeHost {
+export interface NemaHost {
   currentBranch(): Promise<string>;
   headSha(): Promise<string>;
   shortSha(): Promise<string>;
@@ -33,7 +33,7 @@ export interface ForgeHost {
 }
 
 /** Git-only host. PR creation is unsupported — use {@link GitHubHost}. */
-export class LocalGitHost implements ForgeHost {
+export class LocalGitHost implements NemaHost {
   protected readonly git: GitRunner;
   constructor(readonly cwd: string) {
     this.git = new GitRunner(cwd);

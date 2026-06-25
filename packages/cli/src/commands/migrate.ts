@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 import { resolve } from 'node:path';
-import { resolveConfig } from '@docforge/core';
-import { checkContent, formatGateResult } from '@docforge/gates';
-import { migrateCorpus } from '@docforge/producer';
+import { resolveConfig } from '@nema/core';
+import { checkContent, formatGateResult } from '@nema/gates';
+import { migrateCorpus } from '@nema/producer';
 import { defineCommand } from 'citty';
 import { out } from '../util.js';
 
@@ -10,7 +10,7 @@ export const migrateCommand = defineCommand({
   meta: {
     name: 'migrate',
     description:
-      'Import an existing Markdown corpus into the Forge model (seed status + provenance)',
+      'Import an existing Markdown corpus into the Nema model (seed status + provenance)',
   },
   args: {
     dir: { type: 'positional', required: false, description: 'Repo root (default: cwd)' },
@@ -59,7 +59,7 @@ export const migrateCommand = defineCommand({
 
     if (dryRun) return;
 
-    out('\nRunning forge check on the migrated corpus…');
+    out('\nRunning nema check on the migrated corpus…');
     const gate = await checkContent(rootDir, { config: { contentDir } });
     out(formatGateResult(gate));
     if (!gate.ok) {

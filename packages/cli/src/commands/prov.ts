@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { type Page, createContentSource } from '@docforge/core';
+import { type Page, createContentSource } from '@nema/core';
 import { defineCommand } from 'citty';
 import { errOut, out } from '../util.js';
 

@@ -5,9 +5,9 @@ import { defineCommand } from 'citty';
 import { out } from '../util.js';
 
 const CONFIG = `// SPDX-License-Identifier: Apache-2.0
-import type { ForgeConfig } from '@docforge/core';
+import type { NemaConfig } from '@nema/core';
 
-const config: ForgeConfig = {
+const config: NemaConfig = {
   contentDir: 'docs',
   reviewSlaDays: 180,
 };
@@ -22,17 +22,17 @@ status: draft
 
 # Home
 
-Welcome to your Forge docs. Draft new pages through the producer loop:
-\`forge draft\` (or the MCP write-tools) → \`forge open-pr\` → human approval.
+Welcome to your Nema docs. Draft new pages through the producer loop:
+\`nema draft\` (or the MCP write-tools) → \`nema open-pr\` → human approval.
 `;
 
 export const initCommand = defineCommand({
-  meta: { name: 'init', description: 'Scaffold docforge.config.ts and a docs/ directory' },
+  meta: { name: 'init', description: 'Scaffold nema.config.ts and a docs/ directory' },
   args: { dir: { type: 'positional', required: false, description: 'Repo root (default: cwd)' } },
   async run({ args }) {
     const rootDir = args.dir ? String(args.dir) : process.cwd();
 
-    const configPath = join(rootDir, 'docforge.config.ts');
+    const configPath = join(rootDir, 'nema.config.ts');
     if (existsSync(configPath)) {
       out(`exists  ${configPath}`);
     } else {
@@ -50,6 +50,6 @@ export const initCommand = defineCommand({
       out(`created ${indexPath}`);
     }
 
-    out('Done. Try: forge check');
+    out('Done. Try: nema check');
   },
 });

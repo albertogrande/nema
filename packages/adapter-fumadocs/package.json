@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/adapter-fumadocs",
+  "name": "@nema/adapter-fumadocs",
   "version": "0.1.0-alpha.0",
-  "description": "Forge reference renderer adapter for Fumadocs (Next/React): render + .md route + nav + provenance badge",
+  "description": "Nema reference renderer adapter for Fumadocs (Next/React): render + .md route + nav + provenance badge",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -34,9 +34,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/adapter-kit": "workspace:*",
-    "@docforge/core": "workspace:*",
-    "@docforge/schema": "workspace:*"
+    "@nema/adapter-kit": "workspace:*",
+    "@nema/core": "workspace:*",
+    "@nema/schema": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

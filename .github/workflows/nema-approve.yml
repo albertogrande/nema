@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-name: Forge Approve
+name: Nema Approve
 
 # The human approval gate: when a maintainer approves a docs PR, promote the
 # PR's draft pages to reviewed and merge. This is the only path to `reviewed`.
@@ -27,11 +27,11 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @docforge/actions build
+      - run: pnpm --filter @nema/actions build
       - name: Configure git identity
         run: |
-          git config user.name "forge-bot"
-          git config user.email "forge-bot@users.noreply.github.com"
+          git config user.name "nema-bot"
+          git config user.email "nema-bot@users.noreply.github.com"
       - name: Promote and merge
         run: node packages/actions/dist/approve-action.js
         env:

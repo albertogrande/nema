@@ -1,7 +1,7 @@
 {
-  "name": "@docforge/adapter-kit",
+  "name": "@nema/adapter-kit",
   "version": "0.1.0-alpha.0",
-  "description": "Forge core↔adapter contract + adapter conformance test suite",
+  "description": "Nema core↔adapter contract + adapter conformance test suite",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -34,8 +34,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/core": "workspace:*",
-    "@docforge/schema": "workspace:*"
+    "@nema/core": "workspace:*",
+    "@nema/schema": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5",

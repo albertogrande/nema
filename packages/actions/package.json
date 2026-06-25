@@ -1,8 +1,8 @@
 {
-  "name": "@docforge/actions",
+  "name": "@nema/actions",
   "version": "0.0.0",
   "private": true,
-  "description": "Forge composite GitHub Actions: gate, approval→flip, freshness",
+  "description": "Nema composite GitHub Actions: gate, approval→flip, freshness",
   "license": "Apache-2.0",
   "type": "module",
   "exports": {
@@ -20,11 +20,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@docforge/core": "workspace:*",
-    "@docforge/gates": "workspace:*",
-    "@docforge/producer": "workspace:*",
-    "@docforge/provenance": "workspace:*",
-    "@docforge/schema": "workspace:*"
+    "@nema/core": "workspace:*",
+    "@nema/gates": "workspace:*",
+    "@nema/producer": "workspace:*",
+    "@nema/provenance": "workspace:*",
+    "@nema/schema": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5",

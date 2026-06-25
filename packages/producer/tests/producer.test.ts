@@ -2,13 +2,13 @@
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { checkContent } from '@docforge/gates';
-import { readProvenanceFromContent } from '@docforge/provenance';
+import { checkContent } from '@nema/gates';
+import { readProvenanceFromContent } from '@nema/provenance';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
   type CommitOptions,
   type CreatePullRequestInput,
-  type ForgeHost,
+  type NemaHost,
   ProducerEngine,
   type PullRequestRef,
   draftBranchName,
@@ -18,7 +18,7 @@ import {
 
 const CLOCK = () => new Date('2026-06-25T12:00:00Z');
 
-class FakeHost implements ForgeHost {
+class FakeHost implements NemaHost {
   branch = 'main';
   staged: string[] = [];
   commits: Array<{ message: string; opts?: CommitOptions }> = [];
@@ -51,7 +51,7 @@ class FakeHost implements ForgeHost {
 
 const tmpRoots: string[] = [];
 function newRepo(): { rootDir: string; contentRoot: string } {
-  const rootDir = mkdtempSync(join(tmpdir(), 'forge-'));
+  const rootDir = mkdtempSync(join(tmpdir(), 'nema-'));
   tmpRoots.push(rootDir);
   return { rootDir, contentRoot: join(rootDir, 'docs') };
 }
@@ -63,7 +63,7 @@ afterAll(() => {
 describe('slug + branch', () => {
   it('slugifies and names draft branches', () => {
     expect(slugify('Guide/Intro Page!')).toBe('guide-intro-page');
-    expect(draftBranchName('guide/intro', 'abc1234')).toBe('forge/draft/guide-intro-abc1234');
+    expect(draftBranchName('guide/intro', 'abc1234')).toBe('nema/draft/guide-intro-abc1234');
   });
 });
 
@@ -102,13 +102,13 @@ describe('proposeChanges', () => {
       title: 'docs: add home page',
       summary: 'Initial home page.',
     });
-    expect(res.branch).toBe('forge/draft/index-aaaaaaa');
+    expect(res.branch).toBe('nema/draft/index-aaaaaaa');
     expect(host.pushed).toContain(res.branch);
     expect(res.pullRequest.number).toBe(42);
-    expect(host.prs[0]?.labels).toContain('forge:draft');
+    expect(host.prs[0]?.labels).toContain('nema:draft');
     const commit = host.commits[0];
     expect(commit?.opts?.signoff).toBe(true);
-    expect(commit?.opts?.trailers?.['Forge-Provenance']).toContain('authored_by=ai');
+    expect(commit?.opts?.trailers?.['Nema-Provenance']).toContain('authored_by=ai');
   });
 });
 
