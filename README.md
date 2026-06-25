@@ -14,6 +14,8 @@ The market has solved letting an agent *read* your docs. Forge is the open, self
 pipeline that makes agent-*written* docs **safe to ship**: structured + provenance-tracked +
 human-gated. That trust/governance layer is the point.
 
+**→ [Quickstart: your existing docs, governed in 10 minutes](QUICKSTART.md)**
+
 ## The producer loop
 
 ```
