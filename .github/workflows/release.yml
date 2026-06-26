@@ -44,5 +44,8 @@ jobs:
           # var literally named NPM_TOKEN; without it, it falls back to OIDC trusted
           # publishing, which is not configured for these (first-publish) packages.
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          # Provenance is intentionally OFF for the first release: it triggers a
+          # changesets@2.31.0 crash (isAlreadyPublishedError TypeError) on some
+          # packages. Re-enabled later via npm Trusted Publishing, which provides
+          # provenance natively without a long-lived token.
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
