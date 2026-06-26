@@ -14,7 +14,7 @@ pipeline that makes agent-*written* docs **safe to ship**: structured + provenan
 human-gated. That trust/governance layer is the point.
 
 **→ [Quickstart: your existing docs, governed in 10 minutes](QUICKSTART.md)**
-&nbsp;·&nbsp; **[Live demo](https://docforge-docs.vercel.app/docs)** ([trust dashboard](https://docforge-docs.vercel.app/trust))
+&nbsp;·&nbsp; **[Live demo](https://getnema.vercel.app/docs)** ([trust dashboard](https://getnema.vercel.app/trust))
 
 ## The producer loop
 

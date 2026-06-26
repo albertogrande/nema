@@ -76,8 +76,8 @@ nema prov /path/to/your-docs --filter authored_by=ai   # everything an agent wro
 ```
 
 For a reader-facing view, the reference site renders the same provenance as a trust dashboard —
-see the live demo: **[the `/trust` dashboard](https://docforge-docs.vercel.app/trust)** (and a
-page with its [provenance badge](https://docforge-docs.vercel.app/docs/getting-started)).
+see the live demo: **[the `/trust` dashboard](https://getnema.vercel.app/trust)** (and a
+page with its [provenance badge](https://getnema.vercel.app/docs/getting-started)).
 
 ## 4. The ongoing loop
 
