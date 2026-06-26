@@ -1,14 +1,14 @@
 ---
-"@getnema/schema": major
-"@getnema/core": major
-"@getnema/gates": major
-"@getnema/provenance": major
-"@getnema/producer": major
-"@getnema/mcp": major
-"nema": major
-"@getnema/actions": major
-"@getnema/adapter-kit": major
-"@getnema/adapter-fumadocs": major
+"@getnema/schema": minor
+"@getnema/core": minor
+"@getnema/gates": minor
+"@getnema/provenance": minor
+"@getnema/producer": minor
+"@getnema/mcp": minor
+"nema": minor
+"@getnema/actions": minor
+"@getnema/adapter-kit": minor
+"@getnema/adapter-fumadocs": minor
 ---
 
 Rebrand `docforge` → **Nema**.
