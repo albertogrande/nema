@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { defineCommand } from 'citty';
 import { approveCommand } from './commands/approve.js';
+import { auditCommand } from './commands/audit.js';
 import { checkCommand } from './commands/check.js';
 import { doctorCommand } from './commands/doctor.js';
 import { draftCommand } from './commands/draft.js';
@@ -27,6 +28,7 @@ export const main = defineCommand({
     'open-pr': openPrCommand,
     approve: approveCommand,
     prov: provCommand,
+    audit: auditCommand,
     mcp: mcpCommand,
   },
 });
