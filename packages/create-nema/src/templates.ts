@@ -23,7 +23,7 @@ export function templates(opts: TemplateOptions): Record<string, string> {
       'open-pr': 'nema open-pr',
     },
     devDependencies: {
-      nema: '^0.1.0-alpha.0',
+      '@getnema/cli': '^0.1.0',
     },
   };
 

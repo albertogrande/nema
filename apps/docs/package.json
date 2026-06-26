@@ -23,7 +23,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "nema": "workspace:*",
+    "@getnema/cli": "workspace:*",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
