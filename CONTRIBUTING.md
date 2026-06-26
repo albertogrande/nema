@@ -2,7 +2,28 @@
 
 # Contributing to Nema
 
-Thanks for your interest in contributing. This document covers the legal and mechanical basics.
+Thanks for your interest in contributing. This page is the practical how-to; the legal and
+mechanical basics follow below.
+
+## Start in the right place
+
+| I want to… | Go to | Notes |
+|---|---|---|
+| **Report a bug** or wrong behavior | **[Open an issue](../../issues/new/choose)** → Bug report | Concrete and reproducible. A maintainer triages it. |
+| **Request a feature / share an idea** | **[Open an issue](../../issues/new/choose)** → Feature request | Describe the problem first, then the shape you'd want. |
+| **Author or revise a docs page** | The **[producer loop](#dogfooding-the-producer-loop)** | An agent drafts → you approve. Never hand-promote to `reviewed`. See [CLAUDE.md](CLAUDE.md). |
+| **Fix a typo, wording, or bump a dep** | **A pull request** (trivial fast-lane) | No prior issue needed — see below. |
+| **Change engine code** | **A pull request** | Keep it focused; add a changeset for package-affecting changes. |
+| **Report a security vulnerability** | **[SECURITY.md](SECURITY.md)** | Do **not** open a public issue. |
+
+### When can I just open a PR?
+
+The **trivial fast-lane** — open directly, no prior issue needed: typo and wording fixes, doc
+corrections, dependency bumps, comment fixes, obvious one-line CI tweaks. Anything more
+substantial is best filed as an issue first, so the *why* is agreed before the *how* is reviewed.
+
+> **The founding maintainer** follows a separate internal process and isn't bound by the intake
+> rules above. Everyone is bound by review, green CI, and the `draft-pages-not-reviewed` gate.
 
 ## Developer Certificate of Origin (DCO)
 
