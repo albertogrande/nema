@@ -1,13 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
 name: Release
 
-# DORMANT for the source-only alpha: manual trigger only, so a push to main can
-# never auto-publish. To enable npm publishing later: restore the `push` trigger
-# below, add the NPM_TOKEN secret, and run `pnpm changeset pre enter alpha`.
+# On push to main, Changesets opens a "Version Packages" PR; merging THAT PR runs
+# `pnpm release` (changeset publish) to publish @getnema/* + nema + create-nema to
+# npm with provenance. Requires the NPM_TOKEN repo secret — an npm *Automation*
+# token, which satisfies the getnema org's 2FA from CI.
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
 
 permissions:
   contents: write
