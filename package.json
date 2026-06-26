@@ -16,7 +16,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "check": "turbo run lint typecheck test build",
-    "release": "changeset publish"
+    "release": "pnpm -r publish --no-git-checks --access public"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
