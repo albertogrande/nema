@@ -1,7 +1,7 @@
 version = 1
 SPDX-PackageName = "nema"
 SPDX-PackageSupplier = "The Nema Authors"
-SPDX-PackageDownloadLocation = "https://github.com/albertogrande/docforge"
+SPDX-PackageDownloadLocation = "https://github.com/albertogrande/nema"
 
 [[annotations]]
 path = [

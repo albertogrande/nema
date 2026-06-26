@@ -5,14 +5,14 @@
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
-  "homepage": "https://github.com/albertogrande/docforge#readme",
+  "homepage": "https://github.com/albertogrande/nema#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/albertogrande/docforge.git",
+    "url": "git+https://github.com/albertogrande/nema.git",
     "directory": "packages/adapter-fumadocs"
   },
   "bugs": {
-    "url": "https://github.com/albertogrande/docforge/issues"
+    "url": "https://github.com/albertogrande/nema/issues"
   },
   "keywords": ["documentation", "docs-as-code", "ai", "agents", "provenance", "fumadocs", "react"],
   "publishConfig": {

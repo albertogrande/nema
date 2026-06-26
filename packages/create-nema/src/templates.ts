@@ -69,7 +69,7 @@ jobs:
     '.gitignore': 'node_modules\n',
     'README.md': `# ${opts.name}
 
-Governed documentation, powered by [Nema](https://github.com/albertogrande/docforge).
+Governed documentation, powered by [Nema](https://github.com/albertogrande/nema).
 
 ## The producer loop
 

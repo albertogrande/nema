@@ -22,7 +22,7 @@ shows the ongoing loop. (Greenfield? Jump to [Starting from scratch](#starting-f
 ## 1. Get the CLI (one time)
 
 ```bash
-git clone https://github.com/albertogrande/docforge
+git clone https://github.com/albertogrande/nema
 cd nema && pnpm install && pnpm build
 # put `nema` on your PATH for this shell:
 alias nema="node $(pwd)/packages/cli/dist/index.js"
@@ -76,8 +76,8 @@ nema prov /path/to/your-docs --filter authored_by=ai   # everything an agent wro
 ```
 
 For a reader-facing view, the reference site renders the same provenance as a trust dashboard —
-see the live demo: **[the `/trust` dashboard](https://nema-docs.vercel.app/trust)** (and a
-page with its [provenance badge](https://nema-docs.vercel.app/docs/getting-started)).
+see the live demo: **[the `/trust` dashboard](https://docforge-docs.vercel.app/trust)** (and a
+page with its [provenance badge](https://docforge-docs.vercel.app/docs/getting-started)).
 
 ## 4. The ongoing loop
 
