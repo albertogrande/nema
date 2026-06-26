@@ -50,7 +50,10 @@ The `provenance-consistency` gate checks: `reviewed ⇒ reviewed_by + a reviewed
 - **Reachability**: non-root pages must be linked from somewhere (no orphans).
 
 Run `nema check` (or the `check` MCP tool) yourself before proposing. Green-before-PR is the
-norm.
+norm. Every diagnostic carries a `help:` hint; run `nema explain <rule>` for the full fix. The
+`check` and `draft_page` MCP tools also return the diagnostics as structured `structuredContent`
+(`{ rule, severity, path, message, hint }`), so you can act on the exact failure instead of
+parsing text. `nema check --json` gives the same machine-readable report on the CLI.
 
 ## Repo mechanics
 

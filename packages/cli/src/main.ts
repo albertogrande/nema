@@ -2,7 +2,9 @@
 import { defineCommand } from 'citty';
 import { approveCommand } from './commands/approve.js';
 import { checkCommand } from './commands/check.js';
+import { doctorCommand } from './commands/doctor.js';
 import { draftCommand } from './commands/draft.js';
+import { explainCommand } from './commands/explain.js';
 import { initCommand } from './commands/init.js';
 import { mcpCommand } from './commands/mcp.js';
 import { migrateCommand } from './commands/migrate.js';
@@ -18,6 +20,8 @@ export const main = defineCommand({
   subCommands: {
     init: initCommand,
     check: checkCommand,
+    doctor: doctorCommand,
+    explain: explainCommand,
     migrate: migrateCommand,
     draft: draftCommand,
     'open-pr': openPrCommand,

@@ -3,7 +3,7 @@ import { type Server, createServer } from 'node:http';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { formatGateResult } from '@nema/gates';
+import { type GateResult, formatGateResult, gateReport } from '@nema/gates';
 import { z } from 'zod';
 import { formatDraftResult, formatPageList, formatSearchHits } from './format.js';
 import {
@@ -36,6 +36,43 @@ const modelShape = z.object({
   vendor: z.string().optional(),
   prompt_ref: z.string().optional(),
 });
+
+/**
+ * Structured-output shapes. Tools that report gate results expose them as MCP
+ * `structuredContent` (not just prose) so an agent can act on the exact rule,
+ * path, and remediation hint instead of parsing a string.
+ */
+const diagnosticShape = z.object({
+  rule: z.string(),
+  severity: z.enum(['error', 'warning']),
+  path: z.string(),
+  message: z.string(),
+  hint: z.string().optional(),
+});
+
+const gateReportShape = {
+  ok: z.boolean(),
+  checked: z.number().int(),
+  errorCount: z.number().int(),
+  warningCount: z.number().int(),
+  diagnostics: z.array(diagnosticShape),
+};
+
+/** A tool response carrying both the human text and validated structured content. */
+function gateResponse(result: GateResult): ToolText {
+  return {
+    content: [{ type: 'text', text: formatGateResult(result) }],
+    structuredContent: gateReport(result),
+    ...(result.ok ? {} : { isError: true }),
+  };
+}
+
+const draftResultShape = {
+  path: z.string(),
+  filePath: z.string(),
+  ok: z.boolean(),
+  diagnostics: z.array(diagnosticShape),
+};
 
 /**
  * The corpus read tools: list / get / provenance / search / check. These need
@@ -106,13 +143,13 @@ function registerReadTools(server: McpServer, tools: NemaTools): void {
     'check',
     {
       title: 'Run nema check',
-      description: 'Validate the whole corpus against all gates and return diagnostics.',
+      description:
+        'Validate the whole corpus against all gates. Returns structured diagnostics ' +
+        '(rule, severity, path, message, and a remediation hint) as structuredContent, plus a text summary.',
       inputSchema: {},
+      outputSchema: gateReportShape,
     },
-    async () => {
-      const result = await tools.check();
-      return text(formatGateResult(result), !result.ok);
-    },
+    async () => gateResponse(await tools.check()),
   );
 }
 
@@ -128,7 +165,8 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
       title: 'Draft a new page',
       description:
         'Create a NEW page with status: draft and a seeded provenance block, then run nema check ' +
-        'and return diagnostics so you can self-correct. You may only create drafts — never reviewed.',
+        'and return diagnostics so you can self-correct. Structured diagnostics (with fix hints) are ' +
+        'returned as structuredContent. You may only create drafts — never reviewed.',
       inputSchema: {
         path: z.string().describe('Route path without .md, e.g. guide/intro'),
         title: z.string(),
@@ -137,10 +175,20 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
         model: modelShape.optional().describe('Your model id/vendor — required for AI authorship'),
         sources: z.array(sourceShape).optional(),
       },
+      outputSchema: draftResultShape,
     },
     async (input) => {
       const res = await tools.draftPage(input as DraftPageInput);
-      return text(formatDraftResult(res), !res.ok);
+      return {
+        content: [{ type: 'text', text: formatDraftResult(res) }],
+        structuredContent: {
+          path: res.path,
+          filePath: res.filePath,
+          ok: res.ok,
+          diagnostics: res.diagnostics,
+        },
+        ...(res.ok ? {} : { isError: true }),
+      };
     },
   );
 

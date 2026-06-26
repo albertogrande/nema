@@ -5,12 +5,18 @@ import type { ContentModel } from '@nema/schema';
 export type Severity = 'error' | 'warning';
 
 export interface Diagnostic {
-  /** Stable rule id (e.g. `frontmatter-required`, `freshness`). */
+  /** Stable rule id (e.g. `frontmatter-required`, `freshness`). Also the key for `nema explain`. */
   rule: string;
   severity: Severity;
   /** Page route path (or file) the diagnostic concerns. */
   path: string;
   message: string;
+  /**
+   * Short, actionable remediation ("how to fix this"), rendered inline as a
+   * `help:` line. Populated from the rule catalog during {@link runGates} unless
+   * a rule sets a more specific hint itself.
+   */
+  hint?: string;
 }
 
 export interface GateContext {
@@ -30,4 +36,6 @@ export interface GateResult {
   errorCount: number;
   warningCount: number;
   ok: boolean;
+  /** Number of pages the gates ran over. Zero is surfaced as an `empty-corpus` warning. */
+  checked: number;
 }
