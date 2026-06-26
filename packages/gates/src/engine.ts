@@ -2,6 +2,7 @@
 import { type ContentSource, type NemaConfig, createContentSource } from '@nema/core';
 import { CONTENT_MODEL, type ContentModel } from '@nema/schema';
 import { RULE_CATALOG } from './catalog.js';
+import type { GitState } from './git-state.js';
 import { draftNotReviewedRules } from './rules/draft-not-reviewed.js';
 import { footnoteRules } from './rules/footnotes.js';
 import { freshnessRules } from './rules/freshness.js';
@@ -27,6 +28,8 @@ export interface GateOptions {
   today?: Date;
   /** Override the content model. Defaults to the bundled SSOT. */
   model?: ContentModel;
+  /** Git facts enabling the `migration` review-method check (see `createFsGitState`). */
+  gitState?: GitState;
 }
 
 function toISODateUTC(d: Date): string {
@@ -39,6 +42,7 @@ export function createGateContext(source: ContentSource, opts: GateOptions = {})
     config: source.config,
     model: opts.model ?? source.config.contentModel ?? CONTENT_MODEL,
     today: toISODateUTC(opts.today ?? new Date()),
+    gitState: opts.gitState,
   };
 }
 

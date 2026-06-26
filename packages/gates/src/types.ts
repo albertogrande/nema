@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import type { Page, ResolvedConfig } from '@nema/core';
 import type { ContentModel } from '@nema/schema';
+import type { GitState } from './git-state.js';
 
 export type Severity = 'error' | 'warning';
 
@@ -26,6 +27,11 @@ export interface GateContext {
   model: ContentModel;
   /** "Now", as a UTC `YYYY-MM-DD` string — injectable for deterministic tests. */
   today: string;
+  /**
+   * Optional git facts for the `migration` review-method check. Absent ⇒ that
+   * check is skipped, so the rule stays inert in non-git / in-process contexts.
+   */
+  gitState?: GitState;
 }
 
 /** A gate rule: a pure function from context to diagnostics. */

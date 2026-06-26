@@ -59,6 +59,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history so `nema check` can compare a `method:migration` promotion
+          # against the PR base branch (createFsGitState baseline). Without it the
+          # baseline falls back to HEAD and an in-PR promotion goes uncaught.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

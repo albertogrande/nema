@@ -12,7 +12,11 @@ import type { Diagnostic, GateContext } from '../types.js';
  *     reference the approving PR (`pr`).
  *   - `migration` — a human importing an existing corpus with `nema migrate`
  *     asserted the page as reviewed; no PR is required (the migrating human is
- *     the gate).
+ *     the gate). Because that assertion lives only in frontmatter, it is trusted
+ *     ONLY on a genuine first import: when `gitState` is available, a page that
+ *     already existed at the comparison baseline WITHOUT `method:'migration'` may
+ *     not acquire it — that is a self-asserted promotion of existing content and
+ *     still requires a human PR approval. See `createFsGitState`.
  */
 export function draftNotReviewedRules(ctx: GateContext): Diagnostic[] {
   const out: Diagnostic[] = [];
@@ -47,6 +51,21 @@ export function draftNotReviewedRules(ctx: GateContext): Diagnostic[] {
     ) {
       out.push(
         err(page.path, 'github-pr-approval requires a `reviewed` transition referencing the PR'),
+      );
+    }
+    if (
+      prov.reviewed_by.method === 'migration' &&
+      ctx.gitState &&
+      ctx.gitState.isTrackedAtBaseline(page.filePath) &&
+      !ctx.gitState.baselineHadMigrationMethod(page.filePath)
+    ) {
+      out.push(
+        err(
+          page.path,
+          'status=reviewed via method:migration was introduced onto a page that already existed ' +
+            'without it — migration attests review only on first import; promoting an existing ' +
+            'page requires a human PR approval',
+        ),
       );
     }
   }

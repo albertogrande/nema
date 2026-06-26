@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
-import { checkContent, formatGateResult, formatGateResultJson } from '@nema/gates';
+import {
+  checkContent,
+  createFsGitState,
+  formatGateResult,
+  formatGateResultJson,
+} from '@nema/gates';
 import { defineCommand } from 'citty';
 import { out } from '../util.js';
 
@@ -14,7 +19,7 @@ export const checkCommand = defineCommand({
   },
   async run({ args }) {
     const rootDir = args.dir ? String(args.dir) : process.cwd();
-    const result = await checkContent(rootDir);
+    const result = await checkContent(rootDir, { gitState: createFsGitState(rootDir) });
     out(args.json ? formatGateResultJson(result) : formatGateResult(result));
     if (!result.ok) process.exitCode = 1;
   },
