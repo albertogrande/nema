@@ -5,8 +5,8 @@ import {
   readProvenanceFromFrontmatter,
   recordTransition,
   seedProvenance,
-} from '@nema/provenance';
-import type { ReviewMethod } from '@nema/schema';
+} from '@getnema/provenance';
+import type { ReviewMethod } from '@getnema/schema';
 import matter from 'gray-matter';
 
 export function addDays(date: Date, days: number): Date {

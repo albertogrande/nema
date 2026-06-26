@@ -1,5 +1,5 @@
 {
-  "name": "@nema/docs",
+  "name": "@getnema/docs",
   "version": "0.0.0",
   "private": true,
   "description": "Nema dogfood docs site (Next.js) — authored through the producer loop",
@@ -12,9 +12,9 @@
     "check-docs": "nema check ."
   },
   "dependencies": {
-    "@nema/adapter-fumadocs": "workspace:*",
-    "@nema/core": "workspace:*",
-    "@nema/schema": "workspace:*",
+    "@getnema/adapter-fumadocs": "workspace:*",
+    "@getnema/core": "workspace:*",
+    "@getnema/schema": "workspace:*",
     "fumadocs-core": "^15.8.5",
     "fumadocs-ui": "^15.8.5",
     "marked": "^14.1.4",
@@ -23,7 +23,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@nema/cli": "workspace:*",
+    "nema": "workspace:*",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",

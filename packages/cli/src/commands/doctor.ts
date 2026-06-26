@@ -2,8 +2,8 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { createContentSource, resolveConfig } from '@nema/core';
-import { checkContent } from '@nema/gates';
+import { createContentSource, resolveConfig } from '@getnema/core';
+import { checkContent } from '@getnema/gates';
 import { defineCommand } from 'citty';
 import { governanceChecks } from '../doctor/governance.js';
 import { type Check, MARK } from '../doctor/types.js';

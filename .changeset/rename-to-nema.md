@@ -1,19 +1,19 @@
 ---
-"@nema/schema": major
-"@nema/core": major
-"@nema/gates": major
-"@nema/provenance": major
-"@nema/producer": major
-"@nema/mcp": major
-"@nema/cli": major
-"@nema/actions": major
-"@nema/adapter-kit": major
-"@nema/adapter-fumadocs": major
+"@getnema/schema": major
+"@getnema/core": major
+"@getnema/gates": major
+"@getnema/provenance": major
+"@getnema/producer": major
+"@getnema/mcp": major
+"nema": major
+"@getnema/actions": major
+"@getnema/adapter-kit": major
+"@getnema/adapter-fumadocs": major
 ---
 
 Rebrand `docforge` → **Nema**.
 
-The npm scope becomes `@nema/*`, the CLI binary becomes `nema` (e.g. `nema check`,
+The npm scope becomes `@getnema/*`, the CLI binary becomes `nema` (e.g. `nema check`,
 `nema draft`, `nema approve`), the MCP binary becomes `nema-mcp`, and the config file is
 now `nema.config.{ts,js,mjs,json}`. The commit-trailer key is `Nema-Provenance`, the draft
 PR label is `nema:draft`, and the `FORGE_ROOT` env var is now `NEMA_ROOT`. Internal types

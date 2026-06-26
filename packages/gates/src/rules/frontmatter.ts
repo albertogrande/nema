@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { isValidISODate } from '@nema/schema';
+import { isValidISODate } from '@getnema/schema';
 import type { Diagnostic, GateContext } from '../types.js';
 
 /** Required fields present, enum values valid, date fields well-formed. */

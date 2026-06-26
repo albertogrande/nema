@@ -8,7 +8,7 @@ import type {
   MergeOptions,
   NemaHost,
   PullRequestRef,
-} from '@nema/producer';
+} from '@getnema/producer';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { NemaTools, createNemaMcpServer } from '../src/index.js';
 

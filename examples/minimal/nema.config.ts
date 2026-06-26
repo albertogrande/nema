@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { NemaConfig } from '@nema/core';
+import type { NemaConfig } from '@getnema/core';
 
 const config: NemaConfig = {
   contentDir: 'docs',

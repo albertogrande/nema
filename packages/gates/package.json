@@ -1,5 +1,5 @@
 {
-  "name": "@nema/gates",
+  "name": "@getnema/gates",
   "version": "0.1.0-alpha.0",
   "description": "Nema validation gates: frontmatter, freshness, footnotes, links, reachability, provenance",
   "license": "Apache-2.0",
@@ -34,9 +34,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/core": "workspace:*",
-    "@nema/provenance": "workspace:*",
-    "@nema/schema": "workspace:*"
+    "@getnema/core": "workspace:*",
+    "@getnema/provenance": "workspace:*",
+    "@getnema/schema": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5",

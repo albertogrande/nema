@@ -1,6 +1,6 @@
 ---
-"@nema/mcp": minor
-"@nema/cli": minor
+"@getnema/mcp": minor
+"nema": minor
 ---
 
 Serve the MCP read tools over Streamable HTTP. Adds `createReadOnlyNemaMcpServer` (only the

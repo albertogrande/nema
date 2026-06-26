@@ -1,5 +1,5 @@
 {
-  "name": "@nema/mcp",
+  "name": "@getnema/mcp",
   "version": "0.1.0-alpha.0",
   "description": "Nema MCP server: read tools + write tools (draft/update/propose/check/request_review)",
   "license": "Apache-2.0",
@@ -37,11 +37,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/core": "workspace:*",
-    "@nema/gates": "workspace:*",
-    "@nema/producer": "workspace:*",
-    "@nema/provenance": "workspace:*",
-    "@nema/schema": "workspace:*",
+    "@getnema/core": "workspace:*",
+    "@getnema/gates": "workspace:*",
+    "@getnema/producer": "workspace:*",
+    "@getnema/provenance": "workspace:*",
+    "@getnema/schema": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "gray-matter": "^4.0.3",
     "zod": "^3.24.1"

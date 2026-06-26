@@ -1,5 +1,5 @@
 {
-  "name": "@nema/provenance",
+  "name": "@getnema/provenance",
   "version": "0.1.0-alpha.0",
   "description": "Nema provenance: read / seed / recordTransition / verify / write + C2PA mapping stub",
   "license": "Apache-2.0",
@@ -34,7 +34,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/schema": "workspace:*",
+    "@getnema/schema": "workspace:*",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.0"
   },

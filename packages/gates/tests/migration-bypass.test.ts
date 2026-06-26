@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Page, ResolvedConfig } from '@nema/core';
-import { CONTENT_MODEL, type Provenance } from '@nema/schema';
+import type { Page, ResolvedConfig } from '@getnema/core';
+import { CONTENT_MODEL, type Provenance } from '@getnema/schema';
 import { describe, expect, it } from 'vitest';
 import type { GitState } from '../src/git-state.js';
 import { draftNotReviewedRules } from '../src/rules/draft-not-reviewed.js';

@@ -2,15 +2,15 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import type {
   CommitOptions,
   CreatePullRequestInput,
   MergeOptions,
   NemaHost,
   PullRequestRef,
-} from '@nema/producer';
+} from '@getnema/producer';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { NemaTools, createNemaMcpServer, formatDraftResult } from '../src/index.js';
 

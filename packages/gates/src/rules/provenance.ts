@@ -1,6 +1,6 @@
-import { verifyProvenance } from '@nema/provenance';
+import { verifyProvenance } from '@getnema/provenance';
 // SPDX-License-Identifier: Apache-2.0
-import { ProvenanceSchema } from '@nema/schema';
+import { ProvenanceSchema } from '@getnema/schema';
 import type { Diagnostic, GateContext } from '../types.js';
 
 /**

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Page, ResolvedConfig } from '@nema/core';
-import type { ContentModel } from '@nema/schema';
+import type { Page, ResolvedConfig } from '@getnema/core';
+import type { ContentModel } from '@getnema/schema';
 import type { GitState } from './git-state.js';
 
 export type Severity = 'error' | 'warning';

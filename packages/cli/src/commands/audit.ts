@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { type AuditRow, buildAuditView, createContentSource } from '@nema/core';
+import { type AuditRow, buildAuditView, createContentSource } from '@getnema/core';
 import { defineCommand } from 'citty';
 import { out } from '../util.js';
 

@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type ResolvedConfig, contentSourceFromConfig } from '@nema/core';
+import { type ResolvedConfig, contentSourceFromConfig } from '@getnema/core';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
   RULE_CATALOG,

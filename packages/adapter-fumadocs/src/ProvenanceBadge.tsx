@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@nema/schema';
+import type { Provenance } from '@getnema/schema';
 import type { ReactElement } from 'react';
 import { provenanceBadgeProps } from './badge.js';
 

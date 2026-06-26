@@ -1,9 +1,9 @@
 ---
-"@nema/core": minor
-"@nema/cli": minor
+"@getnema/core": minor
+"nema": minor
 ---
 
-Add a corpus-wide review trail. New `buildAuditView` in `@nema/core` flattens every page's
+Add a corpus-wide review trail. New `buildAuditView` in `@getnema/core` flattens every page's
 append-only `provenance.transitions[]` into one sorted, filterable list of lifecycle transitions
 (`{path, to, by, ts, commit?, pr?, method?}`) — a pure projection over the same provenance the gates
 validate, no second source of truth. Surfaced two ways: `nema audit [dir] --actor --status --since

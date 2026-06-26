@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync } from 'node:fs';
-import { createContentSource, resolveConfig } from '@nema/core';
+import { createContentSource, resolveConfig } from '@getnema/core';
 import {
   GitHubHost,
   PROVENANCE_TRAILER_KEY,
   ProducerEngine,
   formatProvenanceTrailer,
   run,
-} from '@nema/producer';
-import { readProvenance } from '@nema/provenance';
+} from '@getnema/producer';
+import { readProvenance } from '@getnema/provenance';
 import { fileToRoute, planApprovals } from './plan.js';
 
 function log(message: string): void {

@@ -32,13 +32,13 @@ importers:
 
   apps/docs:
     dependencies:
-      '@nema/adapter-fumadocs':
+      '@getnema/adapter-fumadocs':
         specifier: workspace:*
         version: link:../../packages/adapter-fumadocs
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../../packages/schema
       fumadocs-core:
@@ -60,9 +60,6 @@ importers:
         specifier: ^19.0.0
         version: 19.2.7(react@19.2.7)
     devDependencies:
-      '@nema/cli':
-        specifier: workspace:*
-        version: link:../../packages/cli
       '@tailwindcss/postcss':
         specifier: ^4.3.1
         version: 4.3.1
@@ -75,6 +72,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.2
         version: 19.2.3(@types/react@19.2.17)
+      nema:
+        specifier: workspace:*
+        version: link:../../packages/cli
       tailwindcss:
         specifier: ^4.3.1
         version: 4.3.1
@@ -84,7 +84,7 @@ importers:
 
   examples/minimal:
     devDependencies:
-      '@nema/gates':
+      '@getnema/gates':
         specifier: workspace:*
         version: link:../../packages/gates
       vitest:
@@ -93,19 +93,19 @@ importers:
 
   packages/actions:
     dependencies:
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../core
-      '@nema/gates':
+      '@getnema/gates':
         specifier: workspace:*
         version: link:../gates
-      '@nema/producer':
+      '@getnema/producer':
         specifier: workspace:*
         version: link:../producer
-      '@nema/provenance':
+      '@getnema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -121,13 +121,13 @@ importers:
 
   packages/adapter-fumadocs:
     dependencies:
-      '@nema/adapter-kit':
+      '@getnema/adapter-kit':
         specifier: workspace:*
         version: link:../adapter-kit
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../core
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -149,10 +149,10 @@ importers:
 
   packages/adapter-kit:
     dependencies:
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../core
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -168,22 +168,22 @@ importers:
 
   packages/cli:
     dependencies:
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../core
-      '@nema/gates':
+      '@getnema/gates':
         specifier: workspace:*
         version: link:../gates
-      '@nema/mcp':
+      '@getnema/mcp':
         specifier: workspace:*
         version: link:../mcp
-      '@nema/producer':
+      '@getnema/producer':
         specifier: workspace:*
         version: link:../producer
-      '@nema/provenance':
+      '@getnema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
       citty:
@@ -208,7 +208,7 @@ importers:
 
   packages/core:
     dependencies:
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
       github-slugger:
@@ -251,13 +251,13 @@ importers:
 
   packages/gates:
     dependencies:
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../core
-      '@nema/provenance':
+      '@getnema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
     devDependencies:
@@ -273,24 +273,24 @@ importers:
 
   packages/mcp:
     dependencies:
+      '@getnema/core':
+        specifier: workspace:*
+        version: link:../core
+      '@getnema/gates':
+        specifier: workspace:*
+        version: link:../gates
+      '@getnema/producer':
+        specifier: workspace:*
+        version: link:../producer
+      '@getnema/provenance':
+        specifier: workspace:*
+        version: link:../provenance
+      '@getnema/schema':
+        specifier: workspace:*
+        version: link:../schema
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.29.0(zod@3.25.76)
-      '@nema/core':
-        specifier: workspace:*
-        version: link:../core
-      '@nema/gates':
-        specifier: workspace:*
-        version: link:../gates
-      '@nema/producer':
-        specifier: workspace:*
-        version: link:../producer
-      '@nema/provenance':
-        specifier: workspace:*
-        version: link:../provenance
-      '@nema/schema':
-        specifier: workspace:*
-        version: link:../schema
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -310,16 +310,16 @@ importers:
 
   packages/producer:
     dependencies:
-      '@nema/core':
+      '@getnema/core':
         specifier: workspace:*
         version: link:../core
-      '@nema/gates':
+      '@getnema/gates':
         specifier: workspace:*
         version: link:../gates
-      '@nema/provenance':
+      '@getnema/provenance':
         specifier: workspace:*
         version: link:../provenance
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
       gray-matter:
@@ -338,7 +338,7 @@ importers:
 
   packages/provenance:
     dependencies:
-      '@nema/schema':
+      '@getnema/schema':
         specifier: workspace:*
         version: link:../schema
       gray-matter:

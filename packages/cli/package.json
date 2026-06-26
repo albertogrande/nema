@@ -1,5 +1,5 @@
 {
-  "name": "@nema/cli",
+  "name": "nema",
   "version": "0.1.0-alpha.0",
   "description": "Nema CLI — the `nema` binary (init/check/draft/open-pr/approve/prov/mcp)",
   "license": "Apache-2.0",
@@ -29,12 +29,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/core": "workspace:*",
-    "@nema/gates": "workspace:*",
-    "@nema/mcp": "workspace:*",
-    "@nema/producer": "workspace:*",
-    "@nema/provenance": "workspace:*",
-    "@nema/schema": "workspace:*",
+    "@getnema/core": "workspace:*",
+    "@getnema/gates": "workspace:*",
+    "@getnema/mcp": "workspace:*",
+    "@getnema/producer": "workspace:*",
+    "@getnema/provenance": "workspace:*",
+    "@getnema/schema": "workspace:*",
     "citty": "^0.1.6",
     "js-yaml": "^4.1.0"
   },

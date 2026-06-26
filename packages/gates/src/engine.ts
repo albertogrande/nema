@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import { type ContentSource, type NemaConfig, createContentSource } from '@nema/core';
-import { CONTENT_MODEL, type ContentModel } from '@nema/schema';
+import { type ContentSource, type NemaConfig, createContentSource } from '@getnema/core';
+import { CONTENT_MODEL, type ContentModel } from '@getnema/schema';
 import { RULE_CATALOG } from './catalog.js';
 import type { GitState } from './git-state.js';
 import { draftNotReviewedRules } from './rules/draft-not-reviewed.js';

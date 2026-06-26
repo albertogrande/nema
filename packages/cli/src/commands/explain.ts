@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { RULE_CATALOG, RULE_IDS, ruleDoc } from '@nema/gates';
+import { RULE_CATALOG, RULE_IDS, ruleDoc } from '@getnema/gates';
 import { defineCommand } from 'citty';
 import { errOut, out } from '../util.js';
 

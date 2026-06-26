@@ -1,5 +1,5 @@
 ---
-"@nema/core": minor
+"@getnema/core": minor
 ---
 
 Add `buildLlmsIndex()` / `buildLlmsFull()` (and `LlmsOptions`) to generate `llms.txt` and

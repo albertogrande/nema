@@ -1,6 +1,6 @@
 ---
-"@nema/core": minor
-"@nema/gates": minor
+"@getnema/core": minor
+"@getnema/gates": minor
 ---
 
 Make the content model configurable per deployment. `nema.config.*` may now supply a

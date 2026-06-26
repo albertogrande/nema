@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { ContentModel, Provenance } from '@nema/schema';
+import type { ContentModel, Provenance } from '@getnema/schema';
 
 /** A loaded documentation page. Domain-neutral. */
 export interface Page {

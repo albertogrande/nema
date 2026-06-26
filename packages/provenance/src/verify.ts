@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@nema/schema';
+import type { Provenance } from '@getnema/schema';
 
 export interface ProvenanceIssue {
   rule: string;

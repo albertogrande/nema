@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { SearchHit } from '@nema/core';
-import type { DraftResult } from '@nema/producer';
+import type { SearchHit } from '@getnema/core';
+import type { DraftResult } from '@getnema/producer';
 import type { PageSummary } from './tools.js';
 
 export function formatPageList(pages: PageSummary[]): string {

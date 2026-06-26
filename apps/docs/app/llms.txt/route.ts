@@ -1,6 +1,6 @@
 import { getSource } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
-import { buildLlmsIndex } from '@nema/core';
+import { buildLlmsIndex } from '@getnema/core';
 
 export const dynamic = 'force-static';
 

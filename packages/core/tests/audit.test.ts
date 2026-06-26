@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@nema/schema';
+import type { Provenance } from '@getnema/schema';
 import { describe, expect, it } from 'vitest';
 import { type AuditRow, buildAuditView } from '../src/index.js';
 import type { Page } from '../src/types.js';

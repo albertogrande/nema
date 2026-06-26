@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { dirname, relative, resolve } from 'node:path';
-import { type Page, findPage, headingSlugs } from '@nema/core';
+import { type Page, findPage, headingSlugs } from '@getnema/core';
 import { extractLinks } from '../markdown.js';
 import type { Diagnostic, GateContext } from '../types.js';
 

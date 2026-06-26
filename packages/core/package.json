@@ -1,5 +1,5 @@
 {
-  "name": "@nema/core",
+  "name": "@getnema/core",
   "version": "0.1.0-alpha.0",
   "description": "Nema renderer-agnostic engine: load / getPage / search / renderMarkdown / nav",
   "license": "Apache-2.0",
@@ -34,7 +34,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/schema": "workspace:*",
+    "@getnema/schema": "workspace:*",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "jiti": "^2.4.2",

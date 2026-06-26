@@ -1,6 +1,6 @@
 ---
-"@nema/gates": minor
-"@nema/cli": patch
+"@getnema/gates": minor
+"nema": patch
 ---
 
 Close the self-asserted `method:'migration'` reviewed bypass. The `draft-pages-not-reviewed` gate

@@ -1,8 +1,8 @@
 ---
-"@nema/schema": minor
-"@nema/gates": minor
-"@nema/producer": minor
-"@nema/cli": minor
+"@getnema/schema": minor
+"@getnema/gates": minor
+"@getnema/producer": minor
+"nema": minor
 ---
 
 Add `nema migrate` — import an existing Markdown corpus into the Nema model.

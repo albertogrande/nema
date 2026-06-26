@@ -2,8 +2,8 @@
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { checkContent } from '@nema/gates';
-import { readProvenanceFromContent } from '@nema/provenance';
+import { checkContent } from '@getnema/gates';
+import { readProvenanceFromContent } from '@getnema/provenance';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
   type CommitOptions,

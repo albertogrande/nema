@@ -2,8 +2,8 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { checkContent } from '@nema/gates';
-import { readProvenanceFromContent } from '@nema/provenance';
+import { checkContent } from '@getnema/gates';
+import { readProvenanceFromContent } from '@getnema/provenance';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { migrateCorpus } from '../src/index.js';
 

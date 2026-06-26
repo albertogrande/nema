@@ -6,7 +6,7 @@ import {
   type Page,
   type ResolvedConfig,
   contentSourceFromConfig,
-} from '@nema/core';
+} from '@getnema/core';
 import { describe, expect, it } from 'vitest';
 import {
   type NavRoute,

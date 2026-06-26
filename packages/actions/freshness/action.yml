@@ -13,4 +13,4 @@ runs:
   steps:
     - name: nema check (freshness SLA enforced)
       shell: bash
-      run: npx --yes @nema/cli check "${{ inputs.path }}"
+      run: npx --yes nema check "${{ inputs.path }}"

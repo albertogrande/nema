@@ -1,12 +1,12 @@
 ---
-"@nema/gates": minor
-"@nema/cli": minor
-"@nema/mcp": minor
+"@getnema/gates": minor
+"nema": minor
+"@getnema/mcp": minor
 ---
 
 Make `nema check` actionable and machine-readable — for humans and agents.
 
-Gate failures are now teaching moments. A new rule catalog (`RULE_CATALOG` in `@nema/gates`) is
+Gate failures are now teaching moments. A new rule catalog (`RULE_CATALOG` in `@getnema/gates`) is
 the single source of truth for every gate's title, one-line fix hint, and long-form explanation.
 `runGates` enriches each `Diagnostic` with its `hint`, and the text report renders it as a
 rustc/cargo-style `help:` line plus a "run `nema explain <rule>`" footer.

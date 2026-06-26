@@ -8,7 +8,7 @@ import {
   type Source,
   type Transition,
   TransitionSchema,
-} from '@nema/schema';
+} from '@getnema/schema';
 
 export interface SeedInput {
   /** Defaults to `ai`. */

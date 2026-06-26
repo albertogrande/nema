@@ -1,6 +1,6 @@
 ---
-"@nema/mcp": minor
-"@nema/cli": patch
+"@getnema/mcp": minor
+"nema": patch
 ---
 
 Add optional bearer-token auth to the Streamable HTTP MCP server. When `startHttpServer` is given an

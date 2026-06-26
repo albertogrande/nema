@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { NavNode } from '@nema/core';
+import type { NavNode } from '@getnema/core';
 import type * as PageTree from 'fumadocs-core/page-tree';
 import { getSource } from './source';
 

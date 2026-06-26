@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
-import { createContentSource, resolveConfig } from '@nema/core';
-import { type NemaHost, ProducerEngine } from '@nema/producer';
+import { createContentSource, resolveConfig } from '@getnema/core';
+import { type NemaHost, ProducerEngine } from '@getnema/producer';
 
 export function out(message: string): void {
   process.stdout.write(`${message}\n`);

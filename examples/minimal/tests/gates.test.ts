@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { fileURLToPath } from 'node:url';
-import { checkContent, formatGateResult } from '@nema/gates';
+import { checkContent, formatGateResult } from '@getnema/gates';
 import { describe, expect, it } from 'vitest';
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url));

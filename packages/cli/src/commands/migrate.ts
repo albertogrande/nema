@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 import { resolve } from 'node:path';
-import { resolveConfig } from '@nema/core';
-import { checkContent, formatGateResult } from '@nema/gates';
-import { migrateCorpus } from '@nema/producer';
+import { resolveConfig } from '@getnema/core';
+import { checkContent, formatGateResult } from '@getnema/gates';
+import { migrateCorpus } from '@getnema/producer';
 import { defineCommand } from 'citty';
 import { out } from '../util.js';
 

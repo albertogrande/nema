@@ -147,16 +147,16 @@ A pnpm + Turborepo monorepo. The engine is **renderer-agnostic**: the moat packa
 
 | Package | Responsibility |
 |---|---|
-| [`@nema/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
-| [`@nema/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
-| [`@nema/provenance`](packages/provenance) | read / merge / recordTransition / verify |
-| [`@nema/gates`](packages/gates) | validation rules behind `nema check` |
-| [`@nema/producer`](packages/producer) | draft → branch → PR → approve → state-flip |
-| [`@nema/mcp`](packages/mcp) | MCP server: read tools + write tools |
-| [`@nema/cli`](packages/cli) | the `nema` binary |
-| [`@nema/adapter-kit`](packages/adapter-kit) | core↔adapter contract + conformance suite |
-| [`@nema/adapter-fumadocs`](packages/adapter-fumadocs) | reference renderer (Next/React) |
-| [`@nema/actions`](packages/actions) | composite GitHub Actions |
+| [`@getnema/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
+| [`@getnema/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
+| [`@getnema/provenance`](packages/provenance) | read / merge / recordTransition / verify |
+| [`@getnema/gates`](packages/gates) | validation rules behind `nema check` |
+| [`@getnema/producer`](packages/producer) | draft → branch → PR → approve → state-flip |
+| [`@getnema/mcp`](packages/mcp) | MCP server: read tools + write tools |
+| [`nema`](packages/cli) | the `nema` binary |
+| [`@getnema/adapter-kit`](packages/adapter-kit) | core↔adapter contract + conformance suite |
+| [`@getnema/adapter-fumadocs`](packages/adapter-fumadocs) | reference renderer (Next/React) |
+| [`@getnema/actions`](packages/actions) | composite GitHub Actions |
 
 ## Security & governance
 

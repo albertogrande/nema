@@ -21,7 +21,7 @@ body:
     id: package
     attributes:
       label: Affected package
-      placeholder: "@nema/core, @nema/gates, cli, ..."
+      placeholder: "@getnema/core, @getnema/gates, cli, ..."
   - type: textarea
     id: env
     attributes:

@@ -30,7 +30,7 @@ describe('templates', () => {
       ]),
     );
     expect(files['package.json']).toContain('"name": "my-docs"');
-    expect(files['package.json']).toContain('@nema/cli');
+    expect(files['package.json']).toContain('nema');
     expect(files['docs/index.md']).toContain('status: draft');
     // The gate that enforces the invariant must be wired into CI.
     expect(files['.github/workflows/nema-check.yml']).toContain('nema check');

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { ReviewMethod } from '@nema/schema';
+import type { ReviewMethod } from '@getnema/schema';
 import type { Page } from './types.js';
 
 /** One row of the audit view: a single lifecycle transition recorded on a page. */

@@ -1,5 +1,5 @@
 {
-  "name": "@nema/example-minimal",
+  "name": "@getnema/example-minimal",
   "version": "0.0.0",
   "private": true,
   "description": "Minimal content-only Nema corpus — an end-to-end gate fixture (no renderer)",
@@ -9,7 +9,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@nema/gates": "workspace:*",
+    "@getnema/gates": "workspace:*",
     "vitest": "^2.1.8"
   }
 }

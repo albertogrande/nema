@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync } from 'node:fs';
-import { type Provenance, ProvenanceSchema } from '@nema/schema';
+import { type Provenance, ProvenanceSchema } from '@getnema/schema';
 import matter from 'gray-matter';
 import { MATTER_OPTIONS } from './yaml.js';
 

@@ -2,7 +2,7 @@
 import { spawnSync } from 'node:child_process';
 import { realpathSync } from 'node:fs';
 import { isAbsolute, relative, resolve } from 'node:path';
-import { readProvenanceFromContent } from '@nema/provenance';
+import { readProvenanceFromContent } from '@getnema/provenance';
 import type { GitState } from './git-state.js';
 
 /** Run `git` with an explicit argument array (never a shell string). */

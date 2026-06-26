@@ -23,13 +23,13 @@ export function templates(opts: TemplateOptions): Record<string, string> {
       'open-pr': 'nema open-pr',
     },
     devDependencies: {
-      '@nema/cli': '^0.1.0-alpha.0',
+      nema: '^0.1.0-alpha.0',
     },
   };
 
   return {
     'nema.config.ts': `// SPDX-License-Identifier: Apache-2.0
-import type { NemaConfig } from '@nema/core';
+import type { NemaConfig } from '@getnema/core';
 
 const config: NemaConfig = {
   contentDir: 'docs',
@@ -92,7 +92,7 @@ npm run check          # run the gates
 Point an MCP-capable agent at this repo:
 
 \`\`\`sh
-claude mcp add nema -- npx -y @nema/cli mcp .
+claude mcp add nema -- npx -y nema mcp .
 \`\`\`
 
 The agent can list, search, read, and **draft** pages — but it cannot promote a page to

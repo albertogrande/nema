@@ -1,5 +1,5 @@
 {
-  "name": "@nema/producer",
+  "name": "@getnema/producer",
   "version": "0.1.0-alpha.0",
   "description": "Nema producer loop: draft -> branch -> PR -> approve -> state-flip, over a NemaHost",
   "license": "Apache-2.0",
@@ -34,10 +34,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/core": "workspace:*",
-    "@nema/gates": "workspace:*",
-    "@nema/provenance": "workspace:*",
-    "@nema/schema": "workspace:*",
+    "@getnema/core": "workspace:*",
+    "@getnema/gates": "workspace:*",
+    "@getnema/provenance": "workspace:*",
+    "@getnema/schema": "workspace:*",
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {

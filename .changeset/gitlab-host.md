@@ -1,5 +1,5 @@
 ---
-"@nema/producer": minor
+"@getnema/producer": minor
 ---
 
 Add a GitLab `NemaHost`. `GitLabHost` creates and merges merge requests via the `glab` CLI

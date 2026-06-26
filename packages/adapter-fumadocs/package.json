@@ -1,5 +1,5 @@
 {
-  "name": "@nema/adapter-fumadocs",
+  "name": "@getnema/adapter-fumadocs",
   "version": "0.1.0-alpha.0",
   "description": "Nema reference renderer adapter for Fumadocs (Next/React): render + .md route + nav + provenance badge",
   "license": "Apache-2.0",
@@ -34,9 +34,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/adapter-kit": "workspace:*",
-    "@nema/core": "workspace:*",
-    "@nema/schema": "workspace:*"
+    "@getnema/adapter-kit": "workspace:*",
+    "@getnema/core": "workspace:*",
+    "@getnema/schema": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

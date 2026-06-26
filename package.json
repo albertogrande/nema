@@ -1,5 +1,5 @@
 {
-  "name": "@nema/monorepo",
+  "name": "@getnema/monorepo",
   "version": "0.0.0",
   "private": true,
   "type": "module",

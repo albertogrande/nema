@@ -1,5 +1,5 @@
 ---
-"@nema/core": minor
+"@getnema/core": minor
 ---
 
 Cache the content source and memoize the search index. `contentSourceFromConfig` now caches by

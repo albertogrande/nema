@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import type { Provenance } from '@nema/schema';
+import type { Provenance } from '@getnema/schema';
 
 /**
  * Minimal C2PA manifest shape (a typed subset). This is a MAPPING STUB: it

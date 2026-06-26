@@ -1,6 +1,6 @@
 # Nema¹ — open-source, AI-native docs platform · v0.1 build plan
 
-> ¹ **Name is a placeholder.** Working scope `@nema/*`, CLI binary `nema`. Pick the real
+> ¹ **Name is a placeholder.** Working scope `@getnema/*`, CLI binary `nema`. Pick the real
 > name (check npm + GitHub org + domain availability) before the first publish; renaming
 > pre-publish is cheap. Everything below is renameable.
 
@@ -47,16 +47,16 @@ workspace) · Conventional Commits + commitlint for history hygiene · `npm publ
 ```
 nema/  (repo root — Apache-2.0)
 ├─ packages/
-│  ├─ schema/            @nema/schema      SSOT content model + Zod + provenance shapes (leaf; Zod only)
-│  ├─ core/              @nema/core        renderer-agnostic engine: load/getPage/search/renderMarkdown
-│  ├─ provenance/        @nema/provenance  provenance record: read/merge/recordTransition/verify
-│  ├─ gates/             @nema/gates       validation rules (TS) + engine behind `nema check`
-│  ├─ mcp/               @nema/mcp         MCP server: read tools + WRITE tools (the moat surface)
-│  ├─ producer/          @nema/producer    draft→branch→PR→approve→state-flip; NemaHost interface
-│  ├─ cli/               @nema/cli         the `nema` binary
-│  ├─ adapter-kit/       @nema/adapter-kit core↔adapter contract + conformance test suite
-│  ├─ adapter-fumadocs/  @nema/adapter-fumadocs   v1 reference renderer (Next/React/Fumadocs)
-│  └─ actions/           @nema/actions     composite GH Actions (gate, approval→flip, freshness)
+│  ├─ schema/            @getnema/schema      SSOT content model + Zod + provenance shapes (leaf; Zod only)
+│  ├─ core/              @getnema/core        renderer-agnostic engine: load/getPage/search/renderMarkdown
+│  ├─ provenance/        @getnema/provenance  provenance record: read/merge/recordTransition/verify
+│  ├─ gates/             @getnema/gates       validation rules (TS) + engine behind `nema check`
+│  ├─ mcp/               @getnema/mcp         MCP server: read tools + WRITE tools (the moat surface)
+│  ├─ producer/          @getnema/producer    draft→branch→PR→approve→state-flip; NemaHost interface
+│  ├─ cli/               nema         the `nema` binary
+│  ├─ adapter-kit/       @getnema/adapter-kit core↔adapter contract + conformance test suite
+│  ├─ adapter-fumadocs/  @getnema/adapter-fumadocs   v1 reference renderer (Next/React/Fumadocs)
+│  └─ actions/           @getnema/actions     composite GH Actions (gate, approval→flip, freshness)
 ├─ apps/docs/            dogfood site (Fumadocs), authored THROUGH the producer loop · private:true
 ├─ examples/minimal/     tiny content repo (core+mcp+gates, no renderer) for E2E tests
 ├─ ee/                   RESERVED, empty in v0.x — future source-available tier (own LICENSE placeholder)
@@ -82,13 +82,13 @@ one language across engine + agents + MCP.
 
 | Source (absolute path) | Becomes | Change |
 |---|---|---|
-| `…/developer-marketing-handbook/mcp/handbook.mjs` | `@nema/core` | `loadPages/getPage/searchHandbook` (BM25 + `github-slugger` anchors) ported ~verbatim; add `renderMarkdown` (the "prepend H1 only if missing" canonicalizer) as the single parity source both MCP and the `.md` route call. |
-| `…/scripts/check_content_quality.py` | `@nema/gates` rules | Footnote integrity, citation discipline (`## Sources`), freshness SLA with teeth (`last_reviewed ≤ today < review_by`, overdue **fails**), reachability — each a TS rule returning structured diagnostics. |
-| `…/scripts/check_frontmatter.py` | `@nema/gates` rules | `frontmatter-required`, `enums-valid`, `dates-valid`. |
-| `…/scripts/check_links.py` | `@nema/gates` rule | `links-resolve` + `anchors-resolve`. |
-| `…/scripts/check_parity.mjs` | `@nema/adapter-kit` | Becomes the **adapter conformance suite** (md-parity, nav coverage, anchor resolution) + a `no-inline-enums` gate. |
-| `…/schema/content-model.json` + `…/src/content.config.ts` | `@nema/schema` | The SSOT-consumed-by-Zod pattern + `superRefine` boundary mechanism, generalized to a domain-neutral base model (profile mechanism deferred to v0.2). |
-| `…/.claude/agents/*`, `skills/*`, `CLAUDE.md`, `.github/workflows/*` | repo `.claude/`, `@nema/actions`, `create-nema` templates | Generalized + extended to document the producer loop and provenance rules for agents. |
+| `…/developer-marketing-handbook/mcp/handbook.mjs` | `@getnema/core` | `loadPages/getPage/searchHandbook` (BM25 + `github-slugger` anchors) ported ~verbatim; add `renderMarkdown` (the "prepend H1 only if missing" canonicalizer) as the single parity source both MCP and the `.md` route call. |
+| `…/scripts/check_content_quality.py` | `@getnema/gates` rules | Footnote integrity, citation discipline (`## Sources`), freshness SLA with teeth (`last_reviewed ≤ today < review_by`, overdue **fails**), reachability — each a TS rule returning structured diagnostics. |
+| `…/scripts/check_frontmatter.py` | `@getnema/gates` rules | `frontmatter-required`, `enums-valid`, `dates-valid`. |
+| `…/scripts/check_links.py` | `@getnema/gates` rule | `links-resolve` + `anchors-resolve`. |
+| `…/scripts/check_parity.mjs` | `@getnema/adapter-kit` | Becomes the **adapter conformance suite** (md-parity, nav coverage, anchor resolution) + a `no-inline-enums` gate. |
+| `…/schema/content-model.json` + `…/src/content.config.ts` | `@getnema/schema` | The SSOT-consumed-by-Zod pattern + `superRefine` boundary mechanism, generalized to a domain-neutral base model (profile mechanism deferred to v0.2). |
+| `…/.claude/agents/*`, `skills/*`, `CLAUDE.md`, `.github/workflows/*` | repo `.claude/`, `@getnema/actions`, `create-nema` templates | Generalized + extended to document the producer loop and provenance rules for agents. |
 
 ## The producer loop (v0.1)
 
@@ -102,7 +102,7 @@ A GitHub App is the multi-tenant upgrade, pre-wired via `NemaHost`, shipped late
 2. Agent (MCP)  propose_changes({title, summary})
    → git checkout -b nema/draft/<slug>-<sha>;  commit --trailer "Nema-Provenance: …";
      git push;  gh pr create --label nema:draft.
-3. CI (@nema/actions)  nema check  → all gates + `draft-pages-not-reviewed`
+3. CI (@getnema/actions)  nema check  → all gates + `draft-pages-not-reviewed`
      (a PR may not introduce status:reviewed by itself).  Optional AI editorial review.
 4. HUMAN approves the PR in GitHub.  ← the approval gate (reuse GitHub review; no custom UI in v0.1)
 5. on pull_request_review==approved → Action runs `nema approve`:
@@ -125,7 +125,7 @@ enforced structurally by the `draft-pages-not-reviewed` gate + the approval-trig
 ## Provenance-as-data (v0.1 = page-level; per-claim deferred to v0.3)
 
 Frontmatter-primary, Markdown-native, git-diffable. Validated by `ProvenanceSchema` (Zod, in
-`@nema/schema`) + a `provenance-consistency` gate (`reviewed ⇒ reviewed_by + a reviewed
+`@getnema/schema`) + a `provenance-consistency` gate (`reviewed ⇒ reviewed_by + a reviewed
 transition`; `authored_by≠human ⇒ model.name set`; every `sources[].id` referenced).
 
 ```yaml
@@ -143,11 +143,11 @@ provenance:
 
 Query via `nema prov <path>` and `nema prov --filter authored_by=ai --status reviewed` (the
 dogfood site renders a `/trust` dashboard generalizing the handbook's `/system`).
-`@nema/provenance.toC2PAManifest()` ships as a **typed mapping stub** (page-level → C2PA
+`@getnema/provenance.toC2PAManifest()` ships as a **typed mapping stub** (page-level → C2PA
 assertions) so the data model is attestation-ready; actual signing is the deferred commercial
 feature.
 
-## Core ↔ adapter contract (`@nema/adapter-kit`)
+## Core ↔ adapter contract (`@getnema/adapter-kit`)
 
 Core hands an adapter a `ContentSource` (`{ pages, getPage, search, renderMarkdown, nav,
 provenanceOf, config }`). An adapter implements `RendererAdapter` (`toRendererSource`,
@@ -178,23 +178,23 @@ pages + `.md` route + nav tree + a `<ProvenanceBadge>` reading `provenanceOf`.
 
 1. **Scaffold** the monorepo: pnpm workspace, Turborepo, `tsconfig.base`, Biome, Vitest, root
    `LICENSE`/`NOTICE`/REUSE/SPDX, governance + `.claude/` + `AGENTS.md`/`CLAUDE.md`, `ee/` stub.
-2. **`@nema/schema`** — domain-neutral base model + Zod `buildSchema()` + `ProvenanceSchema`
+2. **`@getnema/schema`** — domain-neutral base model + Zod `buildSchema()` + `ProvenanceSchema`
    + `LIFECYCLE_STATES`.
-3. **`@nema/core`** — port `loadPages/getPage/search` + add `renderMarkdown`, `resolveConfig`
+3. **`@getnema/core`** — port `loadPages/getPage/search` + add `renderMarkdown`, `resolveConfig`
    (`nema.config.ts`), `nav` builder. Unit tests on the ported BM25/anchor logic.
-4. **`@nema/provenance`** — record types, `readProvenance/recordTransition/verify`,
+4. **`@getnema/provenance`** — record types, `readProvenance/recordTransition/verify`,
    frontmatter writer, `toC2PAManifest` stub.
-5. **`@nema/gates`** — port all handbook rules to TS + `provenance-consistency` +
+5. **`@getnema/gates`** — port all handbook rules to TS + `provenance-consistency` +
    `draft-pages-not-reviewed`; `runGates()` returning structured diagnostics.
-6. **`@nema/producer`** — `NemaHost` interface, `LocalGitHost` + `GitHubHost` (`gh`),
+6. **`@getnema/producer`** — `NemaHost` interface, `LocalGitHost` + `GitHubHost` (`gh`),
    `ProducerEngine` (draft→branch→commit-with-trailer→push→PR) and `approve` (state-flip +
    provenance).
-7. **`@nema/mcp`** — read tools (ported) + write tools `draft_page`/`update_page`/
+7. **`@getnema/mcp`** — read tools (ported) + write tools `draft_page`/`update_page`/
    `propose_changes`/`check`/`request_review` over `@modelcontextprotocol/sdk` (stdio).
-8. **`@nema/cli`** — `nema init/check/draft/open-pr/approve/prov/mcp` (citty).
-9. **`@nema/adapter-kit`** + **`@nema/adapter-fumadocs`** (minimal render + `.md` route +
+8. **`nema`** — `nema init/check/draft/open-pr/approve/prov/mcp` (citty).
+9. **`@getnema/adapter-kit`** + **`@getnema/adapter-fumadocs`** (minimal render + `.md` route +
    nav + badge) + conformance tests.
-10. **`@nema/actions`** — gate workflow, approval→flip workflow, freshness watch.
+10. **`@getnema/actions`** — gate workflow, approval→flip workflow, freshness watch.
 11. **`apps/docs`** authored through the loop + **`examples/minimal`** E2E fixture.
 
 ## Verification (the v0.1 acceptance demo)
@@ -219,7 +219,7 @@ Also: unit tests (BM25/anchors/gates), adapter **conformance tests** green for F
 
 - **Repo location** — propose a sibling dir, e.g. `/Users/alberto/Documents/Code/nema`
   (placeholder), fresh `git init`, new GitHub repo. Adjust on approval.
-- **Name** — placeholder `@nema/*` / `nema` until you pick + verify availability; rename
+- **Name** — placeholder `@getnema/*` / `nema` until you pick + verify availability; rename
   before first publish.
 
 ## Deferred (named, with reason)

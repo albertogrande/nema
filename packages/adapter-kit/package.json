@@ -1,5 +1,5 @@
 {
-  "name": "@nema/adapter-kit",
+  "name": "@getnema/adapter-kit",
   "version": "0.1.0-alpha.0",
   "description": "Nema core↔adapter contract + adapter conformance test suite",
   "license": "Apache-2.0",
@@ -34,8 +34,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@nema/core": "workspace:*",
-    "@nema/schema": "workspace:*"
+    "@getnema/core": "workspace:*",
+    "@getnema/schema": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.5",

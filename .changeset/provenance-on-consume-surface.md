@@ -1,6 +1,6 @@
 ---
-"@nema/core": minor
-"@nema/mcp": minor
+"@getnema/core": minor
+"@getnema/mcp": minor
 ---
 
 Surface provenance on the consumption surfaces.

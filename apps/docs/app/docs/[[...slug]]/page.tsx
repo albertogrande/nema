@@ -1,6 +1,6 @@
 import { getSource, slugToPath } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
-import { ProvenanceBadge } from '@nema/adapter-fumadocs';
+import { ProvenanceBadge } from '@getnema/adapter-fumadocs';
 import { getTableOfContents } from 'fumadocs-core/server';
 import { DocsBody, DocsPage } from 'fumadocs-ui/page';
 import { marked } from 'marked';

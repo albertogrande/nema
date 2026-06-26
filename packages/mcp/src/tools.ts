@@ -8,17 +8,17 @@ import {
   createContentSource,
   provenanceView,
   resolveConfig,
-} from '@nema/core';
-import { type GateResult, checkContent } from '@nema/gates';
+} from '@getnema/core';
+import { type GateResult, checkContent } from '@getnema/gates';
 import {
   type DraftResult,
   GitHubHost,
   type NemaHost,
   ProducerEngine,
   type ProposeResult,
-} from '@nema/producer';
-import { MATTER_OPTIONS, composeContent } from '@nema/provenance';
-import type { ModelInfo, Source } from '@nema/schema';
+} from '@getnema/producer';
+import { MATTER_OPTIONS, composeContent } from '@getnema/provenance';
+import type { ModelInfo, Source } from '@getnema/schema';
 import matter from 'gray-matter';
 
 export interface NemaToolsConfig {

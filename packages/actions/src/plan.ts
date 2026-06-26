@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { relative, resolve } from 'node:path';
-import type { Page } from '@nema/core';
+import type { Page } from '@getnema/core';
 
 /**
  * Map a repo-relative changed file to a content route path, or `null` if it is

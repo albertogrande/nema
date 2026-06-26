@@ -1,6 +1,6 @@
 ---
-"@nema/producer": minor
-"@nema/actions": patch
+"@getnema/producer": minor
+"@getnema/actions": patch
 ---
 
 Harden the approval gate: merge promotions through branch protection instead of `gh pr merge --admin`.

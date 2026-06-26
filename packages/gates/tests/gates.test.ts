@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { fileURLToPath } from 'node:url';
-import { type ResolvedConfig, contentSourceFromConfig } from '@nema/core';
+import { type ResolvedConfig, contentSourceFromConfig } from '@getnema/core';
 import { describe, expect, it } from 'vitest';
 import { createGateContext, formatGateResult, runGates } from '../src/index.js';
 

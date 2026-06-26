@@ -4,7 +4,7 @@ import {
   createFsGitState,
   formatGateResult,
   formatGateResultJson,
-} from '@nema/gates';
+} from '@getnema/gates';
 import { defineCommand } from 'citty';
 import { out } from '../util.js';
 

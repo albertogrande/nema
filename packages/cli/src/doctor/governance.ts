@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { type ResolvedConfig, resolveConfig } from '@nema/core';
-import { run } from '@nema/producer';
-import { CONTENT_MODEL, type ContentModel, ContentModelSchema } from '@nema/schema';
+import { type ResolvedConfig, resolveConfig } from '@getnema/core';
+import { run } from '@getnema/producer';
+import { CONTENT_MODEL, type ContentModel, ContentModelSchema } from '@getnema/schema';
 import { load } from 'js-yaml';
 import type { Check } from './types.js';
 

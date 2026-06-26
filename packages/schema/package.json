@@ -1,5 +1,5 @@
 {
-  "name": "@nema/schema",
+  "name": "@getnema/schema",
   "version": "0.1.0-alpha.0",
   "description": "Nema SSOT content model + Zod schema + provenance shapes",
   "license": "Apache-2.0",

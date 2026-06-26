@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync } from 'node:fs';
-import { LocalGitHost } from '@nema/producer';
+import { LocalGitHost } from '@getnema/producer';
 import { defineCommand } from 'citty';
 import { errOut, makeEngine, out } from '../util.js';
 

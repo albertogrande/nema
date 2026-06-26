@@ -1,6 +1,6 @@
 import { getSource } from '@/lib/source';
 // SPDX-License-Identifier: Apache-2.0
-import { provenanceBadgeProps } from '@nema/adapter-fumadocs';
+import { provenanceBadgeProps } from '@getnema/adapter-fumadocs';
 import Link from 'next/link';
 
 /** Render the commit/PR reference on a transition, if any. */

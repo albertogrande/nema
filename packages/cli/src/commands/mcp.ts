@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { startHttpServer, startStdioServer } from '@nema/mcp';
+import { startHttpServer, startStdioServer } from '@getnema/mcp';
 import { defineCommand } from 'citty';
 
 export const mcpCommand = defineCommand({
