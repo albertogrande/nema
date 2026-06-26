@@ -40,5 +40,9 @@ jobs:
           version: pnpm changeset version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # changesets/action only uses token-based publishing when it finds an env
+          # var literally named NPM_TOKEN; without it, it falls back to OIDC trusted
+          # publishing, which is not configured for these (first-publish) packages.
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: "true"
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
