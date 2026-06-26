@@ -27,6 +27,9 @@ export function formatDraftResult(res: DraftResult): string {
   if (res.ok) {
     return `${head}\n✓ nema check passed for this page. You can now propose_changes.`;
   }
-  const lines = res.diagnostics.map((d) => `  ✗ [${d.rule}] ${d.message}`);
-  return `${head}\nforge check found issues to fix before proposing:\n${lines.join('\n')}`;
+  const lines = res.diagnostics.flatMap((d) => {
+    const row = `  ✗ [${d.rule}] ${d.message}`;
+    return d.hint ? [row, `      help: ${d.hint}`] : [row];
+  });
+  return `${head}\nnema check found issues to fix before proposing:\n${lines.join('\n')}`;
 }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { type ContentSource, type NemaConfig, createContentSource } from '@nema/core';
 import { CONTENT_MODEL, type ContentModel } from '@nema/schema';
+import { RULE_CATALOG } from './catalog.js';
 import { draftNotReviewedRules } from './rules/draft-not-reviewed.js';
 import { footnoteRules } from './rules/footnotes.js';
 import { freshnessRules } from './rules/freshness.js';
@@ -41,14 +42,34 @@ export function createGateContext(source: ContentSource, opts: GateOptions = {})
   };
 }
 
+/**
+ * A check over an empty corpus passes only vacuously — almost always a wrong
+ * path or `contentDir`. Surface it as a warning instead of a silent green.
+ */
+function emptyCorpusDiagnostic(): Diagnostic {
+  return {
+    rule: 'empty-corpus',
+    severity: 'warning',
+    path: '(corpus)',
+    message: 'no pages found under the content directory',
+  };
+}
+
+/** Attach the catalog's remediation hint to any diagnostic that lacks one. */
+function withHints(diagnostics: Diagnostic[]): Diagnostic[] {
+  return diagnostics.map((d) => (d.hint ? d : { ...d, hint: RULE_CATALOG[d.rule]?.hint }));
+}
+
 /** Run a set of rules over a context and aggregate diagnostics. */
 export function runGates(ctx: GateContext, rules: Rule[] = ALL_RULES): GateResult {
-  const diagnostics = rules
-    .flatMap((rule) => rule(ctx))
-    .sort((a, b) => a.path.localeCompare(b.path) || a.rule.localeCompare(b.rule));
+  const raw =
+    ctx.pages.length === 0 ? [emptyCorpusDiagnostic()] : rules.flatMap((rule) => rule(ctx));
+  const diagnostics = withHints(raw).sort(
+    (a, b) => a.path.localeCompare(b.path) || a.rule.localeCompare(b.rule),
+  );
   const errorCount = diagnostics.filter((d) => d.severity === 'error').length;
   const warningCount = diagnostics.filter((d) => d.severity === 'warning').length;
-  return { diagnostics, errorCount, warningCount, ok: errorCount === 0 };
+  return { diagnostics, errorCount, warningCount, ok: errorCount === 0, checked: ctx.pages.length };
 }
 
 /** Convenience: load a repo's content and run all gates against it. */

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+export * from './catalog.js';
 export * from './engine.js';
 export * from './format.js';
 export * from './markdown.js';

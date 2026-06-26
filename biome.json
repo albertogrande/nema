@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["dist", "node_modules", ".turbo", "coverage", "**/*.md"]
+    "ignore": ["dist", "node_modules", ".turbo", "coverage", "**/*.md", "**/.claude/worktrees"]
   },
   "organizeImports": {
     "enabled": true

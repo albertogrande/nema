@@ -27,6 +27,7 @@ cd nema && pnpm install && pnpm build
 # put `nema` on your PATH for this shell:
 alias nema="node $(pwd)/packages/cli/dist/index.js"
 nema --help
+nema doctor          # verify Node, git, gh + auth, and your config are good to go
 ```
 
 ## 2. Onboard your existing docs — `nema migrate`
@@ -56,12 +57,15 @@ Migrated 34 page(s); skipped 0 (already have provenance).
   + foundations/positioning [reviewed] — Positioning for developers
   ...
 Running nema check on the migrated corpus…
-nema check — 1 error(s), 0 warning(s)
+nema check — 1 error(s), 0 warning(s) · 34 pages
   ✗ [links-resolve] foundations/content-model: broken internal link -> ../missing.md
+      help: Fix the link path, or create the page it points to.
+
+Run `nema explain <rule>` for why a gate fires and how to fix it.
 ```
 
-That one finding is a *real* broken link in your content — Nema just surfaced it. Fix what it
-reports, re-run `nema check`, and your corpus is green.
+That one finding is a *real* broken link in your content — Nema just surfaced it, with a hint on
+how to fix it. Fix what it reports, re-run `nema check`, and your corpus is green.
 
 Options: `--status draft|reviewed` (default `reviewed` for status-less pages — existing statuses
 are always kept), `--reviewer <login>`, `--sla-days N`. `migrate` is idempotent: pages that
@@ -70,7 +74,9 @@ already have provenance are skipped, so it's safe to re-run.
 ## 3. See what you've got
 
 ```bash
-nema check /path/to/your-docs                          # all gates
+nema check /path/to/your-docs                          # all gates (with fix hints)
+nema check /path/to/your-docs --json                   # same gates, machine-readable (CI / agents)
+nema explain reachability                              # what a gate checks + how to fix it
 nema prov /path/to/your-docs --status reviewed         # the provenance chain, per page
 nema prov /path/to/your-docs --filter authored_by=ai   # everything an agent wrote
 ```
