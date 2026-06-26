@@ -1,6 +1,6 @@
 {
   "name": "@getnema/actions",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Nema composite GitHub Actions: gate, approval→flip, freshness",
   "license": "Apache-2.0",
@@ -13,7 +13,12 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist", "check", "approve", "freshness"],
+  "files": [
+    "dist",
+    "check",
+    "approve",
+    "freshness"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",

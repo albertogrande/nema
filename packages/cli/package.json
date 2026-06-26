@@ -1,6 +1,6 @@
 {
   "name": "nema",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "description": "Nema CLI — the `nema` binary (init/check/draft/open-pr/approve/prov/mcp)",
   "license": "Apache-2.0",
   "type": "module",
@@ -14,7 +14,15 @@
   "bugs": {
     "url": "https://github.com/albertogrande/nema/issues"
   },
-  "keywords": ["documentation", "docs-as-code", "ai", "agents", "provenance", "mcp", "cli"],
+  "keywords": [
+    "documentation",
+    "docs-as-code",
+    "ai",
+    "agents",
+    "provenance",
+    "mcp",
+    "cli"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -22,7 +30,9 @@
   "bin": {
     "nema": "./dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",

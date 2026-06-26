@@ -1,6 +1,6 @@
 {
   "name": "@getnema/schema",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "description": "Nema SSOT content model + Zod schema + provenance shapes",
   "license": "Apache-2.0",
   "type": "module",
@@ -14,7 +14,14 @@
   "bugs": {
     "url": "https://github.com/albertogrande/nema/issues"
   },
-  "keywords": ["documentation", "docs-as-code", "ai", "agents", "provenance", "mcp"],
+  "keywords": [
+    "documentation",
+    "docs-as-code",
+    "ai",
+    "agents",
+    "provenance",
+    "mcp"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -28,7 +35,10 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist", "content-model.json"],
+  "files": [
+    "dist",
+    "content-model.json"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",

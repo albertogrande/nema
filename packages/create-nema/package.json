@@ -1,6 +1,6 @@
 {
   "name": "create-nema",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0",
   "description": "Scaffold a new Nema-governed documentation repo",
   "license": "Apache-2.0",
   "author": "Alberto Grande",
@@ -13,12 +13,21 @@
   "bugs": {
     "url": "https://github.com/albertogrande/nema/issues"
   },
-  "keywords": ["documentation", "docs-as-code", "ai", "agents", "provenance", "scaffold"],
+  "keywords": [
+    "documentation",
+    "docs-as-code",
+    "ai",
+    "agents",
+    "provenance",
+    "scaffold"
+  ],
   "type": "module",
   "bin": {
     "create-nema": "./dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
