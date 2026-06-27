@@ -38,6 +38,8 @@ export interface NemaHost {
   createBranch(name: string): Promise<void>;
   checkout(name: string): Promise<void>;
   stage(paths: string[]): Promise<void>;
+  /** Whether the index has staged changes to commit (false ⇒ working tree clean). */
+  hasStagedChanges(): Promise<boolean>;
   commit(message: string, opts?: CommitOptions): Promise<string>;
   push(branch: string, opts?: { setUpstream?: boolean }): Promise<void>;
   createPullRequest(input: CreatePullRequestInput): Promise<PullRequestRef>;
@@ -61,6 +63,7 @@ export class LocalGitHost implements NemaHost {
   createBranch = (name: string) => this.git.createBranch(name);
   checkout = (name: string) => this.git.checkout(name);
   stage = (paths: string[]) => this.git.stage(paths);
+  hasStagedChanges = () => this.git.hasStagedChanges();
   commit = (message: string, opts?: CommitOptions) => this.git.commit(message, opts);
   push = (branch: string, opts?: { setUpstream?: boolean }) => this.git.push(branch, opts);
 

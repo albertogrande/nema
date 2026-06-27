@@ -23,6 +23,7 @@ class FakeHost implements NemaHost {
   createBranch = async () => {};
   checkout = async () => {};
   stage = async () => {};
+  hasStagedChanges = async () => true;
   commit = async (_m: string, _o?: CommitOptions) => 'b'.repeat(40);
   push = async () => {};
   createPullRequest = async (_i: CreatePullRequestInput): Promise<PullRequestRef> => ({

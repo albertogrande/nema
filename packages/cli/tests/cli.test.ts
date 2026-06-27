@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runCommand } from 'citty';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { preconditionHint } from '../src/commands/open-pr.js';
 import { main } from '../src/main.js';
 
 let rootDir: string;
@@ -79,6 +80,88 @@ describe('nema draft + prov', () => {
     expect(prov).toContain('model claude-opus-4-8/anthropic');
     expect(prov).toContain('draft');
     expect(prov).not.toContain('reviewed_by');
+  });
+});
+
+describe('nema draft without --model-* flags', () => {
+  it('defaults to authored_by: human so the page is valid (no model required)', async () => {
+    await nema('init', rootDir);
+    const draft = await nema(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'guide/manual',
+      '--title',
+      'Manual',
+      '--body',
+      'Hand-written. See [home](/index).',
+      '--diataxis',
+      'how-to',
+    );
+    expect(draft).toContain('Drafted guide/manual');
+    // No provenance-consistency error: a human draft does not require a model.
+    expect(draft).not.toContain('provenance-consistency');
+
+    const prov = await nema('prov', 'guide/manual', '--dir', rootDir);
+    expect(prov).toContain('authored_by: human');
+  });
+});
+
+describe('open-pr precondition hints (no stack traces)', () => {
+  it('teaches when there is no git repository', () => {
+    const hint = preconditionHint(
+      '`git rev-parse HEAD` failed: fatal: not a git repository (or any of the parent directories): .git',
+    );
+    expect(hint).toContain('git init');
+  });
+
+  it('teaches when the repo has no commits yet', () => {
+    const hint = preconditionHint(
+      "`git rev-parse HEAD` failed: fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.",
+    );
+    expect(hint).toContain('first commit');
+  });
+
+  it('teaches when there is no reachable origin remote', () => {
+    const hint = preconditionHint(
+      "`git push -u origin nema/draft/x` failed: fatal: 'origin' does not appear to be a git repository",
+    );
+    expect(hint).toContain('git remote add origin');
+  });
+
+  it('teaches when gh is missing or unauthenticated', () => {
+    expect(preconditionHint('`gh pr create --title x` failed: spawn gh ENOENT')).toContain(
+      'gh auth login',
+    );
+    expect(preconditionHint('`gh pr create --title x` failed: gh auth login required')).toContain(
+      'gh auth login',
+    );
+  });
+
+  it('returns null for unrelated errors (lets them surface)', () => {
+    expect(preconditionHint('something completely unrelated')).toBeNull();
+  });
+
+  it('emits a help: hint instead of a stack trace when run with no git', async () => {
+    await nema('init', rootDir);
+    await nema(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'guide/x',
+      '--title',
+      'X',
+      '--body',
+      'Body with [home](/index).',
+      '--diataxis',
+      'how-to',
+    );
+    await nema('open-pr', '--dir', rootDir, '--title', 'Add X', '--summary', 'summary');
+    expect(capturedErr).toContain('help:');
+    expect(capturedErr).not.toContain('    at '); // no stack frames
+    expect(process.exitCode).toBe(1);
   });
 });
 

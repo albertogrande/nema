@@ -34,9 +34,12 @@ class FakeHost implements NemaHost {
   checkout = async (name: string) => {
     this.branch = name;
   };
+  /** When false, simulate an already-committed (clean) working tree. */
+  staged_pending = true;
   stage = async (paths: string[]) => {
     this.staged.push(...paths);
   };
+  hasStagedChanges = async () => this.staged_pending;
   commit = async (message: string, opts?: CommitOptions) => {
     this.commits.push({ message, opts });
     return 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
@@ -114,6 +117,29 @@ describe('proposeChanges', () => {
     const commit = host.commits[0];
     expect(commit?.opts?.signoff).toBe(true);
     expect(commit?.opts?.trailers?.['Nema-Provenance']).toContain('authored_by=ai');
+  });
+
+  it('skips the commit and carries HEAD when the draft is already committed (clean tree)', async () => {
+    const { rootDir, contentRoot } = newRepo();
+    const host = new FakeHost();
+    host.staged_pending = false; // working tree clean: nothing to commit
+    const engine = new ProducerEngine({ rootDir, contentRoot, host, clock: CLOCK });
+    await engine.draftPage({
+      path: 'index',
+      title: 'Home',
+      body: 'Welcome.',
+      model: { name: 'claude-opus-4-8' },
+    });
+    const res = await engine.proposeChanges({
+      paths: ['index'],
+      title: 'docs: add home page',
+      summary: 'Initial home page.',
+    });
+    // No empty commit was attempted; the existing HEAD is carried onto the PR.
+    expect(host.commits).toEqual([]);
+    expect(res.commit).toBe(await host.headSha());
+    expect(host.pushed).toContain(res.branch);
+    expect(res.pullRequest.number).toBe(42);
   });
 });
 

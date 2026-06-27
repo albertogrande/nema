@@ -141,10 +141,18 @@ export class ProducerEngine {
     await host.createBranch(branch);
     await host.stage(input.paths.map((p) => this.filePathFor(p)));
 
-    const prov = readProvenance(this.filePathFor(primary));
-    const trailers: Record<string, string> = {};
-    if (prov) trailers[PROVENANCE_TRAILER_KEY] = formatProvenanceTrailer(prov);
-    const commit = await host.commit(input.title, { signoff: true, trailers });
+    // The draft may already be committed (clean working tree). In that case there
+    // is nothing to stage, so don't try to make an empty commit — carry the
+    // existing HEAD onto the branch instead of dying with "nothing to commit".
+    let commit: string;
+    if (await host.hasStagedChanges()) {
+      const prov = readProvenance(this.filePathFor(primary));
+      const trailers: Record<string, string> = {};
+      if (prov) trailers[PROVENANCE_TRAILER_KEY] = formatProvenanceTrailer(prov);
+      commit = await host.commit(input.title, { signoff: true, trailers });
+    } else {
+      commit = await host.headSha();
+    }
 
     await host.push(branch, { setUpstream: true });
 
