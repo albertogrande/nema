@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { createContentSource } from '@getnema/core';
-import type { LabeledCorpus } from '@getnema/gates';
+import { type Diagnostic, type LabeledCorpus, runCoherenceGate } from '@getnema/gates';
 import { run } from './exec.js';
 
 /**
@@ -74,4 +74,39 @@ export async function listDraftBranches(rootDir: string): Promise<string[]> {
     out.push(ref); // keep the resolvable ref (may be origin/-prefixed)
   }
   return out;
+}
+
+/**
+ * Pre-flight a `propose_changes` / `open-pr`: would the working tree's pages collide
+ * with a page another open `nema/draft/*` branch is already authoring? Best-effort and
+ * non-blocking — returns `[]` when there's nothing to compare against (the common
+ * single-agent case) or when git isn't available, so it never derails proposing. The
+ * caller surfaces any returned collisions as a warning and proceeds.
+ */
+export async function precheckProposeCoherence(
+  rootDir: string,
+  opts: { base?: string } = {},
+): Promise<Diagnostic[]> {
+  try {
+    const branches = await listDraftBranches(rootDir);
+    let current = '';
+    try {
+      current = (await run('git', ['rev-parse', '--abbrev-ref', 'HEAD'], rootDir)).stdout.trim();
+    } catch {
+      /* detached / no commits — leave current empty */
+    }
+    const others = branches.filter((b) => b.replace(/^origin\//, '') !== current);
+    if (others.length === 0) return []; // nothing concurrent to collide with
+
+    const base = await loadCorpusAtRef(rootDir, opts.base ?? 'main');
+    const working = await loadCorpusFromDir(rootDir, 'your working tree');
+    const otherCorpora = await Promise.all(others.map((b) => loadCorpusAtRef(rootDir, b)));
+    const result = runCoherenceGate([working, ...otherCorpora], { base });
+    const workingPaths = new Set(working.pages.map((p) => p.path));
+    return result.diagnostics.filter(
+      (d) => d.rule === 'slot-collision' && workingPaths.has(d.path),
+    );
+  } catch {
+    return []; // best-effort: a pre-check failure must never block a proposal
+  }
 }

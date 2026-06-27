@@ -21,6 +21,7 @@ import {
   acquireLease,
   listDraftBranches,
   loadCorpusAtRef,
+  precheckProposeCoherence,
   readLease,
   releaseLease,
 } from '@getnema/producer';
@@ -233,6 +234,17 @@ export class NemaTools {
 
     writeFileSync(filePath, composeContent(fm, input.body ?? content), 'utf8');
     return { filePath, result: await this.check() };
+  }
+
+  /**
+   * Non-blocking pre-flight for {@link proposeChanges}: pages the working tree
+   * changed that another open draft branch is already authoring (a merge-time
+   * `slot-collision` waiting to happen). Best-effort — empty when nothing is
+   * concurrent. The server surfaces these as a warning; it never blocks the propose.
+   */
+  async proposeCoherenceWarnings(): Promise<string[]> {
+    const collisions = await precheckProposeCoherence(this.cfg.rootDir);
+    return collisions.map((c) => `${c.path}: ${c.message}`);
   }
 
   async proposeChanges(input: ProposeInput): Promise<ProposeResult> {

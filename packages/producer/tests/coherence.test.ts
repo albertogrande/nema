@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runCoherenceGate } from '@getnema/gates';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { listDraftBranches, loadCorpusAtRef } from '../src/index.js';
+import { listDraftBranches, loadCorpusAtRef, precheckProposeCoherence } from '../src/index.js';
 
 let repo: string;
 const git = (...args: string[]): void => {
@@ -95,5 +95,24 @@ describe('producer coherence helpers (real git)', () => {
       result.diagnostics.some((d) => d.rule === 'slot-collision' && d.path === 'api/options'),
     ).toBe(true);
     expect(result.ok).toBe(false);
+  });
+
+  it('precheck warns when the working tree collides with an open draft branch', async () => {
+    // Another agent already proposed api/options on its own branch.
+    git('checkout', '-q', '-b', 'nema/draft/other');
+    write('api/options.md', page('Options', 'other agent wrote this. Back [home](/index).'));
+    git('add', '-A');
+    git('commit', '-qm', 'other: api/options');
+    git('checkout', '-q', 'main');
+    // Our working tree (uncommitted) authors the same page differently.
+    write('api/options.md', page('Options', 'WE wrote something else. Back [home](/index).'));
+
+    const collisions = await precheckProposeCoherence(repo);
+    expect(collisions.some((d) => d.path === 'api/options')).toBe(true);
+  });
+
+  it('precheck is silent (empty) when there are no other draft branches', async () => {
+    write('api/options.md', page('Options', 'Back [home](/index).'));
+    expect(await precheckProposeCoherence(repo)).toEqual([]);
   });
 });

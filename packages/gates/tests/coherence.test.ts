@@ -164,6 +164,33 @@ describe('merge-time coherence gate', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('notes a rename when one branch moves a page another branch still links', () => {
+    const oldContent = page('Reference', 'Back [home](/index).');
+    const base = corpus('base', {
+      index: page('Home', 'See [guide](/guide) and [ref](/reference).'),
+      guide: page('Guide', 'Back [home](/index).'),
+      reference: oldContent,
+    });
+    // Branch A moves reference -> api/reference (same content) and updates its own link.
+    const a = corpus('feat-a', {
+      index: page('Home', 'See [guide](/guide) and [ref](/api/reference).'),
+      guide: page('Guide', 'Back [home](/index).'),
+      'api/reference': oldContent,
+    });
+    // Branch B doesn't know about the move and adds a link to the OLD path from guide.
+    const b = corpus('feat-b', {
+      index: page('Home', 'See [guide](/guide) and [ref](/reference).'),
+      guide: page('Guide', 'See [the reference](/reference). Back [home](/index).'),
+      reference: oldContent,
+    });
+    const result = runCoherenceGate([a, b], { base, today: TODAY });
+    const broken = result.diagnostics.filter((d) => d.rule === 'merge-coherence');
+    expect(broken.length, JSON.stringify(result.diagnostics)).toBeGreaterThan(0);
+    expect(broken.some((d) => /renamed to '\/api\/reference' on feat-a/.test(d.message))).toBe(
+      true,
+    );
+  });
+
   it('flags an edit/delete conflict', () => {
     const base = corpus('base', {
       index: page('Home', '[Doc](/doc).'),

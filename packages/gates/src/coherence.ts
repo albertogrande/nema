@@ -60,12 +60,23 @@ export interface PageConflict {
   representative: Page;
 }
 
+/** A page one branch moved: same content, new route. Used to enrich a merge-broken
+ * link into the *old* route with "it was renamed to X" instead of a bare dead link. */
+export interface Rename {
+  from: string;
+  to: string;
+  /** The branch that performed the move. */
+  branch: string;
+}
+
 export interface MergeResult {
   /** The integrated corpus, with conflicting pages omitted (so downstream link
    * checks surface the resulting holes). File paths are normalized to a virtual
    * root so file-relative links resolve across branches. */
   merged: Page[];
   conflicts: PageConflict[];
+  /** Renames (delete-old + add-new-with-same-content) detected per branch. */
+  renames: Rename[];
 }
 
 /** A virtual, fs-free content root so file-relative links resolve in the union. */
@@ -108,6 +119,25 @@ export function mergeCorpora(corpora: LabeledCorpus[], base?: LabeledCorpus): Me
   for (const [path, page] of basePages) baseSig.set(path, contentSignature(page));
 
   const corpusMaps = corpora.map((c) => ({ label: c.label, map: byPath(c.pages) }));
+
+  // Detect per-branch renames: a baseline page a branch removed, re-appearing under
+  // a new route with identical content. Lets the gate point a now-dead link at the
+  // new home instead of just flagging it broken.
+  const renames: Rename[] = [];
+  for (const { label, map } of corpusMaps) {
+    const removed = [...basePages.keys()].filter((p) => !map.has(p));
+    const added = [...map.keys()].filter((p) => !basePages.has(p));
+    const claimed = new Set<string>();
+    for (const from of removed) {
+      const to = added.find(
+        (a) => !claimed.has(a) && contentSignature(map.get(a)!) === baseSig.get(from),
+      );
+      if (to) {
+        claimed.add(to);
+        renames.push({ from, to, branch: label });
+      }
+    }
+  }
 
   const allPaths = new Set<string>(basePages.keys());
   for (const c of corpusMaps) for (const path of c.map.keys()) allPaths.add(path);
@@ -198,7 +228,7 @@ export function mergeCorpora(corpora: LabeledCorpus[], base?: LabeledCorpus): Me
   }
 
   merged.sort((a, b) => a.path.localeCompare(b.path));
-  return { merged, conflicts };
+  return { merged, conflicts, renames };
 }
 
 /** Build the gate context for the merged doc-graph (virtual root, base config). */
@@ -240,8 +270,25 @@ export function runCoherenceGate(
   corpora: LabeledCorpus[],
   options: CoherenceOptions = {},
 ): GateResult {
-  const { merged, conflicts } = mergeCorpora(corpora, options.base);
+  const { merged, conflicts, renames } = mergeCorpora(corpora, options.base);
   const raw: Diagnostic[] = [];
+
+  // Index renames by the *old* route so a broken link into it can name the new home.
+  const renamedFrom = new Map(renames.map((r) => [r.from, r]));
+  const renameNote = (message: string): string => {
+    const arrow = message.lastIndexOf('-> ');
+    if (arrow === -1) return message;
+    const target = message
+      .slice(arrow + 3)
+      .trim()
+      .replace(/#.*$/, '')
+      .replace(/^\//, '')
+      .replace(/\.md$/, '');
+    const r = renamedFrom.get(target);
+    return r
+      ? `${message} — '/${r.from}' was renamed to '/${r.to}' on ${r.branch}; update the link`
+      : message;
+  };
 
   for (const c of conflicts) {
     raw.push({
@@ -267,7 +314,7 @@ export function runCoherenceGate(
       rule: 'merge-coherence',
       severity: 'error',
       path: d.path,
-      message: `merged doc-graph broken — ${d.message}`,
+      message: renameNote(`merged doc-graph broken — ${d.message}`),
     });
   }
 

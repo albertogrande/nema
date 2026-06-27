@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { GitHubHost } from '@getnema/producer';
+import { GitHubHost, precheckProposeCoherence } from '@getnema/producer';
 import { defineCommand } from 'citty';
 import { draftPaths, errOut, makeEngine, out } from '../util.js';
 
@@ -74,6 +74,17 @@ export const openPrCommand = defineCommand({
       process.exitCode = 1;
       return;
     }
+    // Non-blocking pre-flight: warn if another open draft branch is already authoring
+    // one of these pages, so the collision is caught here rather than at merge time.
+    const collisions = await precheckProposeCoherence(rootDir, {
+      base: args.base ? String(args.base) : undefined,
+    });
+    if (collisions.length > 0) {
+      errOut('⚠ coherence: another open draft branch is already authoring page(s) you changed:');
+      for (const c of collisions) errOut(`    ${c.path}: ${c.message}`);
+      errOut('  Proceeding anyway — `nema claim <path> --agent <id>` reserves a page up front.');
+    }
+
     const engine = await makeEngine(rootDir, new GitHubHost(rootDir));
     try {
       const res = await engine.proposeChanges({

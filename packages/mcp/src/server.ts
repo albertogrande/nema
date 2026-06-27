@@ -239,9 +239,16 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
     },
     async (input) => {
       try {
+        const warnings = await tools.proposeCoherenceWarnings();
         const r = await tools.proposeChanges(input);
+        const warnBlock =
+          warnings.length > 0
+            ? '⚠ coherence: another open draft branch is already authoring:\n' +
+              warnings.map((w) => `    ${w}`).join('\n') +
+              '\n  Claim the slot (claim_slot) up front to avoid a merge-time collision.\n\n'
+            : '';
         return text(
-          `Opened ${r.pullRequest.url} (branch ${r.branch}, commit ${r.commit.slice(0, 7)}). ` +
+          `${warnBlock}Opened ${r.pullRequest.url} (branch ${r.branch}, commit ${r.commit.slice(0, 7)}). ` +
             'A human must approve the PR — agents cannot self-approve.',
         );
       } catch (e) {
