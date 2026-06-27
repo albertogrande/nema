@@ -84,6 +84,15 @@ describe('write tools', () => {
     expect(pages.find((p) => p.path === 'index')?.status).toBe('draft');
   });
 
+  it('draft_page rejects an empty body (parity with the CLI guard)', async () => {
+    await expect(tools.draftPage({ path: 'empty', title: 'Empty', body: '' })).rejects.toThrow(
+      /body is required/,
+    );
+    await expect(
+      tools.draftPage({ path: 'blank', title: 'Blank', body: '   \n\t' }),
+    ).rejects.toThrow(/body is required/);
+  });
+
   it('update_page refuses to set status: reviewed', async () => {
     await expect(
       tools.updatePage({ path: 'index', frontmatter: { status: 'reviewed' } }),

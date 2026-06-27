@@ -47,6 +47,21 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
 
+  smoke-publish:
+    name: smoke (publish artifacts → day-1 app)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Pack real tarballs and run a stranger's full flow (scaffold --app → install →
+      # next build) against them — proves the publish candidates render with no clone.
+      - run: pnpm smoke
+
   reuse:
     name: reuse (license) compliance
     runs-on: ubuntu-latest

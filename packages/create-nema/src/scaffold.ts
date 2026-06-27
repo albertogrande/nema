@@ -21,7 +21,7 @@ export function scaffold(opts: ScaffoldOptions): ScaffoldResult {
   const dir = resolve(opts.target);
   const created: string[] = [];
   const skipped: string[] = [];
-  for (const [rel, content] of Object.entries(templates({ name: opts.name }))) {
+  for (const [rel, content] of Object.entries(templates({ name: opts.name, app: opts.app }))) {
     const abs = join(dir, rel);
     if (existsSync(abs) && !opts.force) {
       skipped.push(rel);

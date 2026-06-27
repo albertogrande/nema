@@ -3,6 +3,12 @@
 export interface TemplateOptions {
   /** Project name, written into the scaffolded package.json. */
   name: string;
+  /**
+   * Also emit a rendering Fumadocs app (Next.js) so day-1 `npm run dev` opens a
+   * browser on a badged, rendered page. When false (default) the scaffold is the
+   * minimal checkable producer-loop repo.
+   */
+  app?: boolean;
 }
 
 /**
@@ -10,8 +16,18 @@ export interface TemplateOptions {
  * published packages. Pure: returns a `path → content` map with no I/O, so it is
  * trivially testable. The generated `nema check` workflow is the load-bearing
  * piece: its `draft-pages-not-reviewed` gate makes self-promotion impossible.
+ *
+ * With `app: true` the map is the superset that also renders: a minimal Next +
+ * Fumadocs app wired to `@getnema/adapter-fumadocs`, mirroring the `apps/docs`
+ * dogfood tree on the *published* packages (no source build, no `workspace:*`).
  */
 export function templates(opts: TemplateOptions): Record<string, string> {
+  const base = baseTemplates(opts);
+  return opts.app ? { ...base, ...appTemplates(opts) } : base;
+}
+
+/** The minimal checkable producer-loop repo (no renderer). */
+function baseTemplates(opts: TemplateOptions): Record<string, string> {
   const pkg = {
     name: opts.name,
     version: '0.0.0',
@@ -29,44 +45,10 @@ export function templates(opts: TemplateOptions): Record<string, string> {
   };
 
   return {
-    'nema.config.ts': `// SPDX-License-Identifier: Apache-2.0
-import type { NemaConfig } from '@getnema/core';
-
-const config: NemaConfig = {
-  contentDir: 'docs',
-  reviewSlaDays: 180,
-};
-
-export default config;
-`,
-    'docs/index.md': `---
-title: Home
-status: draft
----
-
-# Home
-
-Welcome to your Nema docs. Draft new pages through the producer loop:
-\`nema draft\` (or the MCP write-tools) → \`nema open-pr\` → human approval.
-`,
+    'nema.config.ts': NEMA_CONFIG,
+    'docs/index.md': DOCS_INDEX,
     'package.json': `${JSON.stringify(pkg, null, 2)}\n`,
-    '.github/workflows/nema-check.yml': `# SPDX-License-Identifier: Apache-2.0
-name: nema check
-on:
-  pull_request:
-  push:
-    branches: [main]
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm install
-      - run: npm run check
-`,
+    '.github/workflows/nema-check.yml': NEMA_CHECK_WORKFLOW,
     '.gitignore': 'node_modules\n',
     'README.md': `# ${opts.name}
 
@@ -93,7 +75,7 @@ npm run check          # run the gates
 Point an MCP-capable agent at this repo:
 
 \`\`\`sh
-claude mcp add nema -- npx -y nema mcp .
+claude mcp add nema -- npx -y @getnema/cli mcp .
 \`\`\`
 
 The agent can list, search, read, and **draft** pages — but it cannot promote a page to
@@ -101,3 +83,506 @@ The agent can list, search, read, and **draft** pages — but it cannot promote 
 `,
   };
 }
+
+/**
+ * The additional / overriding files for a rendering app. Mirrors `apps/docs`,
+ * but on the published packages and with `dev`/`build`/`start` scripts so a
+ * stranger lands on `localhost:3000` with no source build.
+ */
+function appTemplates(opts: TemplateOptions): Record<string, string> {
+  const pkg = {
+    name: opts.name,
+    version: '0.0.0',
+    private: true,
+    type: 'module',
+    scripts: {
+      dev: 'next dev',
+      build: 'next build',
+      start: 'next start',
+      check: 'nema check',
+      draft: 'nema draft',
+      'open-pr': 'nema open-pr',
+    },
+    dependencies: {
+      '@getnema/adapter-fumadocs': '^0.1.0',
+      '@getnema/core': '^0.1.0',
+      '@getnema/schema': '^0.1.0',
+      'fumadocs-core': '^15.8.5',
+      'fumadocs-ui': '^15.8.5',
+      marked: '^14.1.4',
+      next: '^15.1.3',
+      react: '^19.0.0',
+      'react-dom': '^19.0.0',
+    },
+    devDependencies: {
+      '@getnema/cli': '^0.1.0',
+      '@tailwindcss/postcss': '^4.3.1',
+      '@types/node': '^22.10.2',
+      '@types/react': '^19.0.1',
+      '@types/react-dom': '^19.0.2',
+      tailwindcss: '^4.3.1',
+      typescript: '^5.7.2',
+    },
+  };
+
+  return {
+    'package.json': `${JSON.stringify(pkg, null, 2)}\n`,
+    '.gitignore': 'node_modules\n.next\nnext-env.d.ts\n',
+    'README.md': `# ${opts.name}
+
+An AI-native, self-hostable docs site, powered by [Nema](https://github.com/albertogrande/nema).
+Your agents draft pages, a human approves every one, provenance is native — and it renders through
+[Fumadocs](https://fumadocs.dev).
+
+## Day one
+
+\`\`\`sh
+npm install
+npm run dev            # → http://localhost:3000
+\`\`\`
+
+You land on a rendered page carrying an **"AI draft · pending review"** badge — proof the page was
+agent-authored and not yet human-approved. The \`/trust\` route is the provenance dashboard.
+
+## The producer loop
+
+1. An agent **drafts** a page — \`npm run draft\` or the MCP write-tools — writing \`status: draft\`
+   with a seeded provenance block, then self-checks against the gates.
+2. **Propose** — \`nema open-pr\` opens a PR labeled \`nema:draft\`.
+3. **CI** runs \`nema check\` — every gate, including \`draft-pages-not-reviewed\`, which makes it
+   impossible to publish an unreviewed page as trusted.
+4. **A human approves** the PR. That approval is the only path to \`reviewed\`.
+
+## Let your agents author it (MCP)
+
+\`\`\`sh
+claude mcp add nema -- npx -y @getnema/cli mcp .
+\`\`\`
+
+Agents can list, search, read, and **draft** pages — but cannot promote a page to \`reviewed\`.
+Only a human PR approval can.
+`,
+    'next.config.mjs': `// SPDX-License-Identifier: Apache-2.0
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  transpilePackages: [
+    '@getnema/core',
+    '@getnema/schema',
+    '@getnema/provenance',
+    '@getnema/adapter-fumadocs',
+  ],
+};
+
+export default nextConfig;
+`,
+    'postcss.config.mjs': `// SPDX-License-Identifier: Apache-2.0
+const config = {
+  plugins: {
+    '@tailwindcss/postcss': {},
+  },
+};
+
+export default config;
+`,
+    'tsconfig.json': `{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "preserve",
+    "strict": true,
+    "noEmit": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
+    "skipLibCheck": true,
+    "plugins": [{ "name": "next" }],
+    "paths": { "@/*": ["./*"] }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+`,
+    'next-env.d.ts': `/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+`,
+    'app/layout.tsx': `// SPDX-License-Identifier: Apache-2.0
+import { RootProvider } from 'fumadocs-ui/provider';
+import type { ReactNode } from 'react';
+import './globals.css';
+
+export const metadata = {
+  title: '${opts.name}',
+  description: 'An AI-native docs site authored through the Nema producer loop.',
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <RootProvider>{children}</RootProvider>
+      </body>
+    </html>
+  );
+}
+`,
+    'app/page.tsx': `// SPDX-License-Identifier: Apache-2.0
+import { redirect } from 'next/navigation';
+
+export default function Home() {
+  redirect('/docs');
+}
+`,
+    'app/globals.css': `/* SPDX-License-Identifier: Apache-2.0 */
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/* Nema provenance badge + trust dashboard. */
+.nema-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-fd-border);
+  margin-bottom: 1rem;
+}
+.nema-badge--reviewed {
+  background: #10301c;
+  border-color: #1f7a44;
+  color: #7ee2a8;
+}
+.nema-badge--ai {
+  background: #2a2410;
+  border-color: #7a6a1f;
+  color: #e2cf7e;
+}
+.nema-badge--draft {
+  background: #20242b;
+  color: var(--color-fd-muted-foreground);
+}
+
+.trust-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.trust-table th,
+.trust-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-fd-border);
+  font-size: 0.9rem;
+}
+.trust-table th {
+  color: var(--color-fd-muted-foreground);
+}
+`,
+    'app/docs/layout.tsx': `import { getPageTree } from '@/lib/tree';
+// SPDX-License-Identifier: Apache-2.0
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import type { ReactNode } from 'react';
+
+export default async function DocsRootLayout({ children }: { children: ReactNode }) {
+  const tree = await getPageTree();
+  return (
+    <DocsLayout tree={tree} nav={{ title: '${opts.name}' }} links={[{ text: 'Trust', url: '/trust' }]}>
+      {children}
+    </DocsLayout>
+  );
+}
+`,
+    'app/docs/[[...slug]]/page.tsx': `import { getSource, slugToPath } from '@/lib/source';
+// SPDX-License-Identifier: Apache-2.0
+import { ProvenanceBadge } from '@getnema/adapter-fumadocs';
+import { getTableOfContents } from 'fumadocs-core/server';
+import { DocsBody, DocsPage } from 'fumadocs-ui/page';
+import { marked } from 'marked';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+export async function generateStaticParams() {
+  const source = await getSource();
+  return source.pages.map((p) => ({ slug: p.path === 'index' ? [] : p.path.split('/') }));
+}
+
+export default async function DocPage({ params }: { params: Promise<{ slug?: string[] }> }) {
+  const { slug } = await params;
+  const source = await getSource();
+  const page = source.getPage(slugToPath(slug));
+  if (!page) notFound();
+
+  // renderMarkdown is the parity source (same bytes the .md route serves); the HTML
+  // and the table of contents are derived from it for the human-facing view.
+  const markdown = source.renderMarkdown(page);
+  const html = marked.parse(markdown, { async: false }) as string;
+  const toc = getTableOfContents(markdown);
+  const provenance = source.provenanceOf(page.path);
+
+  return (
+    <DocsPage toc={toc}>
+      <DocsBody>
+        <ProvenanceBadge provenance={provenance} />
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: trusted, gate-validated local Markdown */}
+        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <hr />
+        <p style={{ fontSize: '0.85rem', color: 'var(--color-fd-muted-foreground)' }}>
+          <Link href={\`/md/\${page.path}\`}>View raw Markdown (.md route)</Link>
+          {' · '}
+          <Link href="/trust">Provenance dashboard</Link>
+        </p>
+      </DocsBody>
+    </DocsPage>
+  );
+}
+`,
+    'app/trust/page.tsx': `import { getSource } from '@/lib/source';
+// SPDX-License-Identifier: Apache-2.0
+import { provenanceBadgeProps } from '@getnema/adapter-fumadocs';
+import Link from 'next/link';
+
+/** Render the commit/PR reference on a transition, if any. */
+function transitionRef(t: { pr?: number; commit?: string }): string {
+  if (t.pr != null) return \` (pr #\${t.pr})\`;
+  if (t.commit) return \` (\${t.commit.slice(0, 7)})\`;
+  return '';
+}
+
+export default async function TrustPage() {
+  const source = await getSource();
+  const rows = source.pages.map((page) => {
+    const prov = page.provenance ?? null;
+    return { page, prov, badge: provenanceBadgeProps(prov) };
+  });
+
+  return (
+    <main style={{ maxWidth: 920, margin: '0 auto', padding: '2.5rem 1.5rem' }}>
+      <h1>Provenance dashboard</h1>
+      <p style={{ color: 'var(--color-fd-muted-foreground)' }}>
+        Every page&rsquo;s authorship chain — who/what authored it, which model, and whether a human
+        has reviewed it — read straight from the provenance the gates validate.
+      </p>
+      <table className="trust-table">
+        <thead>
+          <tr>
+            <th>Page</th>
+            <th>Status</th>
+            <th>Authored by</th>
+            <th>Model</th>
+            <th>Reviewer</th>
+            <th>Review trail</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(({ page, prov, badge }) => (
+            <tr key={page.path}>
+              <td>
+                <Link href={page.path === 'index' ? '/docs' : \`/docs/\${page.path}\`}>
+                  {page.title}
+                </Link>
+              </td>
+              <td>
+                <span className={\`nema-badge nema-badge--\${badge.tone}\`}>{page.status || '—'}</span>
+              </td>
+              <td>{prov?.authored_by ?? '—'}</td>
+              <td>{prov?.model?.name ?? '—'}</td>
+              <td>{prov?.reviewed_by?.login ? \`@\${prov.reviewed_by.login}\` : '—'}</td>
+              <td>
+                {prov && prov.transitions.length > 0 ? (
+                  <details>
+                    <summary>
+                      {prov.transitions.length} event{prov.transitions.length === 1 ? '' : 's'}
+                    </summary>
+                    <ul style={{ margin: '0.4rem 0 0', paddingLeft: '1rem', fontSize: '0.8rem' }}>
+                      {prov.transitions.map((t) => (
+                        <li key={\`\${t.ts}-\${t.to}\`}>
+                          {t.ts.slice(0, 10)} → <strong>{t.to}</strong> by {t.by}
+                          {transitionRef(t)}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                ) : (
+                  '—'
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p style={{ marginTop: '2rem', fontSize: '0.85rem' }}>
+        <Link href="/docs">← Back to docs</Link>
+      </p>
+    </main>
+  );
+}
+`,
+    'app/api/search/route.ts': `import { getSource } from '@/lib/source';
+// SPDX-License-Identifier: Apache-2.0
+import type { SortedResult } from 'fumadocs-core/search';
+
+export const dynamic = 'force-dynamic';
+
+function docUrl(path: string): string {
+  return path === 'index' ? '/docs' : \`/docs/\${path}\`;
+}
+
+/**
+ * Reader-facing search: serves the Nema BM25 index (the same one the MCP
+ * \`search\` tool uses) in the shape Fumadocs' default search dialog expects, so
+ * the \`Cmd/Ctrl+K\` UI is backed by our engine rather than a duplicate index.
+ */
+export async function GET(request: Request): Promise<Response> {
+  const query = new URL(request.url).searchParams.get('query')?.trim() ?? '';
+  if (!query) {
+    return new Response('[]', { headers: { 'content-type': 'application/json; charset=utf-8' } });
+  }
+
+  const source = await getSource();
+  const results: SortedResult[] = [];
+  for (const hit of source.search(query, 12)) {
+    const url = hit.anchor ? \`\${docUrl(hit.path)}#\${hit.anchor}\` : docUrl(hit.path);
+    results.push({ id: hit.path, url, type: 'page', content: hit.title });
+    if (hit.snippet) {
+      results.push({ id: \`\${hit.path}#snippet\`, url, type: 'text', content: hit.snippet });
+    }
+  }
+  return new Response(JSON.stringify(results), {
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+  });
+}
+`,
+    'app/md/[...slug]/route.ts': `import { getSource, slugToPath } from '@/lib/source';
+// SPDX-License-Identifier: Apache-2.0
+import { provenanceHeaders, provenanceView } from '@getnema/core';
+
+export async function generateStaticParams() {
+  const source = await getSource();
+  return source.pages.map((p) => ({ slug: p.path.split('/') }));
+}
+
+/**
+ * The \`.md\` route: serves the canonical Markdown verbatim, byte-identical to the
+ * MCP \`get_page\` tool — both go through \`renderMarkdown\`. This is the parity the
+ * adapter conformance suite guards. Provenance rides on response headers and an
+ * opt-in \`?meta\` JSON variant, never in the body (which would break that parity).
+ */
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string[] }> }) {
+  const { slug } = await params;
+  const source = await getSource();
+  const page = source.getPage(slugToPath(slug));
+  if (!page) return new Response('Not found', { status: 404 });
+
+  const view = provenanceView(page, source.provenanceOf(page.path));
+
+  // Opt-in structured variant for agents that want the full record.
+  const accept = request.headers.get('accept') ?? '';
+  if (new URL(request.url).searchParams.has('meta') || accept.includes('application/json')) {
+    return new Response(JSON.stringify(view, null, 2), {
+      headers: { 'content-type': 'application/json; charset=utf-8' },
+    });
+  }
+
+  // Body is byte-identical to renderMarkdown(page); provenance rides on headers.
+  return new Response(source.renderMarkdown(page), {
+    headers: {
+      'content-type': 'text/markdown; charset=utf-8',
+      link: \`</md/\${page.path}?meta>; rel="describedby"\`,
+      ...provenanceHeaders(view),
+    },
+  });
+}
+`,
+    'lib/source.ts': `// SPDX-License-Identifier: Apache-2.0
+import { type ContentSource, createContentSource } from '@getnema/core';
+
+let cached: Promise<ContentSource> | null = null;
+
+/** Load (and memoize) the content source rooted at the app directory. */
+export function getSource(): Promise<ContentSource> {
+  if (!cached) cached = createContentSource(process.cwd());
+  return cached;
+}
+
+/** Normalize a \`[[...slug]]\` param to a route path (\`[]\` → \`index\`). */
+export function slugToPath(slug: string[] | undefined): string {
+  const joined = (slug ?? []).join('/');
+  return joined || 'index';
+}
+`,
+    'lib/tree.ts': `// SPDX-License-Identifier: Apache-2.0
+import type { NavNode } from '@getnema/core';
+import type * as PageTree from 'fumadocs-core/page-tree';
+import { getSource } from './source';
+
+function docUrl(path: string): string {
+  return path === 'index' ? '/docs' : \`/docs/\${path}\`;
+}
+
+function toNodes(nodes: NavNode[]): PageTree.Node[] {
+  return nodes.map((node): PageTree.Node => {
+    if (node.items && node.items.length > 0) {
+      return {
+        type: 'folder',
+        name: node.title,
+        ...(node.path ? { index: { type: 'page', name: node.title, url: docUrl(node.path) } } : {}),
+        children: toNodes(node.items),
+      };
+    }
+    return { type: 'page', name: node.title, url: docUrl(node.path ?? node.title) };
+  });
+}
+
+/** Build the Fumadocs page tree from the Nema nav (renderer-agnostic core data). */
+export async function getPageTree(): Promise<PageTree.Root> {
+  const source = await getSource();
+  return { name: 'Documentation', children: toNodes(source.nav) };
+}
+`,
+  };
+}
+
+const NEMA_CONFIG = `// SPDX-License-Identifier: Apache-2.0
+import type { NemaConfig } from '@getnema/core';
+
+const config: NemaConfig = {
+  contentDir: 'docs',
+  reviewSlaDays: 180,
+};
+
+export default config;
+`;
+
+const DOCS_INDEX = `---
+title: Home
+status: draft
+---
+
+# Home
+
+Welcome to your Nema docs. Draft new pages through the producer loop:
+\`nema draft\` (or the MCP write-tools) → \`nema open-pr\` → human approval.
+`;
+
+const NEMA_CHECK_WORKFLOW = `# SPDX-License-Identifier: Apache-2.0
+name: nema check
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run check
+`;

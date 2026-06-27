@@ -129,6 +129,12 @@ export class NemaTools {
   // ---- write tools ------------------------------------------------------
 
   async draftPage(input: DraftPageInput): Promise<DraftResult> {
+    // Mirror the CLI's guard (cli/commands/draft.ts): an empty body would write a
+    // contentless page the gates can't meaningfully check. Reject it here so the
+    // MCP write-path and the CLI behave identically.
+    if (!input.body || input.body.trim() === '') {
+      throw new Error('body is required — a draft page needs Markdown content');
+    }
     const engine = await this.engine();
     return engine.draftPage({
       path: input.path,
