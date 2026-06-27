@@ -101,7 +101,12 @@ export async function contentModelChecks(rootDir: string): Promise<Check[]> {
 
 // ── CI scope ─────────────────────────────────────────────────────────────────
 
-const CHECK_RE = /\bnema\s+check\b|index\.js\s+check\b|\bcli\b[^\n]*\bcheck\b/;
+// Recognize a `nema check` invocation in any of the forms CI uses: the binary
+// directly, the built CLI entrypoint, a `cli ... check` dev invocation, or the
+// package-manager indirection (`npm run check` / `pnpm check` / `yarn check`)
+// that the scaffold's `"check": "nema check"` script resolves to.
+const CHECK_RE =
+  /\bnema\s+check\b|index\.js\s+check\b|\bcli\b[^\n]*\bcheck\b|\b(?:npm\s+run|pnpm(?:\s+run)?|yarn(?:\s+run)?)\s+check\b/;
 const DIFF_RE = /changed|diff|\$\{\{/;
 const FIXED_RE = /examples\/|apps\/|\bdocs\b/;
 

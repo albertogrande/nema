@@ -49,6 +49,9 @@ function baseTemplates(opts: TemplateOptions): Record<string, string> {
     'docs/index.md': DOCS_INDEX,
     'package.json': `${JSON.stringify(pkg, null, 2)}\n`,
     '.github/workflows/nema-check.yml': NEMA_CHECK_WORKFLOW,
+    '.github/workflows/nema-approve.yml': NEMA_APPROVE_WORKFLOW,
+    'AGENTS.md': AGENTS_CONTRACT,
+    'CLAUDE.md': CLAUDE_POINTER,
     '.gitignore': 'node_modules\n',
     'README.md': `# ${opts.name}
 
@@ -585,4 +588,139 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run check
+`;
+
+/**
+ * The human-approval gate as a GitHub Action. When a maintainer approves a docs
+ * PR, this promotes the PR's changed draft pages to `reviewed` (via the published
+ * `nema approve`), commits the promotion, and enables auto-merge — the ONLY path
+ * to `reviewed`. The promotion push uses NEMA_PROMOTE_TOKEN (a PAT/App token), so
+ * it re-triggers CI and the merge waits on a real status check instead of
+ * bypassing branch protection.
+ */
+const NEMA_APPROVE_WORKFLOW = `# SPDX-License-Identifier: Apache-2.0
+name: nema approve
+# The human approval gate: when a maintainer approves a docs PR, promote its
+# draft pages to reviewed and merge. This is the only path to \`reviewed\`.
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  promote:
+    name: promote draft → reviewed
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: \${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          # NEMA_PROMOTE_TOKEN: a PAT (or GitHub App installation token) with
+          # contents:write + pull-requests:write, allowed to push to the protected
+          # branch. Unlike GITHUB_TOKEN, a push authenticated with it re-triggers CI on
+          # the promotion commit, so auto-merge waits on a real status check rather than
+          # bypassing branch protection. Add it under Settings → Secrets → Actions.
+          token: \${{ secrets.NEMA_PROMOTE_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - name: Configure git identity
+        run: |
+          git config user.name "nema-bot"
+          git config user.email "nema-bot@users.noreply.github.com"
+      - name: Promote approved draft pages and merge
+        env:
+          GH_TOKEN: \${{ secrets.NEMA_PROMOTE_TOKEN }}
+          PR: \${{ github.event.pull_request.number }}
+          REVIEWER: \${{ github.event.review.user.login }}
+        run: |
+          set -euo pipefail
+          # The draft .md files this PR changes (under docs/), turned into route paths.
+          mapfile -t files < <(gh pr view "$PR" --json files -q '.files[].path' \\
+            | grep -E '^docs/.*\\.md$' || true)
+          if [ "\${#files[@]}" -eq 0 ]; then
+            echo "No docs/*.md changes in this PR — nothing to promote."
+            exit 0
+          fi
+          head_sha="$(git rev-parse HEAD)"
+          # The routes currently in \`status: draft\` (printed as "<route> — ... [status=draft]").
+          draft_routes="$(npx -y @getnema/cli prov --status draft 2>/dev/null | sed -E 's/ —.*//' || true)"
+          promoted=0
+          for f in "\${files[@]}"; do
+            # docs/foo/bar.md -> foo/bar
+            route="\${f#docs/}"; route="\${route%.md}"
+            if printf '%s\\n' "$draft_routes" | grep -qxF "$route"; then
+              npx -y @getnema/cli approve --path "$route" --reviewer "$REVIEWER" --pr "$PR" --commit "$head_sha"
+              git add -- "$f"
+              promoted=$((promoted+1))
+            fi
+          done
+          if [ "$promoted" -eq 0 ]; then
+            echo "No draft pages to promote."
+            exit 0
+          fi
+          git commit -s -m "docs: promote approved pages to reviewed (approved by @$REVIEWER)"
+          git push origin "HEAD:\${{ github.event.pull_request.head.ref }}"
+          # Enable auto-merge: completes once the re-triggered nema check passes.
+          gh pr merge "$PR" --squash --auto
+`;
+
+/**
+ * The agent contract shipped into a scaffolded repo. It gives a stranger's agent
+ * the rails the MCP tools alone don't: the draft → PR → human-approve loop and
+ * the one invariant (only a human PR approval promotes a page to `reviewed`).
+ */
+const AGENTS_CONTRACT = `<!-- SPDX-License-Identifier: Apache-2.0 -->
+# Agent contract
+
+This repository is governed by **Nema**. Agents author documentation; **a human approves every
+page.** Follow this contract.
+
+## The one invariant — never break it
+
+> An agent may move a page to **\`draft\`**. **Only a human PR approval** may promote a page to
+> **\`reviewed\`**. Never set \`status: reviewed\` yourself, and never merge your own PR.
+
+## The producer loop
+
+1. **Draft.** Create or edit a page with \`status: draft\` and a complete \`provenance\` block —
+   use the \`draft_page\` MCP tool, or run \`nema draft --path <route> --title <t> --diataxis <genre>
+   --body "<markdown>"\`. When you author the page, record yourself: pass \`--model-name <id>\`
+   (and \`--model-vendor\`) so provenance shows \`authored_by: ai\` with your model.
+2. **Self-check.** Run \`nema check\` (or the \`check\` MCP tool) and fix **every** diagnostic
+   before proposing. \`nema explain <rule>\` says why a gate fires and how to fix it.
+3. **Propose.** Run \`nema open-pr --title <t> --summary <s>\` to open a PR labeled \`nema:draft\`.
+   Requires git + a GitHub remote + an authenticated \`gh\` (\`nema doctor\` verifies this).
+4. **Stop.** Report the PR and any open decisions. **Do not approve or merge** — that is the
+   human's gate. The \`nema approve\` workflow promotes the page to \`reviewed\` only after a human
+   approves the PR.
+
+## Useful commands
+
+- \`nema doctor\` — check the environment + governance wiring (CI, promotion gate, branch protection).
+- \`nema check\` — run every gate over the docs.
+- \`nema prov <route>\` — show a page's provenance / status.
+
+## Connect an agent over MCP
+
+\`\`\`sh
+claude mcp add nema -- npx -y @getnema/cli mcp .
+\`\`\`
+
+The MCP server lets an agent list, search, read, **draft**, and **propose** — but it exposes **no**
+tool that promotes a page to \`reviewed\`. Only a human PR approval can.
+`;
+
+const CLAUDE_POINTER = `<!-- SPDX-License-Identifier: Apache-2.0 -->
+# CLAUDE.md
+
+This repository is governed by **Nema**. The agent contract — the draft → PR → human-approve loop
+and the invariant that **only a human PR approval promotes a page to \`reviewed\`** — lives in
+[\`AGENTS.md\`](AGENTS.md). Read it first, then follow it.
 `;
