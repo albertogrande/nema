@@ -35,6 +35,31 @@ describe('templates', () => {
     // The gate that enforces the invariant must be wired into CI.
     expect(files['.github/workflows/nema-check.yml']).toContain('nema check');
   });
+
+  it('emits a rendering Fumadocs app with --app, on published packages', () => {
+    const files = templates({ name: 'my-docs', app: true });
+    // The render path a stranger lands on day-1.
+    expect(Object.keys(files)).toEqual(
+      expect.arrayContaining([
+        'next.config.mjs',
+        'tsconfig.json',
+        'app/layout.tsx',
+        'app/docs/[[...slug]]/page.tsx',
+        'app/trust/page.tsx',
+        'lib/source.ts',
+        'lib/tree.ts',
+      ]),
+    );
+    // npm run dev must exist, and deps must resolve from npm (no workspace:*).
+    expect(files['package.json']).toContain('"dev": "next dev"');
+    expect(files['package.json']).toContain('"@getnema/adapter-fumadocs": "^0.1.0"');
+    expect(files['package.json']).not.toContain('workspace:*');
+    // The rendered page carries the provenance badge.
+    expect(files['app/docs/[[...slug]]/page.tsx']).toContain('ProvenanceBadge');
+    // Escaped template literals survived as real JS template syntax, not interpolated away.
+    expect(files['app/docs/[[...slug]]/page.tsx']).toContain('`/md/${page.path}`');
+    expect(files['lib/tree.ts']).toContain('`/docs/${path}`');
+  });
 });
 
 describe('scaffold', () => {

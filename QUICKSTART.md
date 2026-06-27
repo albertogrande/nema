@@ -89,9 +89,10 @@ page with its [provenance badge](https://getnema.vercel.app/docs/getting-started
 
 Now new docs get written the Nema way — agents draft, you approve:
 
-1. **Register the MCP server** so your agent (e.g. Claude Code) can author through Nema:
+1. **Register the MCP server** so your agent (e.g. Claude Code) can author through Nema —
+   no clone, no build, straight from npm:
    ```bash
-   claude mcp add nema -- node /path/to/nema/packages/cli/dist/index.js mcp /path/to/your-docs
+   claude mcp add nema -- npx -y @getnema/cli mcp /path/to/your-docs
    ```
 2. **An agent drafts** a page (`draft_page` / `nema draft`) — it writes `status: draft` with a
    seeded provenance block and self-checks against the gates.
