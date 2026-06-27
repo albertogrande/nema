@@ -25,6 +25,9 @@ describe('templates', () => {
         'docs/index.md',
         'package.json',
         '.github/workflows/nema-check.yml',
+        '.github/workflows/nema-approve.yml',
+        'AGENTS.md',
+        'CLAUDE.md',
         'README.md',
         '.gitignore',
       ]),
@@ -34,6 +37,28 @@ describe('templates', () => {
     expect(files['docs/index.md']).toContain('status: draft');
     // The gate that enforces the invariant must be wired into CI.
     expect(files['.github/workflows/nema-check.yml']).toContain('nema check');
+  });
+
+  it('ships the human-approval (promotion) workflow so `nema doctor` passes', () => {
+    const files = templates({ name: 'my-docs' });
+    const approve = files['.github/workflows/nema-approve.yml'];
+    // doctor's promoteTokenCheck requires: pull_request_review trigger,
+    // a nema approve reference, and NEMA_PROMOTE_TOKEN.
+    expect(approve).toContain('pull_request_review');
+    expect(approve).toContain('nema');
+    expect(approve).toContain('approve');
+    expect(approve).toContain('NEMA_PROMOTE_TOKEN');
+  });
+
+  it('ships an agent contract describing the draft → PR → approve loop and the invariant', () => {
+    const files = templates({ name: 'my-docs' });
+    const agents = files['AGENTS.md'] ?? '';
+    expect(agents).toContain('draft');
+    expect(agents).toContain('reviewed');
+    // The invariant: only a human PR approval promotes to reviewed.
+    expect(agents.toLowerCase()).toContain('human');
+    // CLAUDE.md points at AGENTS.md.
+    expect(files['CLAUDE.md']).toContain('AGENTS.md');
   });
 
   it('emits a rendering Fumadocs app with --app, on published packages', () => {

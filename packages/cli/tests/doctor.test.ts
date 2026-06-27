@@ -32,6 +32,25 @@ describe('nema doctor — ci scope', () => {
     expect(ciScopeCheck(root).level).toBe('warn');
   });
 
+  it('counts the scaffold CI step `npm run check` (resolves to `nema check`)', () => {
+    workflow('nema-check.yml', [
+      'jobs:',
+      '  check:',
+      '    steps:',
+      '      - run: npm install',
+      '      - run: npm run check',
+    ]);
+    expect(ciScopeCheck(root).level).toBe('ok');
+  });
+
+  it('also recognizes pnpm/yarn check invocations', () => {
+    workflow('pnpm.yml', ['jobs:', '  check:', '    steps:', '      - run: pnpm check']);
+    expect(ciScopeCheck(root).level).toBe('ok');
+    rmSync(join(root, '.github'), { recursive: true, force: true });
+    workflow('yarn.yml', ['jobs:', '  check:', '    steps:', '      - run: yarn check']);
+    expect(ciScopeCheck(root).level).toBe('ok');
+  });
+
   it('passes when a check is scoped to changed content', () => {
     workflow('ci.yml', [
       'jobs:',
