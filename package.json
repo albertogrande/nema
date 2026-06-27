@@ -17,6 +17,7 @@
     "format": "biome format --write .",
     "check": "turbo run lint typecheck test build",
     "smoke": "node scripts/smoke-publish.mjs",
+    "demo:concurrent": "node scripts/demo-concurrent.mjs",
     "release": "pnpm -r publish --no-git-checks --access public"
   },
   "devDependencies": {

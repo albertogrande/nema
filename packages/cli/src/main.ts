@@ -4,6 +4,7 @@ import { approveCommand } from './commands/approve.js';
 import { auditCommand } from './commands/audit.js';
 import { checkCommand } from './commands/check.js';
 import { claimCommand } from './commands/claim.js';
+import { coherenceCommand } from './commands/coherence.js';
 import { doctorCommand } from './commands/doctor.js';
 import { draftCommand } from './commands/draft.js';
 import { explainCommand } from './commands/explain.js';
@@ -33,6 +34,7 @@ export const main = defineCommand({
     approve: approveCommand,
     claim: claimCommand,
     release: releaseCommand,
+    coherence: coherenceCommand,
     prov: provCommand,
     audit: auditCommand,
     mcp: mcpCommand,

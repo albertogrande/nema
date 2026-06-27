@@ -172,6 +172,37 @@ export const RULE_CATALOG: Record<string, RuleDoc> = {
       '`nema approve` to promote it after a human approves the PR. A human importing an existing ' +
       'corpus can assert reviewed pages via `nema migrate` (method `migration`).',
   },
+  'slot-collision': {
+    id: 'slot-collision',
+    title: 'No two branches author the same page',
+    summary:
+      'Two or more draft branches created or edited the same page incompatibly — a clobber a ' +
+      'page lease would have prevented.',
+    hint: 'Have one agent claim the page slot (`nema claim <path>`); rebase the other onto its change.',
+    details:
+      'This is the merge-time backstop for slot leasing. Page-level leases stop two *live* agents ' +
+      'from writing the same page, but a missing or expired lease can still let two draft branches ' +
+      'each create or edit the same route — each passes `nema check` alone, then collides on merge.\n\n' +
+      'The gate reports the conflicting branches and the kind (`add/add`, `edit/edit`, `edit/delete`). ' +
+      'Fix: pick one branch as the authority for that page (claim its slot via `nema claim <path> ' +
+      '--agent <id>`), drop or rebase the other branch onto it, and re-run `nema coherence`.',
+  },
+  'merge-coherence': {
+    id: 'merge-coherence',
+    title: 'The merged doc-graph is coherent',
+    summary:
+      'Merging the draft branches must not break the doc-graph — no dangling internal links and ' +
+      'no newly orphaned pages in the union.',
+    hint: 'Re-point or restore the broken link/page, or coordinate the two branches before merging.',
+    details:
+      'Each draft branch is gate-green on its own, but merging them can still break the corpus: ' +
+      'one branch deletes or renames a page another branch links to (a dangling link), or removes ' +
+      'the only inbound link to a page (a fresh orphan). Because every branch passed `nema check` ' +
+      'in isolation, any link or reachability error on the *merged* graph is introduced by the merge.\n\n' +
+      'Fix: the message carries the underlying breakage (a broken link or an orphan) on the merged ' +
+      'route. Restore or re-point the target, or sequence the branches so the dependency lands first, ' +
+      'then re-run `nema coherence`.',
+  },
   'empty-corpus': {
     id: 'empty-corpus',
     title: 'The corpus is not empty',

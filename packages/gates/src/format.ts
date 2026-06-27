@@ -6,9 +6,10 @@ function pages(n: number): string {
 }
 
 /** Render a gate result as a plain-text report (for the CLI / CI logs). */
-export function formatGateResult(result: GateResult): string {
+export function formatGateResult(result: GateResult, opts: { command?: string } = {}): string {
+  const command = opts.command ?? 'nema check';
   if (result.diagnostics.length === 0) {
-    return `✓ nema check: all gates passed (${pages(result.checked)})`;
+    return `✓ ${command}: all gates passed (${pages(result.checked)})`;
   }
 
   const lines: string[] = [];
@@ -22,7 +23,7 @@ export function formatGateResult(result: GateResult): string {
     result.checked,
   )}`;
   return [
-    `nema check — ${summary}`,
+    `${command} — ${summary}`,
     ...lines,
     '',
     'Run `nema explain <rule>` for why a gate fires and how to fix it.',

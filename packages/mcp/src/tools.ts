@@ -9,7 +9,7 @@ import {
   provenanceView,
   resolveConfig,
 } from '@getnema/core';
-import { type GateResult, checkContent } from '@getnema/gates';
+import { type GateResult, checkContent, runCoherenceGate } from '@getnema/gates';
 import {
   type AcquireLeaseResult,
   type DraftResult,
@@ -19,6 +19,8 @@ import {
   ProducerEngine,
   type ProposeResult,
   acquireLease,
+  listDraftBranches,
+  loadCorpusAtRef,
   readLease,
   releaseLease,
 } from '@getnema/producer';
@@ -133,6 +135,21 @@ export class NemaTools {
 
   async check(): Promise<GateResult> {
     return checkContent(this.cfg.rootDir, { today: this.now() });
+  }
+
+  /**
+   * Merge-time coherence — the second half of the moat. Validate that the open
+   * draft branches (or explicit refs) merge into a coherent doc-graph: no two
+   * branches authoring the same page, no merge-broken links or fresh orphans.
+   * Materializes each ref in an ephemeral worktree, so the live tree is untouched.
+   */
+  async checkCoherence(input: { base?: string; refs?: string[] } = {}): Promise<GateResult> {
+    const rootDir = this.cfg.rootDir;
+    const refs =
+      input.refs && input.refs.length > 0 ? input.refs : await listDraftBranches(rootDir);
+    const base = await loadCorpusAtRef(rootDir, input.base ?? 'main');
+    const corpora = await Promise.all(refs.map((r) => loadCorpusAtRef(rootDir, r)));
+    return runCoherenceGate(corpora, { base, today: this.now() });
   }
 
   // ---- slot leasing (the multi-agent moat) ------------------------------

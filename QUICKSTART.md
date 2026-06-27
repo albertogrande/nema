@@ -82,7 +82,12 @@ nema check /path/to/your-docs --json                   # same gates, machine-rea
 nema explain reachability                              # what a gate checks + how to fix it
 nema prov /path/to/your-docs --status reviewed         # the provenance chain, per page
 nema prov /path/to/your-docs --filter authored_by=ai   # everything an agent wrote
+nema coherence                                         # multi-agent: do the open draft branches merge cleanly?
 ```
+
+Running a *fleet* of agents on one corpus? `nema claim`/`release` lease pages so two agents don't
+clobber the same one, and `nema coherence` refuses a merge that would break the doc-graph. See
+[`examples/concurrent`](examples/concurrent).
 
 For a reader-facing view, the reference site renders the same provenance as a trust dashboard —
 see the live demo: **[the `/trust` dashboard](https://getnema.vercel.app/trust)** (and a

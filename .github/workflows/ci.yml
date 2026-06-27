@@ -90,6 +90,23 @@ jobs:
       - run: node packages/cli/dist/index.js check examples/minimal
       - run: node packages/cli/dist/index.js check apps/docs
 
+  concurrent-demo:
+    name: multi-agent demo (slot leasing + merge-time coherence)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # Dogfood the moat: drive the real CLI through leasing + coherence end to end.
+      # The script asserts each outcome and exits non-zero on any regression.
+      - run: git config --global user.email ci@nema.dev && git config --global user.name CI
+      - run: pnpm demo:concurrent
+
   doctor:
     name: nema doctor (operator config, advisory)
     runs-on: ubuntu-latest

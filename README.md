@@ -37,13 +37,15 @@ or closed SaaS.
 
 Mintlify is a docs platform built *pre-agent* — it bolts one closed agent onto a closed SaaS. Nema is
 built **agent-native from the ground up**: the agents are *yours*, the corpus is *yours*, the infra is
-*yours*. The structural goal is **multi-agent concurrent authoring** — many of your agents working the
+*yours*. The structural moat is **multi-agent concurrent authoring** — many of your agents working the
 same corpus at once without clobbering — something a single closed-agent SaaS cannot follow.
 
 > **Alpha — honest status.** What ships today: an agent writes a page that lands *in your nav, linked,
 > and cited*, self-checks against the gates, and opens a PR you approve — rendered live. The
-> **multi-agent moat (concurrent authoring, slot-leasing, merge-time coherence) is on the roadmap, not
-> yet shipped** — we won't claim a "fleet" until the demo runs. APIs may change before 0.1.0.
+> **multi-agent moat now ships** too: page-level slot leasing stops two live agents clobbering a page,
+> and a **merge-time coherence gate** refuses a merge that would break the doc-graph
+> (`pnpm demo:concurrent` runs it end to end). A *hosted control plane* remains on the roadmap. APIs
+> may change before 0.1.0.
 
 ## Quickstart
 
@@ -141,6 +143,28 @@ promote a page to `reviewed`. Only your PR approval can. The contract every agen
 The result: a page whose entire authorship chain — *AI-authored → which model → which sources → which
 human reviewer → timestamps and commits* — is recorded as queryable, git-diffable data.
 
+## Multi-agent concurrent authoring (the moat)
+
+Point a *fleet* of your agents at one corpus. Two mechanisms keep them from stepping on each other:
+
+- **Page-level slot leasing.** `nema claim <path> --agent <id>` (and the `claim_slot` MCP tool)
+  reserves a page; a second agent's write to a held page is refused. Acquisition is an atomic
+  `O_EXCL` create — racing agents resolve to one winner with no coordination server, and leases
+  expire so a dead agent never strands a page. The single-agent path stays lease-free.
+- **Merge-time coherence.** Each draft branch is gate-green alone, but merging several can still
+  break the corpus. `nema coherence` 3-way merges the open `nema/draft/*` branches against `main`
+  and refuses the merge on a **`slot-collision`** (the same page authored on two branches) or
+  **`merge-coherence`** failure (a link or page one branch breaks for another). Independent edits to
+  a shared page — e.g. two agents each adding a nav link — merge cleanly, exactly as git would.
+
+```bash
+nema coherence                         # auto-discover nema/draft/* branches, check vs main
+nema coherence ./a ./b --base ./main   # or explicit directories / git refs
+```
+
+See [`examples/concurrent`](examples/concurrent) for the two-terminal walkthrough, or run
+`pnpm demo:concurrent` for the self-verifying end-to-end demo.
+
 ## Provenance as data
 
 Every page records `authored_by`, `model`, **structured** `sources`, review `transitions`, and the
@@ -165,7 +189,13 @@ nema check — 3 error(s), 0 warning(s) · 2 pages
 ```
 
 `--json` emits a stable machine-readable report for CI and agents; `nema explain <rule>` says why a
-gate fires; `nema doctor` preflights Node / git / gh / auth / config.
+gate fires; `nema doctor` preflights Node / git / gh / auth / config; `nema coherence` extends the
+gates across draft branches at merge time (see above).
+
+To bootstrap a corpus from existing code, `nema generate <src>` ingests a source repo (package
+metadata, README intro, exported symbols) and writes a seeded, gate-green diátaxis doc set — a
+factual skeleton your agent then fills with prose through the draft loop. It never writes prose
+itself.
 
 ## Architecture
 
@@ -188,17 +218,20 @@ renderer. Only `adapter-fumadocs` and the app template touch React/Next.
 
 ## On the roadmap (not yet shipped)
 
-The structural moat. We build it in the open and won't market it as done until it runs clean:
+The structural moat — concurrent authoring with slot-leasing and a merge-time coherence gate — now
+ships (see above). What's still ahead, built in the open:
 
-- **Multi-agent concurrent authoring** — two+ of your agents on one corpus at once, with slot-leasing
-  so they don't clobber and a merge-time coherence gate that refuses a broken doc-graph.
 - **A hosted control plane** — optional coordination + cross-repo provenance for teams that want it;
-  the open core always runs fully self-hosted, and git stays the source of truth.
+  the open core always runs fully self-hosted, and git stays the source of truth. A robust
+  distributed lease (replacing the filesystem lease) lives here.
+- **Per-claim provenance** and additional renderer adapters (Starlight/Astro) to prove the
+  renderer-agnostic boundary.
 
 ## Status
 
-**v0.1 alpha.** The single-agent producer loop runs end to end and renders; the engine is green
-(tests, lint, typecheck, build). Expect breaking changes. The multi-agent moat is in active design.
+**v0.1 alpha.** The producer loop runs end to end and renders; **multi-agent concurrent authoring
+(slot leasing + merge-time coherence) ships** and is exercised in CI. The engine is green (tests,
+lint, typecheck, build). Expect breaking changes before 0.1.0.
 
 ## Contributing
 

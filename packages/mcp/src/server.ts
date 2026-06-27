@@ -306,6 +306,33 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
         : text(`Slot "${path}" is not held by agent "${agent}" (nothing released).`, true);
     },
   );
+
+  server.registerTool(
+    'check_coherence',
+    {
+      title: 'Check merge-time coherence',
+      description:
+        'Prove the open draft branches (or explicit refs) merge into a valid doc-graph: no two ' +
+        'branches authoring the same page (slot-collision) and no merge-broken links or orphans ' +
+        '(merge-coherence). The second half of the multi-agent moat — run it before merging a ' +
+        'fleet of drafts. Returns structured diagnostics as structuredContent.',
+      inputSchema: {
+        base: z.string().optional().describe('Integration baseline ref (default: main)'),
+        refs: z
+          .array(z.string())
+          .optional()
+          .describe('Branches/refs to merge-check (default: all nema/draft/* branches)'),
+      },
+      outputSchema: gateReportShape,
+    },
+    async (input) => {
+      try {
+        return gateResponse(await tools.checkCoherence(input));
+      } catch (e) {
+        return text((e as Error).message, true);
+      }
+    },
+  );
 }
 
 /**

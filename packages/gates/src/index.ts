@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 export * from './catalog.js';
+export * from './coherence.js';
+export * from './diff3.js';
 export * from './engine.js';
 export * from './format.js';
 export * from './git-state.js';

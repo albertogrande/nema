@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+export * from './coherence.js';
 export * from './engine.js';
 export * from './exec.js';
 export * from './generate.js';
