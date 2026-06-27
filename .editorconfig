@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: Apache-2.0
+# EditorConfig — keeps editors aligned with Biome (see biome.json).
+# https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+max_line_length = 100
+
+# Markdown: trailing whitespace can be a hard line break — don't strip it.
+[*.md]
+trim_trailing_whitespace = false
+
+# Lockfiles and generated files: leave formatting to the tool that owns them.
+[pnpm-lock.yaml]
+indent_size = unset

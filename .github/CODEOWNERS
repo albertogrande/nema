@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Code owners are requested for review automatically on matching paths.
+# In the founding phase a single maintainer owns all areas (see MAINTAINERS.md).
+# Later, split ownership per package as the contributor base grows.
+
+# Default owner for everything in the repo.
+*       @albertogrande
+
+# Governance, licensing and CI are sensitive — keep them explicitly owned.
+/.github/        @albertogrande
+/LICENSE         @albertogrande
+/LICENSES/       @albertogrande
+/REUSE.toml      @albertogrande
+/GOVERNANCE.md   @albertogrande
+/MAINTAINERS.md  @albertogrande
+/SECURITY.md     @albertogrande
+
+# Reserved, out of scope for the core license — still owned by the maintainer.
+/ee/             @albertogrande

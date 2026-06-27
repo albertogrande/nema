@@ -25,6 +25,8 @@ path = [
   "**/*.json",
   ".gitignore",
   ".npmrc",
+  ".nvmrc",
+  ".editorconfig",
   "**/next-env.d.ts",
   "**/*.placeholder",
   "NOTICE",
