@@ -37,7 +37,10 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: pnpm release
-          version: pnpm changeset version
+          # Format after the version bump: `changeset version` rewrites package.json
+          # in a layout biome's formatter would reject, which otherwise turns the lint
+          # job red on main right after a release. `version:packages` re-formats them.
+          version: pnpm run version:packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # changesets/action only uses token-based publishing when it finds an env
