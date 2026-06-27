@@ -42,6 +42,21 @@ export class GitRunner {
     await this.git(['add', '--', ...paths]);
   }
 
+  /**
+   * Whether the index has changes to commit (staged vs HEAD). Lets a caller skip
+   * an empty commit when the work is already committed, instead of letting `git
+   * commit` die with "nothing to commit, working tree clean".
+   */
+  async hasStagedChanges(): Promise<boolean> {
+    // `diff --cached --quiet` exits 1 when there ARE staged changes, 0 when none.
+    try {
+      await this.git(['diff', '--cached', '--quiet']);
+      return false;
+    } catch {
+      return true;
+    }
+  }
+
   async commit(message: string, opts: CommitOptions = {}): Promise<string> {
     const args = ['commit', '-m', message];
     if (opts.signoff) args.push('--signoff');

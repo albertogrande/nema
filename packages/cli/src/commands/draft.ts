@@ -39,18 +39,24 @@ export const draftCommand = defineCommand({
       process.exitCode = 1;
       return;
     }
+    const model = args['model-name']
+      ? {
+          name: String(args['model-name']),
+          vendor: args['model-vendor'] ? String(args['model-vendor']) : undefined,
+        }
+      : undefined;
+
     const engine = await makeEngine(rootDir, new LocalGitHost(rootDir));
     const res = await engine.draftPage({
       path: String(args.path),
       title: String(args.title),
       body,
       frontmatter: args.diataxis ? { diataxis: String(args.diataxis) } : undefined,
-      model: args['model-name']
-        ? {
-            name: String(args['model-name']),
-            vendor: args['model-vendor'] ? String(args['model-vendor']) : undefined,
-          }
-        : undefined,
+      // No model means a human is drafting from the CLI: record `authored_by: human`
+      // so the page is valid. `authored_by: ai` requires `provenance.model.name`,
+      // which we only have when --model-name is supplied.
+      authoredBy: model ? 'ai' : 'human',
+      model,
     });
     out(`Drafted ${res.path} -> ${res.filePath}`);
     if (res.ok) {
