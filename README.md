@@ -47,18 +47,61 @@ same corpus at once without clobbering — something a single closed-agent SaaS 
 
 ## Quickstart
 
-A rendered, badged docs site in under five minutes — no clone, no source build:
+Stand up a brand-new, agent-native docs site for your project — from nothing to a rendered,
+provenance-badged page in about five minutes. No clone, no source build. **You need Node 22+.**
+
+### 1. Scaffold it
 
 ```bash
 npx create-nema my-docs --app
+```
+
+Writes a small **Next + Fumadocs** app: a `docs/` folder with one seeded page, a `nema.config.ts`, the
+gates wired as a GitHub Action, and a `/trust` provenance dashboard.
+
+### 2. Run it
+
+```bash
 cd my-docs
-npm install
+npm install          # npm may print audit warnings — fine for local dev
 npm run dev          # → http://localhost:3000
 ```
 
-You land on a rendered page carrying an **"AI draft · pending review"** badge, with a `/trust`
-provenance dashboard alongside it. That's the whole point made concrete: an agent-written page, clearly
-marked as not-yet-human-approved.
+Open the URL. You land on your rendered docs home carrying a **"pending review"** provenance badge,
+with a **`/trust`** dashboard alongside. That's the idea made concrete: every page shows whether a
+human has signed off.
+
+### 3. Add your first page
+
+Your agents normally do this for you over MCP (next section) — the CLI does the same thing, so you can
+see the loop right now:
+
+```bash
+nema draft --path guides/getting-started --title "Getting Started" \
+  --diataxis how-to --model-name claude-opus-4-8 --model-vendor anthropic \
+  --body "Install it, then run it."
+```
+
+Nema writes the page with a full **provenance block** (`authored_by: ai`, the model, a `draft`
+transition) and immediately runs the gates — which catch that nothing links to it yet:
+
+```text
+✗ [reachability] guides/getting-started: orphan — not linked from any other page
+    help: Link to the page from another page, or list its path in `rootExempt`.
+```
+
+That's the gates **teaching** you what a coherent corpus needs — not a wall you fight. Add a link to
+`guides/getting-started` from `docs/index.md`, then:
+
+### 4. Confirm it's clean
+
+```bash
+nema check           # re-run every gate
+```
+
+Green. Your site runs locally and your first page is valid — drafted by an agent, provenance recorded,
+not yet human-approved. Promoting it to `reviewed` happens **only** through a human PR approval — which
+is where your agents come in. ↓
 
 ## Point your agent at it
 

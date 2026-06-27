@@ -10,24 +10,27 @@ it valid, and agents can safely draft new pages because a human approval is the 
 This guide takes an **existing** docs repo from "a folder of Markdown" to "Nema-governed" — then
 shows the ongoing loop. (Greenfield? Jump to [Starting from scratch](#starting-from-scratch).)
 
-> **Alpha — source-only.** Nema isn't on npm yet, so you build the CLI from source (one time).
-> npm install is coming; everything below works today.
+> **Alpha.** Nema is on npm and works today (`@getnema/cli`, `create-nema`); APIs may still shift
+> before 1.0.
 
 ## Prerequisites
 
-- **Node 22+** and **pnpm** (`corepack enable` will provide it).
+- **Node 22+** (npm ships with it). Add the `gh` CLI + auth if you want the PR/approve loop.
 - A git repo whose docs are Markdown files (any layout — Docusaurus, Starlight, Mintlify-from-git,
   or just a `docs/` folder).
 
-## 1. Get the CLI (one time)
+## 1. Get the CLI
+
+Nema is on npm — no clone, no build:
 
 ```bash
-git clone https://github.com/albertogrande/nema
-cd nema && pnpm install && pnpm build
-# put `nema` on your PATH for this shell:
-alias nema="node $(pwd)/packages/cli/dist/index.js"
+# install so `nema` is on your PATH:
+npm install -g @getnema/cli
 nema --help
 nema doctor          # verify Node, git, gh + auth, and your config are good to go
+
+# …or run any command one-off without installing:
+npx @getnema/cli doctor
 ```
 
 ## 2. Onboard your existing docs — `nema migrate`
@@ -113,14 +116,15 @@ your team can keep up). That's the wedge.
 
 ## Starting from scratch
 
-No existing docs? Scaffold a fresh Nema repo:
+No existing docs? Scaffold a fresh, **renderable** Nema site and open it in the browser:
 
 ```bash
-nema init ./my-docs    # creates nema.config.ts + docs/index.md
-nema check ./my-docs
+npx create-nema my-docs --app              # Nema repo + a Fumadocs app
+cd my-docs && npm install && npm run dev   # → http://localhost:3000 — a badged, rendered page
 ```
 
-Then jump to step 4 and let an agent draft your first pages.
+Want docs-only (no renderer — bring your own)? Drop `--app` (`npx create-nema my-docs`) for a minimal
+repo that ends at `nema check`. Either way, jump to step 4 and let an agent draft your first pages.
 
 ---
 
