@@ -1,5 +1,13 @@
 # @getnema/mcp
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [6f6253f]
+  - @getnema/gates@0.2.1
+  - @getnema/producer@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes
