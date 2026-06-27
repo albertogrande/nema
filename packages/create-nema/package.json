@@ -13,21 +13,12 @@
   "bugs": {
     "url": "https://github.com/albertogrande/nema/issues"
   },
-  "keywords": [
-    "documentation",
-    "docs-as-code",
-    "ai",
-    "agents",
-    "provenance",
-    "scaffold"
-  ],
+  "keywords": ["documentation", "docs-as-code", "ai", "agents", "provenance", "scaffold"],
   "type": "module",
   "bin": {
     "create-nema": "./dist/index.js"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "publishConfig": {
     "access": "public"
   },

@@ -13,12 +13,7 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "check",
-    "approve",
-    "freshness"
-  ],
+  "files": ["dist", "check", "approve", "freshness"],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
