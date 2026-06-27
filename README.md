@@ -47,61 +47,58 @@ same corpus at once without clobbering — something a single closed-agent SaaS 
 
 ## Quickstart
 
-Stand up a brand-new, agent-native docs site for your project — from nothing to a rendered,
-provenance-badged page in about five minutes. No clone, no source build. **You need Node 22+.**
+Stand up a brand-new, agent-native docs site — from nothing to a rendered, provenance-badged page in
+about five minutes. **You need Node 22+.** No git, no account, no agent required to get there.
 
-### 1. Scaffold it
+*(Already have docs? Don't scaffold — see [QUICKSTART.md](QUICKSTART.md) to bring an existing repo
+under Nema with `nema migrate`.)*
+
+### 1. Scaffold and run
 
 ```bash
 npx create-nema my-docs --app
-```
-
-Writes a small **Next + Fumadocs** app: a `docs/` folder with one seeded page, a `nema.config.ts`, the
-gates wired as a GitHub Action, and a `/trust` provenance dashboard.
-
-### 2. Run it
-
-```bash
 cd my-docs
 npm install          # npm may print audit warnings — fine for local dev
 npm run dev          # → http://localhost:3000
 ```
 
-Open the URL. You land on your rendered docs home carrying a **"pending review"** provenance badge,
-with a **`/trust`** dashboard alongside. That's the idea made concrete: every page shows whether a
-human has signed off.
-
-### 3. Add your first page
-
-Your agents normally do this for you over MCP (next section) — the CLI does the same thing, so you can
-see the loop right now:
+Open the URL: your docs render with a **"pending review"** provenance badge and a **`/trust`**
+dashboard. That's the idea made concrete — every page shows whether a human has signed off. Confirm
+the corpus is valid out of the box:
 
 ```bash
-nema draft --path guides/getting-started --title "Getting Started" \
-  --diataxis how-to --model-name claude-opus-4-8 --model-vendor anthropic \
-  --body "Install it, then run it."
+nema check           # → all gates passed
 ```
 
-Nema writes the page with a full **provenance block** (`authored_by: ai`, the model, a `draft`
-transition) and immediately runs the gates — which catch that nothing links to it yet:
+Everything so far works with **no git, no account, no agent**.
 
-```text
-✗ [reachability] guides/getting-started: orphan — not linked from any other page
-    help: Link to the page from another page, or list its path in `rootExempt`.
-```
+### 2. Add a page — your agent does the writing
 
-That's the gates **teaching** you what a coherent corpus needs — not a wall you fight. Add a link to
-`guides/getting-started` from `docs/index.md`, then:
-
-### 4. Confirm it's clean
+Authoring is your agent's job, not yours at a terminal. Point your coding agent (Claude Code shown;
+the MCP server is agent-agnostic) at the repo:
 
 ```bash
-nema check           # re-run every gate
+claude mcp add nema -- npx -y @getnema/cli mcp .
 ```
 
-Green. Your site runs locally and your first page is valid — drafted by an agent, provenance recorded,
-not yet human-approved. Promoting it to `reviewed` happens **only** through a human PR approval — which
-is where your agents come in. ↓
+Then ask it, in plain language:
+
+> Draft a "Getting Started" how-to page, link it from the docs index, and run `nema check`.
+
+Your agent writes the page with a full **provenance block** (`authored_by: ai`, the model, a `draft`
+transition), links it into the nav, and self-checks against the gates — fixing whatever they flag.
+Reload `localhost:3000` and the page is there, badged *pending review*.
+
+### 3. Ship it for approval
+
+When you're ready to promote a draft to **reviewed**:
+
+```bash
+nema open-pr         # the first step that needs git + a GitHub remote + the `gh` CLI
+```
+
+A human approves the PR on GitHub — the **only** path to `reviewed`. An Action runs `nema approve`,
+flips `draft → reviewed`, stamps freshness, and merges. That approval gate is the one invariant.
 
 ## Point your agent at it
 
