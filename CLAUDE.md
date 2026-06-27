@@ -65,3 +65,7 @@ parsing text. `nema check --json` gives the same machine-readable report on the 
 - Sign commits: `git commit -s`. Conventional Commits. Add a changeset for package-affecting
   changes.
 - Do **not** touch `ee/` — reserved, out of scope.
+- **After every merge to `main`, run the [`docs-freshness`](.claude/skills/docs-freshness/SKILL.md)
+  skill** — the README, QUICKSTART, and `docs/` must stay in sync with the shipped code (we dogfood
+  the freshness contract on our own repo). Scope it to the merge delta; never self-promote a page to
+  `reviewed`.

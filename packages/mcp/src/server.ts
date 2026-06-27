@@ -175,6 +175,10 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
         diataxis: z.enum(['tutorial', 'how-to', 'reference', 'explanation', 'overview']).optional(),
         model: modelShape.optional().describe('Your model id/vendor — required for AI authorship'),
         sources: z.array(sourceShape).optional(),
+        agent: z
+          .string()
+          .optional()
+          .describe('Your stable agent id — refuses the write if another agent holds this page'),
       },
       outputSchema: draftResultShape,
     },
@@ -204,6 +208,10 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
         title: z.string().optional(),
         body: z.string().optional(),
         frontmatter: z.record(z.any()).optional(),
+        agent: z
+          .string()
+          .optional()
+          .describe('Your stable agent id — refuses the write if another agent holds this page'),
       },
     },
     async (input) => {
@@ -251,6 +259,52 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
       inputSchema: { pr: z.number().int().optional(), note: z.string().optional() },
     },
     async (input) => text((await tools.requestReview(input)).message),
+  );
+
+  server.registerTool(
+    'claim_slot',
+    {
+      title: 'Claim a page authoring slot',
+      description:
+        'Reserve a page for concurrent multi-agent authoring so your fleet does not clobber the ' +
+        'same page. Atomic: if another agent holds a live lease, this is refused with the holder. ' +
+        'Pass the same agent id to draft_page/update_page to keep the lease.',
+      inputSchema: {
+        path: z.string().describe('Page route without .md, e.g. api/reference'),
+        agent: z.string().describe('Your stable agent id'),
+        branch: z.string().optional().describe('Branch you are authoring on'),
+      },
+    },
+    async ({ path, agent, branch }) => {
+      const res = tools.claimSlot({ path, agent, branch });
+      if (res.ok) {
+        const how = res.alreadyHeld ? 'already held by you' : 'acquired';
+        return text(`Slot "${path}" ${how} for agent "${agent}".`);
+      }
+      return text(
+        `Slot "${path}" is leased by agent "${res.lease.agent}" (since ${res.lease.ts}). ` +
+          'Choose another page or wait for it to release.',
+        true,
+      );
+    },
+  );
+
+  server.registerTool(
+    'release_slot',
+    {
+      title: 'Release a page authoring slot',
+      description: 'Release a slot you hold so another agent can author the page.',
+      inputSchema: {
+        path: z.string().describe('Page route without .md'),
+        agent: z.string().describe('Your stable agent id'),
+      },
+    },
+    async ({ path, agent }) => {
+      const { released } = tools.releaseSlot({ path, agent });
+      return released
+        ? text(`Released slot "${path}".`)
+        : text(`Slot "${path}" is not held by agent "${agent}" (nothing released).`, true);
+    },
   );
 }
 

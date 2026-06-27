@@ -11,11 +11,16 @@ import {
 } from '@getnema/core';
 import { type GateResult, checkContent } from '@getnema/gates';
 import {
+  type AcquireLeaseResult,
   type DraftResult,
   GitHubHost,
+  type Lease,
   type NemaHost,
   ProducerEngine,
   type ProposeResult,
+  acquireLease,
+  readLease,
+  releaseLease,
 } from '@getnema/producer';
 import { MATTER_OPTIONS, composeContent } from '@getnema/provenance';
 import type { ModelInfo, Source } from '@getnema/schema';
@@ -43,6 +48,8 @@ export interface DraftPageInput {
   diataxis?: string;
   model?: ModelInfo;
   sources?: Source[];
+  /** Stable agent id. When set, the write is refused if another agent holds the page. */
+  agent?: string;
 }
 
 export interface UpdatePageInput {
@@ -50,6 +57,8 @@ export interface UpdatePageInput {
   title?: string;
   body?: string;
   frontmatter?: Record<string, unknown>;
+  /** Stable agent id. When set, the write is refused if another agent holds the page. */
+  agent?: string;
 }
 
 export interface ProposeInput {
@@ -126,6 +135,43 @@ export class NemaTools {
     return checkContent(this.cfg.rootDir, { today: this.now() });
   }
 
+  // ---- slot leasing (the multi-agent moat) ------------------------------
+
+  /**
+   * Claim the authoring slot for a page so concurrent agents don't clobber it.
+   * Atomic at the filesystem layer — two agents racing for the same page resolve
+   * to one winner. Returns `ok: false` with the current holder on a live lease.
+   */
+  claimSlot(input: { path: string; agent: string; branch?: string }): AcquireLeaseResult {
+    return acquireLease({ rootDir: this.cfg.rootDir, ...input });
+  }
+
+  /** Release a slot you hold. */
+  releaseSlot(input: { path: string; agent: string }): { released: boolean } {
+    return releaseLease({ rootDir: this.cfg.rootDir, ...input });
+  }
+
+  /** The current lease for a page, or null if the slot is free. */
+  slotFor(path: string): Lease | null {
+    return readLease(this.cfg.rootDir, path);
+  }
+
+  /**
+   * Refuse a write when another agent holds the page; otherwise take/refresh the
+   * lease so a concurrent writer is blocked. No-op when `agent` is unset (the
+   * single-agent path stays lease-free and backward-compatible).
+   */
+  private guardSlot(path: string, agent: string | undefined): void {
+    if (!agent) return;
+    const res = this.claimSlot({ path, agent });
+    if (!res.ok) {
+      throw new Error(
+        `page "${path}" is leased by agent "${res.lease.agent}" (since ${res.lease.ts}) — ` +
+          'claim a different page or wait for the lease to release.',
+      );
+    }
+  }
+
   // ---- write tools ------------------------------------------------------
 
   async draftPage(input: DraftPageInput): Promise<DraftResult> {
@@ -135,6 +181,7 @@ export class NemaTools {
     if (!input.body || input.body.trim() === '') {
       throw new Error('body is required — a draft page needs Markdown content');
     }
+    this.guardSlot(input.path, input.agent);
     const engine = await this.engine();
     return engine.draftPage({
       path: input.path,
@@ -148,6 +195,7 @@ export class NemaTools {
   }
 
   async updatePage(input: UpdatePageInput): Promise<{ filePath: string; result: GateResult }> {
+    this.guardSlot(input.path, input.agent);
     const engine = await this.engine();
     const filePath = engine.filePathFor(input.path);
     if (!existsSync(filePath)) {
