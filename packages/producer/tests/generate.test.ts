@@ -49,6 +49,31 @@ describe('ingestRepo', () => {
   });
 });
 
+describe('ingestRepo — barrel re-exports', () => {
+  it('follows `export *` to flatten a pure re-export index', () => {
+    const barrel = mkdtempSync(join(tmpdir(), 'nema-generate-barrel-'));
+    mkdirSync(join(barrel, 'src'), { recursive: true });
+    writeFileSync(join(barrel, 'package.json'), JSON.stringify({ name: 'barrellib' }));
+    writeFileSync(
+      join(barrel, 'src/index.ts'),
+      ["export * from './math.js';", "export * as ns from './ns.js';"].join('\n'),
+    );
+    writeFileSync(
+      join(barrel, 'src/math.ts'),
+      ['export function add(a, b) { return a + b; }', 'export const PI = 3.14;'].join('\n'),
+    );
+    writeFileSync(join(barrel, 'src/ns.ts'), 'export const inner = 1;');
+
+    const repo = ingestRepo(barrel);
+    const names = repo.exports.map((e) => e.name);
+    expect(names).toContain('add'); // flattened from the re-exported module
+    expect(names).toContain('PI');
+    expect(names).toContain('ns'); // `export * as ns` stays a single namespace export
+    expect(names).not.toContain('inner'); // not flattened — it lives under `ns`
+    rmSync(barrel, { recursive: true, force: true });
+  });
+});
+
 describe('planDocs', () => {
   it('plans an overview + tutorial + reference, each footnoting its sources', () => {
     const entries = planDocs(ingestRepo(repoDir));
