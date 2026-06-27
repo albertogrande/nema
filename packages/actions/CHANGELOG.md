@@ -1,5 +1,13 @@
 # @getnema/actions
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [178d8a9]
+  - @getnema/gates@0.3.0
+  - @getnema/producer@0.3.0
+
 ## 0.1.3
 
 ### Patch Changes
