@@ -51,6 +51,13 @@ export interface PageConflict {
   branches: string[];
   /** add/add (both created it), edit/edit (both edited it), or edit/delete. */
   kind: 'add/add' | 'edit/edit' | 'edit/delete';
+  /**
+   * A stand-in version of the page (one branch's content, normalized). The merge
+   * leaves the real page unresolved, but the graph check treats this as present so
+   * the *root-cause* collision isn't drowned out by cascade diagnostics — links into
+   * the page resolve and it isn't reported as a fresh orphan.
+   */
+  representative: Page;
 }
 
 export interface MergeResult {
@@ -139,7 +146,12 @@ export function mergeCorpora(corpora: LabeledCorpus[], base?: LabeledCorpus): Me
     const distinctSigs = new Set(mutations.map((m) => m.sig));
 
     if (mutations.length > 0 && deletions.length > 0) {
-      conflicts.push({ path, branches: changes.map((c) => c.label), kind: 'edit/delete' });
+      conflicts.push({
+        path,
+        branches: changes.map((c) => c.label),
+        kind: 'edit/delete',
+        representative: normalize(mutations[0]!.page), // the edited side stands in
+      });
       continue; // unresolved — omit from the merged graph
     }
     if (mutations.length === 0) {
@@ -154,7 +166,12 @@ export function mergeCorpora(corpora: LabeledCorpus[], base?: LabeledCorpus): Me
     // nav link) merge cleanly, the way git would. Without one (add/add), it's a true
     // slot collision: two agents created the same page from scratch.
     if (!inBase) {
-      conflicts.push({ path, branches: mutations.map((m) => m.label), kind: 'add/add' });
+      conflicts.push({
+        path,
+        branches: mutations.map((m) => m.label),
+        kind: 'add/add',
+        representative: normalize(mutations[0]!.page),
+      });
       continue;
     }
     const ancestor = basePages.get(path)!.body.split('\n');
@@ -169,7 +186,12 @@ export function mergeCorpora(corpora: LabeledCorpus[], base?: LabeledCorpus): Me
       acc = r.lines;
     }
     if (!clean) {
-      conflicts.push({ path, branches: mutations.map((m) => m.label), kind: 'edit/edit' });
+      conflicts.push({
+        path,
+        branches: mutations.map((m) => m.label),
+        kind: 'edit/edit',
+        representative: normalize(mutations[0]!.page),
+      });
       continue;
     }
     merged.push(normalize({ ...mutations[0]!.page, body: acc.join('\n') }));
@@ -232,7 +254,14 @@ export function runCoherenceGate(
     });
   }
 
-  const ctx = mergedContext(merged, corpora, options);
+  // Check the graph over the resolved pages PLUS a stand-in for each conflicted page.
+  // A `slot-collision` is the root cause; including its representative keeps that
+  // collision from cascading into derived `merge-coherence` noise (dangling links to
+  // it, or pages orphaned because their only inbound link sat on the conflicted page).
+  const graphPages = [...merged, ...conflicts.map((c) => c.representative)].sort((a, b) =>
+    a.path.localeCompare(b.path),
+  );
+  const ctx = mergedContext(graphPages, corpora, options);
   for (const d of [...linkRules(ctx), ...reachabilityRules(ctx)]) {
     raw.push({
       rule: 'merge-coherence',

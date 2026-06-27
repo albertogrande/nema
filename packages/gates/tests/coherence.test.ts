@@ -115,6 +115,25 @@ describe('merge-time coherence gate', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('reports only the root-cause collision, not derived merge-coherence cascade', () => {
+    // Both branches create api/options differently (a collision) AND both link it
+    // from the index the same way. A naive union would omit the conflicted page and
+    // then also cry "broken link /api/options" + "orphan" — pure cascade noise.
+    const base = corpus('base', { index: page('Home', 'Welcome.') });
+    const a = corpus('feat-a', {
+      index: page('Home', 'Welcome. See [options](/api/options).'),
+      'api/options': page('Options', 'A wrote this. Back [home](/index).'),
+    });
+    const b = corpus('feat-b', {
+      index: page('Home', 'Welcome. See [options](/api/options).'),
+      'api/options': page('Options', 'B wrote ELSE. Back [home](/index).'),
+    });
+    const result = runCoherenceGate([a, b], { base, today: TODAY });
+    expect(result.diagnostics.filter((d) => d.rule === 'slot-collision')).toHaveLength(1);
+    // The collision is the only diagnostic — no derived merge-coherence noise.
+    expect(result.diagnostics.filter((d) => d.rule === 'merge-coherence')).toEqual([]);
+  });
+
   it('does not flag a collision when both branches add identical content', () => {
     const identical = page('Shared', 'Same bytes. Back [home](/index).');
     const base = corpus('base', { index: page('Home', '[Shared](/shared).') });
