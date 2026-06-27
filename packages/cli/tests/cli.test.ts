@@ -134,9 +134,9 @@ describe('open-pr precondition hints (no stack traces)', () => {
     expect(preconditionHint('`gh pr create --title x` failed: spawn gh ENOENT')).toContain(
       'gh auth login',
     );
-    expect(
-      preconditionHint('`gh pr create --title x` failed: gh auth login required'),
-    ).toContain('gh auth login');
+    expect(preconditionHint('`gh pr create --title x` failed: gh auth login required')).toContain(
+      'gh auth login',
+    );
   });
 
   it('returns null for unrelated errors (lets them surface)', () => {
