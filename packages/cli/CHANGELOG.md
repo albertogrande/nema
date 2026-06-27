@@ -1,5 +1,12 @@
 # nema
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [b12c39b]
+  - @getnema/mcp@0.1.1
+
 ## 0.1.0
 
 ### Minor Changes
