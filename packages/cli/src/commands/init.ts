@@ -32,6 +32,10 @@ export const initCommand = defineCommand({
   async run({ args }) {
     const rootDir = args.dir ? String(args.dir) : process.cwd();
 
+    // Scaffolding is init's job: create the target root if it doesn't exist yet,
+    // so `nema init <new-dir>` works rather than crashing on the first writeFileSync.
+    mkdirSync(rootDir, { recursive: true });
+
     const configPath = join(rootDir, 'nema.config.ts');
     if (existsSync(configPath)) {
       out(`exists  ${configPath}`);

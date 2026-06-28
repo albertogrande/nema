@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: Apache-2.0
+import { existsSync, statSync } from 'node:fs';
 import { type Page, createContentSource } from '@getnema/core';
 import { defineCommand } from 'citty';
 import { errOut, out } from '../util.js';
+
+function isDir(target: string): boolean {
+  try {
+    return existsSync(target) && statSync(target).isDirectory();
+  } catch {
+    return false;
+  }
+}
 
 function printChain(page: Page): void {
   const prov = page.provenance;
@@ -58,13 +67,23 @@ export const provCommand = defineCommand({
     dir: { type: 'string', description: 'Repo root (default: cwd)' },
   },
   async run({ args }) {
-    const rootDir = args.dir ? String(args.dir) : process.cwd();
+    let rootDir = args.dir ? String(args.dir) : process.cwd();
+    let pageArg = args.path ? String(args.path) : undefined;
+
+    // Sibling commands (audit/check/migrate/doctor) take a repo dir as their positional.
+    // Accept that shape here too: `nema prov <dir>` lists that repo instead of erroring
+    // with "No page found", so the positional means the same thing across commands.
+    if (pageArg && isDir(pageArg)) {
+      rootDir = pageArg;
+      pageArg = undefined;
+    }
+
     const source = await createContentSource(rootDir);
 
-    if (args.path) {
-      const page = source.getPage(String(args.path));
+    if (pageArg) {
+      const page = source.getPage(pageArg);
       if (!page) {
-        errOut(`No page found for "${args.path}"`);
+        errOut(`No page found for "${pageArg}"`);
         process.exitCode = 1;
         return;
       }
