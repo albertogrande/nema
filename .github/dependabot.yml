@@ -2,6 +2,12 @@
 # Automated dependency updates. pnpm workspace with a single root lockfile, so the
 # npm ecosystem is scanned from the root. Updates are grouped to keep PR noise low,
 # and commit messages follow Conventional Commits (see hq engineering standard).
+#
+# Low-friction policy (single maintainer):
+#   - npm minor/patch are grouped into two PRs (dev + prod) per run.
+#   - npm MAJOR bumps are ignored: they routinely carry breaking changes and break
+#     CI, so they are upgraded deliberately by hand, not auto-proposed.
+#   - github-actions bumps are grouped into a single PR.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -16,6 +22,10 @@ updates:
       prod-minor-patch:
         dependency-type: production
         update-types: [minor, patch]
+    ignore:
+      # Skip majors across the board — opt into them manually when ready to migrate.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "chore(deps)"
       prefix-development: "chore(deps-dev)"
@@ -24,5 +34,8 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
     commit-message:
       prefix: "ci(deps)"
