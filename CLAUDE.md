@@ -69,3 +69,6 @@ parsing text. `nema check --json` gives the same machine-readable report on the 
   skill** — the README, QUICKSTART, and `docs/` must stay in sync with the shipped code (we dogfood
   the freshness contract on our own repo). Scope it to the merge delta; never self-promote a page to
   `reviewed`.
+- **DX findings from `nema-demo`** land here as `nema:dx-finding` issues. Work them with the
+  [`fix-dx-issues`](.claude/skills/fix-dx-issues/SKILL.md) skill: triage → reproduce → fix → PR
+  for human approval. (The demo files them; this repo fixes them. Merging is the gate.)
