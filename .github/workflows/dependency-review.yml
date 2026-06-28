@@ -17,12 +17,12 @@ jobs:
     name: dependency review
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Dependency Review
         # Advisory: a failure here (high-sev finding, or Dependency graph disabled)
         # must not block the PR. Findings still post as a comment for the maintainer.
         continue-on-error: true
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         with:
           comment-summary-in-pr: on-failure
           fail-on-severity: high
