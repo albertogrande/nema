@@ -2,7 +2,9 @@
 name: Dependency Review
 
 # On every PR, flag dependencies being added/updated that carry known vulnerabilities
-# or incompatible licenses, before they land on main. Free for public repos.
+# or incompatible licenses. Advisory only — it surfaces findings as a PR comment but
+# never blocks a merge, and tolerates repos where the Dependency graph feature is off
+# (single-maintainer, zero-config: no GitHub UI setup required to merge).
 on:
   pull_request:
     branches: [main]
@@ -17,6 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Dependency Review
+        # Advisory: a failure here (high-sev finding, or Dependency graph disabled)
+        # must not block the PR. Findings still post as a comment for the maintainer.
+        continue-on-error: true
         uses: actions/dependency-review-action@v4
         with:
           comment-summary-in-pr: on-failure
