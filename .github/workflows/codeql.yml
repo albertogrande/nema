@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: Apache-2.0
+name: CodeQL
+
+# Static analysis security scanning for JS/TS. Runs on PRs and pushes to main, plus a
+# weekly scheduled scan to catch newly disclosed query patterns on unchanged code.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "27 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: analyze (javascript-typescript)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-and-quality
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"

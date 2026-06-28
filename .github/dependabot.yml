@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+# Automated dependency updates. pnpm workspace with a single root lockfile, so the
+# npm ecosystem is scanned from the root. Updates are grouped to keep PR noise low,
+# and commit messages follow Conventional Commits (see hq engineering standard).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+      prod-minor-patch:
+        dependency-type: production
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(deps-dev)"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci(deps)"

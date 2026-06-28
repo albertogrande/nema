@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(pnpm check:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm changeset:*)",
+      "Bash(pnpm --filter:*)",
+      "Bash(pnpm exec turbo:*)",
+      "Bash(node packages/cli/dist/index.js:*)",
+      "Bash(biome check:*)",
+      "Bash(biome format:*)",
+      "Bash(reuse lint)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git restore:*)",
+      "Bash(git stash:*)"
+    ],
+    "deny": [
+      "Bash(pnpm publish:*)",
+      "Bash(pnpm release:*)",
+      "Bash(npm publish:*)",
+      "Read(./ee/**)",
+      "Edit(./ee/**)",
+      "Write(./ee/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/guard-reviewed.mjs" }]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/session-bootstrap.mjs",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

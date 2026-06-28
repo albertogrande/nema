@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: Apache-2.0
+# Categorizes GitHub's auto-generated release notes by PR label. Complements the
+# Changesets changelog (per-package) with a readable, grouped GitHub Release body.
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: 🚀 Features
+      labels: ["type:feat", "enhancement"]
+    - title: 🐛 Fixes
+      labels: ["type:bug", "bug"]
+    - title: 📚 Documentation
+      labels: ["type:docs", "documentation"]
+    - title: 🔒 Security
+      labels: ["security"]
+    - title: 🧰 Maintenance & CI
+      labels: ["type:chore", "ci", "dependencies"]
+    - title: Other Changes
+      labels: ["*"]

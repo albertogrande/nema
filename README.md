@@ -21,6 +21,12 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/albertogrande/nema/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/albertogrande/nema/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="https://github.com/albertogrande/nema/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/albertogrande/nema/actions/workflows/codeql.yml/badge.svg?branch=main"></a>
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/albertogrande/nema"><img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/albertogrande/nema/badge"></a>
+</p>
+
+<p align="center">
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-1b1b1f?style=flat-square&labelColor=1b1b1f"></a>
   <img alt="Status: alpha" src="https://img.shields.io/badge/status-alpha-d99a06?style=flat-square&labelColor=1b1b1f">
   <img alt="Node 22+" src="https://img.shields.io/badge/node-22%2B-1b1b1f?style=flat-square&labelColor=1b1b1f">
