@@ -35,7 +35,7 @@
     "@getnema/producer": "workspace:*",
     "@getnema/provenance": "workspace:*",
     "@getnema/schema": "workspace:*",
-    "citty": "^0.1.6",
+    "citty": "^0.2.2",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {
