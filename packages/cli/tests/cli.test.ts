@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
+import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { runCommand } from 'citty';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import pkg from '../package.json' with { type: 'json' };
 import { preconditionHint } from '../src/commands/open-pr.js';
 import { main } from '../src/main.js';
 
@@ -42,12 +44,30 @@ afterEach(() => {
   process.exitCode = 0;
 });
 
+describe('nema --version', () => {
+  it('reports the package.json version (not a hardcoded stale value)', () => {
+    const meta = main.meta as { version?: string };
+    expect(meta.version).toBe(pkg.version);
+  });
+});
+
 describe('nema init + check', () => {
   it('scaffolds a repo and the starter passes check', async () => {
     const init = await nema('init', rootDir);
     expect(init).toContain('nema.config.ts');
 
     const check = await nema('check', rootDir);
+    expect(check).toContain('all gates passed');
+    expect(process.exitCode).toBe(0);
+  });
+
+  it('scaffolds a target directory that does not exist yet', async () => {
+    const target = join(rootDir, 'nested', 'ws');
+    const init = await nema('init', target);
+    expect(init).toContain('nema.config.ts');
+    expect(capturedErr).not.toContain('ENOENT');
+
+    const check = await nema('check', target);
     expect(check).toContain('all gates passed');
     expect(process.exitCode).toBe(0);
   });
@@ -183,6 +203,55 @@ describe('nema prov --filter', () => {
     );
     const listed = await nema('prov', '--dir', rootDir, '--filter', 'authored_by=ai');
     expect(listed).toContain('a — A');
+  });
+
+  it('treats a directory positional as a repo to list (like audit/check)', async () => {
+    await nema('init', rootDir);
+    await nema(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'a',
+      '--title',
+      'A',
+      '--body',
+      'Linked from [home](/index).',
+      '--model-name',
+      'claude-opus-4-8',
+    );
+    // `nema prov <dir>` used to fail with "No page found for <dir>"; now it lists.
+    const listed = await nema('prov', rootDir);
+    expect(listed).toContain('a — A');
+    expect(capturedErr).not.toContain('No page found');
+  });
+});
+
+describe('nema coherence', () => {
+  it('reframes "not a git repository" instead of dumping a stack trace', async () => {
+    await nema('coherence', '--dir', rootDir);
+    expect(capturedErr).toContain('not a git repository');
+    expect(capturedErr).toContain('help:');
+    expect(capturedErr).not.toContain('    at '); // no stack frames
+    expect(capturedErr).not.toContain('/dist/'); // no internal paths
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('emits parseable JSON on the no-git error path under --json', async () => {
+    const json = await nema('coherence', '--dir', rootDir, '--json');
+    const report = JSON.parse(json);
+    expect(report.ok).toBe(false);
+    expect(report.diagnostics[0]).toMatchObject({ rule: 'coherence', severity: 'error' });
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('emits JSON (not a human string) when there are no draft branches', async () => {
+    execFileSync('git', ['init', '-q'], { cwd: rootDir });
+    const json = await nema('coherence', '--dir', rootDir, '--json');
+    const report = JSON.parse(json);
+    expect(report).toMatchObject({ ok: true, diagnostics: [] });
+    expect(report.note).toContain('no draft branches');
+    expect(process.exitCode).toBe(0);
   });
 });
 

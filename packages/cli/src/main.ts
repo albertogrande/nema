@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { defineCommand } from 'citty';
+import pkg from '../package.json' with { type: 'json' };
 import { approveCommand } from './commands/approve.js';
 import { auditCommand } from './commands/audit.js';
 import { checkCommand } from './commands/check.js';
@@ -19,7 +20,7 @@ import { releaseCommand } from './commands/release.js';
 export const main = defineCommand({
   meta: {
     name: 'nema',
-    version: '0.1.0',
+    version: pkg.version,
     description: 'Nema — open-source, AI-native documentation platform',
   },
   subCommands: {
