@@ -34,8 +34,13 @@ const EXPORT_DECL_RE =
 const DECL_RE =
   /(?:export\s+)?(?:declare\s+)?(?:default\s+)?(const|let|var|function|class|type|interface|enum)\s+([A-Za-z_$][\w$]*)/g;
 
-/** `export { A, B as C, type D }` — the export-list form. */
-const EXPORT_LIST_RE = /export\s*(?:type\s*)?\{([^}]*)\}/g;
+/**
+ * `export { A, B as C, type D }` — the export-list form. The `type` keyword and
+ * the whitespace before `{` are matched without two competing `\s` quantifiers
+ * (`(?:\s+type)?` keeps its whitespace behind the literal `type`), so the
+ * pattern stays linear over arbitrary input.
+ */
+const EXPORT_LIST_RE = /export(?:\s+type)?\s*\{([^}]*)\}/g;
 
 const IDENT_RE = /^[A-Za-z_$][\w$]*$/;
 
@@ -52,7 +57,9 @@ export function extractExports(source: string): RepoExport[] {
     for (const part of m[1]!.split(',')) {
       const token = part.trim();
       if (!token) continue;
-      const name = (token.split(/\s+as\s+/).pop() ?? token).replace(/^type\s+/, '').trim();
+      // Split on the `as` rename via a zero-width word boundary, not `\s+as\s+`
+      // (whose two `\s+` quantifiers backtrack super-linearly on a run of spaces).
+      const name = (token.split(/\bas\b/).pop() ?? token).replace(/^type\s+/, '').trim();
       if (name === 'default') continue; // a default re-export has no useful symbol name
       if (IDENT_RE.test(name) && !found.has(name)) found.set(name, 'export');
     }
