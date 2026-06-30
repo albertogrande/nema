@@ -20,6 +20,23 @@ describe('extractExports', () => {
       .sort();
     expect(names).toEqual(['Server', 'VERSION', 'createServer']);
   });
+
+  it('parses type-only and as-renamed export lists', () => {
+    const src = 'export type { Opts } from "./o";\nexport { a as b, c } from "./x";';
+    const names = extractExports(src)
+      .map((e) => e.name)
+      .sort();
+    expect(names).toEqual(['Opts', 'b', 'c']);
+  });
+
+  it('stays linear on adversarial input (no ReDoS)', () => {
+    // Inputs CodeQL flagged for the old regexes: a long run of `|` after `{`,
+    // and a long run of spaces. Both must complete promptly.
+    const start = Date.now();
+    extractExports(`export {${'|'.repeat(50000)}`);
+    extractExports(`export { A${' '.repeat(50000)}}`);
+    expect(Date.now() - start).toBeLessThan(1000);
+  });
 });
 
 describe('symbolSignature', () => {

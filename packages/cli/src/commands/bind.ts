@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { resolveConfig } from '@getnema/core';
 import { fingerprintBinding, readCodeBindings } from '@getnema/drift';
@@ -64,11 +64,6 @@ export const bindCommand = defineCommand({
     const config = await resolveConfig(rootDir);
 
     const filePath = join(config.contentRoot, `${String(args.path)}.md`);
-    if (!existsSync(filePath)) {
-      errOut(`No page found at ${String(args.path)} (${filePath})`);
-      process.exitCode = 1;
-      return;
-    }
 
     let strategy: FingerprintStrategy | undefined;
     if (args.strategy) {
@@ -82,7 +77,16 @@ export const bindCommand = defineCommand({
       strategy = String(args.strategy) as FingerprintStrategy;
     }
 
-    const raw = readFileSync(filePath, 'utf8');
+    // Read directly and handle a missing file via the error, rather than an
+    // existsSync pre-check (which would be a time-of-check/time-of-use race).
+    let raw: string;
+    try {
+      raw = readFileSync(filePath, 'utf8');
+    } catch {
+      errOut(`No page found at ${String(args.path)} (${filePath})`);
+      process.exitCode = 1;
+      return;
+    }
     const { data, content } = matter(raw, MATTER_OPTIONS);
     const fm = { ...((data ?? {}) as Record<string, unknown>) };
     const { bindings } = readCodeBindings(fm);
