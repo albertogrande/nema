@@ -21,6 +21,7 @@ function fakeSource(): ContentSource {
       rootDir: '',
       contentDir: 'docs',
       contentRoot: CONTENT_ROOT,
+      codeRoot: CONTENT_ROOT,
       reviewSlaDays: 180,
       rootExempt: ['index'],
       baseUrl: '',

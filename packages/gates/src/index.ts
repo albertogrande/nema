@@ -7,6 +7,7 @@ export * from './format.js';
 export * from './git-state.js';
 export * from './git-state-fs.js';
 export * from './markdown.js';
+export * from './rules/code-drift.js';
 export * from './rules/draft-not-reviewed.js';
 export * from './rules/footnotes.js';
 export * from './rules/frontmatter.js';

@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: Apache-2.0
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { type RepoExport, extractExports } from '@getnema/drift';
 import { composeContent, recordTransition, seedProvenance } from '@getnema/provenance';
 import type { AuthoredBy, ModelInfo, Source } from '@getnema/schema';
+
+export type { RepoExport };
 
 /**
  * `nema generate` — lay the rails for "docs from your code". This module is a
@@ -13,12 +16,6 @@ import type { AuthoredBy, ModelInfo, Source } from '@getnema/schema';
  * real source files. It never writes prose: the explanatory text is left to the
  * user's own agent, which fills the skeleton through the existing draft loop.
  */
-
-/** A single exported symbol discovered in the entry file. */
-export interface RepoExport {
-  name: string;
-  kind: string;
-}
 
 /** The facts read out of a source repo — the "context bundle", inline for now. */
 export interface IngestedRepo {
@@ -55,33 +52,6 @@ function readmeIntro(markdown: string): string | undefined {
     return block.replace(/\s+/g, ' ').trim();
   }
   return undefined;
-}
-
-/** Extract exported symbol names from TS/JS source via lightweight pattern match. */
-function extractExports(source: string): RepoExport[] {
-  const found = new Map<string, string>();
-
-  // `export const|function|class|type|interface|enum Name`
-  const declRe =
-    /export\s+(?:declare\s+)?(?:default\s+)?(const|let|var|function|class|type|interface|enum)\s+([A-Za-z_$][\w$]*)/g;
-  for (const m of source.matchAll(declRe)) {
-    const kind = m[1] === 'let' || m[1] === 'var' ? 'const' : m[1]!;
-    found.set(m[2]!, kind === 'function' ? 'function' : kind);
-  }
-
-  // `export { A, B as C, type D }`
-  const listRe = /export\s*(?:type\s*)?\{([^}]*)\}/g;
-  for (const m of source.matchAll(listRe)) {
-    for (const part of m[1]!.split(',')) {
-      const token = part.trim();
-      if (!token) continue;
-      const name = (token.split(/\s+as\s+/).pop() ?? token).replace(/^type\s+/, '').trim();
-      if (name === 'default') continue; // a default re-export has no useful symbol name
-      if (/^[A-Za-z_$][\w$]*$/.test(name) && !found.has(name)) found.set(name, 'export');
-    }
-  }
-
-  return [...found].map(([name, kind]) => ({ name, kind }));
 }
 
 function firstExisting(repoDir: string, candidates: string[]): string | undefined {

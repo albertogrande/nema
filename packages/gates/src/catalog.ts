@@ -172,6 +172,25 @@ export const RULE_CATALOG: Record<string, RuleDoc> = {
       '`nema approve` to promote it after a human approves the PR. A human importing an existing ' +
       'corpus can assert reviewed pages via `nema migrate` (method `migration`).',
   },
+  'code-drift': {
+    id: 'code-drift',
+    title: 'Docs track their code',
+    summary:
+      'A page bound to source code (a `code:` block) whose bound code has changed since the ' +
+      'page was last reviewed — the docs may now be behind the code.',
+    hint: 'Re-read the changed source and update the page, then re-propose; approval re-stamps the baseline.',
+    details:
+      'A page can declare the code it documents in a frontmatter `code:` block — a list of bindings, ' +
+      'each pointing at a source file (and optionally specific exported symbols). On approval Nema ' +
+      'stamps a fingerprint of that code as the reviewed baseline. The gate recomputes the fingerprint ' +
+      'from the current source and warns when it has moved: the surface changed (`symbols` strategy ' +
+      'ignores body-only edits), a tracked symbol is no longer exported, or the source file is gone.\n\n' +
+      'This is a **warning**, not an error: code racing ahead of the docs is the normal signal to act ' +
+      'on, not a build break. Fix: run `nema drift` to see exactly what moved, update the page from the ' +
+      'changed source through the normal draft loop, and re-propose. A human approval re-stamps the ' +
+      'baseline — agents never stamp a reviewed baseline themselves. Seed/refresh a baseline on a draft ' +
+      'with `nema bind <path> <source>`.',
+  },
   'slot-collision': {
     id: 'slot-collision',
     title: 'No two branches author the same page',

@@ -244,6 +244,7 @@ function mergedContext(
         rootDir: VIRTUAL_ROOT,
         contentDir: '.',
         contentRoot: VIRTUAL_ROOT,
+        codeRoot: VIRTUAL_ROOT,
         reviewSlaDays: 180,
         rootExempt: ['index'],
         baseUrl: '',

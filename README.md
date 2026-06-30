@@ -203,6 +203,26 @@ metadata, README intro, exported symbols) and writes a seeded, gate-green diáta
 factual skeleton your agent then fills with prose through the draft loop. It never writes prose
 itself.
 
+## Docs that stay fresh (code-drift)
+
+A page can declare the **code it documents** in a frontmatter `code:` block. Nema fingerprints that
+code's *public surface* and, on human approval, stamps it as the page's baseline. When the code
+later moves past that baseline, `nema drift` tells you exactly which pages are now behind — and your
+agent fixes them through the normal draft loop.
+
+```bash
+nema bind api/reference src/api.ts --symbols createServer   # bind + stamp a baseline
+nema drift                                                  # which pages fell behind their code?
+nema drift --json --strict                                  # machine-readable; non-zero on drift (CI)
+```
+
+Drift tracks the **API surface, not the implementation**: a changed signature, a removed export, or
+a deleted source counts; a body-only edit or reformatting does not. It also shows up in `nema check`
+as a **warning** (never a build break — code racing ahead of the docs is the signal to act on), and
+the `drift` MCP tool returns it as structured data an agent can act on. A human approval re-stamps
+the baseline, exactly as it stamps the freshness dates — agents never stamp it themselves. See
+[`examples/drift`](examples/drift) or run `pnpm demo:drift` for the self-verifying walkthrough.
+
 ## Architecture
 
 A pnpm + Turborepo monorepo. The engine is **renderer-agnostic**: the core packages
@@ -214,6 +234,7 @@ renderer. Only `adapter-fumadocs` and the app template touch React/Next.
 | [`@getnema/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
 | [`@getnema/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
 | [`@getnema/provenance`](packages/provenance) | read / merge / recordTransition / verify |
+| [`@getnema/drift`](packages/drift) | fingerprint bound source code + detect doc/code drift |
 | [`@getnema/gates`](packages/gates) | validation rules behind `nema check` |
 | [`@getnema/producer`](packages/producer) | draft → branch → PR → approve → state-flip |
 | [`@getnema/mcp`](packages/mcp) | MCP server: read tools + write tools |

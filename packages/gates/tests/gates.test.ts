@@ -12,6 +12,7 @@ function sourceFor(name: string) {
     rootDir: fileURLToPath(new URL(`./fixtures/${name}`, import.meta.url)),
     contentDir: 'docs',
     contentRoot,
+    codeRoot: contentRoot,
     reviewSlaDays: 180,
     rootExempt: ['index'],
     baseUrl: '',

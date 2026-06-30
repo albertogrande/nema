@@ -6,6 +6,7 @@ import type { NemaConfig, ResolvedConfig } from './types.js';
 
 export const DEFAULT_CONFIG: Required<Omit<NemaConfig, 'nav' | 'contentModel'>> = {
   contentDir: 'docs',
+  codeRoot: '.',
   reviewSlaDays: 180,
   rootExempt: ['index'],
   baseUrl: '',
@@ -50,6 +51,7 @@ export async function resolveConfig(
     rootDir: root,
     contentDir: merged.contentDir,
     contentRoot: resolve(root, merged.contentDir),
+    codeRoot: resolve(root, merged.codeRoot),
     reviewSlaDays: merged.reviewSlaDays,
     rootExempt: merged.rootExempt,
     baseUrl: merged.baseUrl,

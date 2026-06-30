@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
+import { readCodeBindings, stampBindings } from '@getnema/drift';
 import {
   MATTER_OPTIONS,
   composeContent,
@@ -31,6 +32,13 @@ export interface FlipOptions {
   reviewSlaDays: number;
   /** SHA of the approving/merge commit, recorded on the reviewed transition. */
   commit?: string;
+  /**
+   * Absolute root the page's `code:` bindings resolve against. When set, the
+   * reviewed flip re-stamps each binding's baseline fingerprint to the current
+   * code — the human approval IS the moment the baseline becomes authoritative.
+   * Omit to leave bindings untouched.
+   */
+  codeRoot?: string;
 }
 
 /**
@@ -64,6 +72,15 @@ export function flipToReviewed(raw: string, opts: FlipOptions): string {
   fm.last_reviewed = toISODate(opts.today);
   fm.review_by = toISODate(addDays(opts.today, opts.reviewSlaDays));
   fm.provenance = prov;
+
+  // Re-stamp code bindings: approval is the moment the bound code becomes the
+  // reviewed baseline against which future drift is measured.
+  if (opts.codeRoot != null) {
+    const { bindings } = readCodeBindings(fm);
+    if (bindings.length > 0) {
+      fm.code = stampBindings(bindings, opts.codeRoot, toISODate(opts.today));
+    }
+  }
 
   return composeContent(fm, content);
 }

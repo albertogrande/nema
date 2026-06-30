@@ -11,6 +11,7 @@ function source(): ContentSource {
     rootDir: fileURLToPath(new URL('./fixtures', import.meta.url)),
     contentDir: 'docs',
     contentRoot,
+    codeRoot: contentRoot,
     reviewSlaDays: 180,
     rootExempt: ['index'],
     baseUrl: '',

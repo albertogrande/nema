@@ -106,6 +106,8 @@ jobs:
       # The script asserts each outcome and exits non-zero on any regression.
       - run: git config --global user.email ci@nema.dev && git config --global user.name CI
       - run: pnpm demo:concurrent
+      # Dogfood the code-drift engine: bind → drift → re-stamp, asserted end to end.
+      - run: pnpm demo:drift
 
   doctor:
     name: nema doctor (operator config, advisory)

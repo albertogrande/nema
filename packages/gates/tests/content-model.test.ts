@@ -31,6 +31,7 @@ function source(frontmatter: string, contentModel?: ContentModel): ContentSource
     rootDir: root,
     contentDir: 'docs',
     contentRoot: docs,
+    codeRoot: docs,
     reviewSlaDays: 180,
     rootExempt: ['index'],
     baseUrl: '',

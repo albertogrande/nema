@@ -48,6 +48,11 @@ The `provenance-consistency` gate checks: `reviewed ⇒ reviewed_by + a reviewed
   footnotes.
 - **Links**: internal links and `#anchors` must resolve.
 - **Reachability**: non-root pages must be linked from somewhere (no orphans).
+- **Code-drift**: a page may bind to the source it documents via a frontmatter `code:` block. When
+  that code's public surface moves past the page's reviewed baseline, the `code-drift` gate
+  **warns** (never fails) and `nema drift` lists the stale pages. You may add/refresh bindings on a
+  draft (`nema bind <path> <source>`) and re-draft from the changed source — but the reviewed
+  baseline is re-stamped **only** on human approval, exactly like `reviewed` itself. Never stamp it.
 
 Run `nema check` (or the `check` MCP tool) yourself before proposing. Green-before-PR is the
 norm. Every diagnostic carries a `help:` hint; run `nema explain <rule>` for the full fix. The

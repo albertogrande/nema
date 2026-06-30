@@ -30,12 +30,14 @@
   },
   "dependencies": {
     "@getnema/core": "workspace:*",
+    "@getnema/drift": "workspace:*",
     "@getnema/gates": "workspace:*",
     "@getnema/mcp": "workspace:*",
     "@getnema/producer": "workspace:*",
     "@getnema/provenance": "workspace:*",
     "@getnema/schema": "workspace:*",
     "citty": "^0.2.2",
+    "gray-matter": "^4.0.3",
     "js-yaml": "^4.3.0"
   },
   "devDependencies": {

@@ -18,6 +18,8 @@ export interface ProducerConfig {
   rootDir: string;
   /** Absolute path to the content directory (where `.md` pages live). */
   contentRoot: string;
+  /** Absolute root that `code:` bindings resolve against. Default `rootDir`. */
+  codeRoot?: string;
   host: NemaHost;
   /** Freshness SLA in days. Default 180. */
   reviewSlaDays?: number;
@@ -183,6 +185,7 @@ export class ProducerEngine {
       today,
       reviewSlaDays: this.sla(),
       commit,
+      codeRoot: this.cfg.codeRoot ?? this.cfg.rootDir,
     });
     writeFileSync(filePath, next, 'utf8');
 

@@ -18,6 +18,7 @@
     "check": "turbo run lint typecheck test build",
     "smoke": "node scripts/smoke-publish.mjs",
     "demo:concurrent": "node scripts/demo-concurrent.mjs",
+    "demo:drift": "node scripts/demo-drift.mjs",
     "version:packages": "changeset version && biome format --write .",
     "release": "pnpm -r publish --no-git-checks --access public"
   },

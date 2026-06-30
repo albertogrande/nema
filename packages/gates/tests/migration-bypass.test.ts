@@ -10,6 +10,7 @@ const CONFIG: ResolvedConfig = {
   rootDir: '/repo',
   contentDir: 'docs',
   contentRoot: '/repo/docs',
+  codeRoot: '/repo/docs',
   reviewSlaDays: 180,
   rootExempt: ['index'],
   baseUrl: '',

@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@getnema/core": "workspace:*",
+    "@getnema/drift": "workspace:*",
     "@getnema/gates": "workspace:*",
     "@getnema/provenance": "workspace:*",
     "@getnema/schema": "workspace:*",

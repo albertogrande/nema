@@ -69,6 +69,7 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
   const engine = new ProducerEngine({
     rootDir: repoRoot,
     contentRoot: config.contentRoot,
+    codeRoot: config.codeRoot,
     host,
     reviewSlaDays: config.reviewSlaDays,
   });

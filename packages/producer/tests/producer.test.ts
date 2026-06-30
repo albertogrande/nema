@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { checkContent } from '@getnema/gates';
@@ -201,5 +201,67 @@ describe('flipToReviewed (pure)', () => {
     expect(out).toContain('status: reviewed');
     expect(out).toContain('review_by: 2026-09-23');
     expect(out).toContain('Body.');
+  });
+});
+
+describe('flipToReviewed re-stamps code bindings', () => {
+  it('stamps the current code fingerprint as the reviewed baseline', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'nema-flip-drift-'));
+    try {
+      writeFileSync(join(dir, 'api.ts'), 'export function f(a: number): void {}', 'utf8');
+      const raw = [
+        '---',
+        'title: T',
+        'status: draft',
+        'code:',
+        '  - id: cb-api',
+        '    source: api.ts',
+        'provenance:',
+        '  authored_by: ai',
+        '  model:',
+        '    name: m',
+        '  transitions:',
+        '    - to: draft',
+        '      by: ai',
+        '      ts: 2026-06-20T14:02:00Z',
+        '---',
+        '',
+        'Body.',
+        '',
+      ].join('\n');
+
+      const out = flipToReviewed(raw, {
+        reviewer: { login: 'alberto', pr: 7 },
+        today: new Date('2026-06-25T00:00:00Z'),
+        reviewSlaDays: 90,
+        codeRoot: dir,
+      });
+
+      expect(out).toMatch(/fingerprint: sha256:/);
+      expect(out).toContain('fingerprinted_at: 2026-06-25');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('leaves bindings untouched when no codeRoot is given', () => {
+    const raw = [
+      '---',
+      'title: T',
+      'status: draft',
+      'code:',
+      '  - id: cb-api',
+      '    source: api.ts',
+      '---',
+      '',
+      'Body.',
+      '',
+    ].join('\n');
+    const out = flipToReviewed(raw, {
+      reviewer: { login: 'alberto', pr: 7 },
+      today: new Date('2026-06-25T00:00:00Z'),
+      reviewSlaDays: 90,
+    });
+    expect(out).not.toMatch(/fingerprint:/);
   });
 });

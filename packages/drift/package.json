@@ -1,7 +1,7 @@
 {
-  "name": "@getnema/gates",
-  "version": "0.3.0",
-  "description": "Nema validation gates: frontmatter, freshness, footnotes, links, reachability, provenance",
+  "name": "@getnema/drift",
+  "version": "0.1.0",
+  "description": "Nema drift: fingerprint the code a doc page documents and detect when it falls behind",
   "license": "Apache-2.0",
   "type": "module",
   "author": "Alberto Grande",
@@ -9,12 +9,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/albertogrande/nema.git",
-    "directory": "packages/gates"
+    "directory": "packages/drift"
   },
   "bugs": {
     "url": "https://github.com/albertogrande/nema/issues"
   },
-  "keywords": ["documentation", "docs-as-code", "ai", "agents", "provenance", "mcp"],
+  "keywords": ["documentation", "docs-as-code", "ai", "agents", "drift", "freshness"],
   "publishConfig": {
     "access": "public"
   },
@@ -34,9 +34,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@getnema/core": "workspace:*",
-    "@getnema/drift": "workspace:*",
-    "@getnema/provenance": "workspace:*",
     "@getnema/schema": "workspace:*"
   },
   "devDependencies": {

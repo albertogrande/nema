@@ -75,6 +75,31 @@ const draftResultShape = {
   diagnostics: z.array(diagnosticShape),
 };
 
+const driftFindingShape = z.object({
+  path: z.string(),
+  bindingId: z.string(),
+  source: z.string(),
+  strategy: z.string(),
+  reason: z.enum([
+    'changed',
+    'missing-source',
+    'missing-symbols',
+    'no-baseline',
+    'invalid-binding',
+  ]),
+  actionable: z.boolean(),
+  baseline: z.string().optional(),
+  current: z.string().optional(),
+  symbols: z.array(z.string()).optional(),
+  message: z.string(),
+});
+
+const driftReportShape = {
+  checked: z.number().int(),
+  drifted: z.number().int(),
+  findings: z.array(driftFindingShape),
+};
+
 /**
  * The corpus read tools: list / get / provenance / search / check. These need
  * only a filesystem content source — no git or `gh` — so they are safe to expose
@@ -151,6 +176,36 @@ function registerReadTools(server: McpServer, tools: NemaTools): void {
       outputSchema: gateReportShape,
     },
     async () => gateResponse(await tools.check()),
+  );
+
+  server.registerTool(
+    'drift',
+    {
+      title: 'Detect code drift',
+      description:
+        'Report documentation pages whose bound source code has changed since the page was last ' +
+        'reviewed (its `code:` bindings). Use it to find what to re-draft: each finding names the ' +
+        'page, the binding, why it drifted (changed surface, removed export, missing file), and the ' +
+        'baseline vs current fingerprint. Returns structured findings as structuredContent. You fix ' +
+        'drift through the normal draft loop — the reviewed baseline re-stamps only on human approval.',
+      inputSchema: {},
+      outputSchema: driftReportShape,
+    },
+    async () => {
+      const report = await tools.drift();
+      const summary =
+        report.checked === 0
+          ? 'No pages declare a `code:` binding. Bind one with `nema bind <path> <source>`.'
+          : `nema drift — ${report.drifted} drifted page(s), ${report.findings.length} finding(s) · ` +
+            `${report.checked} bound page(s)`;
+      const lines = report.findings.map(
+        (f) => `  ${f.actionable ? '✗' : '•'} ${f.path} [${f.reason}] ${f.bindingId}: ${f.message}`,
+      );
+      return {
+        content: [{ type: 'text' as const, text: [summary, ...lines].join('\n') }],
+        structuredContent: report,
+      };
+    },
   );
 }
 

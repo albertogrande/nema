@@ -31,7 +31,7 @@ async function toolNames(server: McpServer): Promise<string[]> {
 describe('read-only MCP server', () => {
   it('exposes only the corpus read tools — no write/git surface', async () => {
     const names = await toolNames(createReadOnlyNemaMcpServer({ rootDir: root() }));
-    expect(names).toEqual(['check', 'get_page', 'get_provenance', 'list_pages', 'search']);
+    expect(names).toEqual(['check', 'drift', 'get_page', 'get_provenance', 'list_pages', 'search']);
   });
 
   it('the full server additionally exposes the write tools', async () => {

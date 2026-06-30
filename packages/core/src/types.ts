@@ -55,6 +55,11 @@ export interface ContentSource {
 export interface NemaConfig {
   /** Directory holding `.md` content, relative to repo root. Default `docs`. */
   contentDir?: string;
+  /**
+   * Root the `code:` bindings resolve their `source` paths against, relative to
+   * the repo root. Default `.` (the repo itself — the common monorepo case).
+   */
+  codeRoot?: string;
   /** Freshness SLA in days — how far ahead `review_by` is set on approval. Default 180. */
   reviewSlaDays?: number;
   /** Pages exempt from the orphan/reachability check. Default `['index']`. */
@@ -73,6 +78,8 @@ export interface ResolvedConfig {
   contentDir: string;
   /** Absolute path to the content directory. */
   contentRoot: string;
+  /** Absolute path to the root that `code:` bindings resolve against. */
+  codeRoot: string;
   reviewSlaDays: number;
   rootExempt: string[];
   baseUrl: string;

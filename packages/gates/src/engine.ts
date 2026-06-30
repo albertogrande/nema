@@ -3,6 +3,7 @@ import { type ContentSource, type NemaConfig, createContentSource } from '@getne
 import { CONTENT_MODEL, type ContentModel } from '@getnema/schema';
 import { RULE_CATALOG } from './catalog.js';
 import type { GitState } from './git-state.js';
+import { codeDriftRules } from './rules/code-drift.js';
 import { draftNotReviewedRules } from './rules/draft-not-reviewed.js';
 import { footnoteRules } from './rules/footnotes.js';
 import { freshnessRules } from './rules/freshness.js';
@@ -21,6 +22,7 @@ export const ALL_RULES: Rule[] = [
   reachabilityRules,
   provenanceRules,
   draftNotReviewedRules,
+  codeDriftRules,
 ];
 
 export interface GateOptions {

@@ -25,6 +25,7 @@ function corpus(label: string, files: Record<string, string>): LabeledCorpus {
     rootDir: root,
     contentDir: '.',
     contentRoot: root,
+    codeRoot: root,
     reviewSlaDays: 180,
     rootExempt: ['index'],
     baseUrl: '',

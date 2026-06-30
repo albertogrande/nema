@@ -83,7 +83,12 @@ nema explain reachability                              # what a gate checks + ho
 nema prov /path/to/your-docs --status reviewed         # the provenance chain, per page
 nema prov /path/to/your-docs --filter authored_by=ai   # everything an agent wrote
 nema coherence                                         # multi-agent: do the open draft branches merge cleanly?
+nema drift /path/to/your-docs                          # which pages fell behind the code they document?
 ```
+
+Tracking code with your docs? `nema bind <page> <source>` binds a page to the source it documents
+and stamps a baseline; `nema drift` then flags pages whose code changed since their last review (the
+API surface, not the implementation). See [`examples/drift`](examples/drift).
 
 Running a *fleet* of agents on one corpus? `nema claim`/`release` lease pages so two agents don't
 clobber the same one, and `nema coherence` refuses a merge that would break the doc-graph. See

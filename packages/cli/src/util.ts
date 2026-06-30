@@ -19,6 +19,7 @@ export async function makeEngine(
   return new ProducerEngine({
     rootDir,
     contentRoot: config.contentRoot,
+    codeRoot: config.codeRoot,
     host,
     reviewSlaDays: opts.reviewSlaDays,
   });

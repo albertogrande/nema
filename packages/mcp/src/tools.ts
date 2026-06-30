@@ -9,6 +9,7 @@ import {
   provenanceView,
   resolveConfig,
 } from '@getnema/core';
+import { type DriftReport, detectDrift } from '@getnema/drift';
 import { type GateResult, checkContent, runCoherenceGate } from '@getnema/gates';
 import {
   type AcquireLeaseResult,
@@ -91,6 +92,7 @@ export class NemaTools {
     return new ProducerEngine({
       rootDir: this.cfg.rootDir,
       contentRoot: config.contentRoot,
+      codeRoot: config.codeRoot,
       host: this.cfg.host ?? new GitHubHost(this.cfg.rootDir),
       reviewSlaDays: this.cfg.reviewSlaDays,
       clock: this.cfg.clock,
@@ -136,6 +138,17 @@ export class NemaTools {
 
   async check(): Promise<GateResult> {
     return checkContent(this.cfg.rootDir, { today: this.now() });
+  }
+
+  /**
+   * Code-drift — which pages' bound source code has moved past its reviewed
+   * baseline. Read-only: an agent uses this to find what to re-draft, then fixes
+   * it through the normal draft loop. The reviewed baseline is re-stamped only on
+   * human approval, never here.
+   */
+  async drift(): Promise<DriftReport> {
+    const source = await this.source();
+    return detectDrift(source.pages, source.config.codeRoot);
   }
 
   /**
