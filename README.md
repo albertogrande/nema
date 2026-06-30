@@ -46,12 +46,25 @@ built **agent-native from the ground up**: the agents are *yours*, the corpus is
 *yours*. The structural moat is **multi-agent concurrent authoring** — many of your agents working the
 same corpus at once without clobbering — something a single closed-agent SaaS cannot follow.
 
+**What you get:**
+
+- 🤖 **Agents author, humans approve** — every page is agent-written, and nothing reaches `reviewed`
+  without a human PR approval. That gate is the one invariant.
+- 🔍 **Provenance as git-diffable data** — who wrote it, which model, which sources, which reviewer —
+  recorded as structured, queryable data, not free-text footnotes.
+- 🧵 **Multi-agent concurrent authoring** — slot leasing plus a merge-time coherence gate let a *fleet*
+  of your agents work one corpus without clobbering each other.
+- ✅ **Gate-checked before the PR** — `nema check` catches broken links, orphans, stale frontmatter, and
+  self-promotion, with a fix hint per failure — the same report for a human and for an agent in a loop.
+- 🔓 **Renderer-agnostic and self-hostable** — renders through [Fumadocs](https://fumadocs.dev); your
+  agents, your corpus, your infra. Apache-2.0, no SaaS lock-in.
+
 > **Alpha — honest status.** What ships today: an agent writes a page that lands *in your nav, linked,
 > and cited*, self-checks against the gates, and opens a PR you approve — rendered live. The
 > **multi-agent moat now ships** too: page-level slot leasing stops two live agents clobbering a page,
 > and a **merge-time coherence gate** refuses a merge that would break the doc-graph
 > (`pnpm demo:concurrent` runs it end to end). A *hosted control plane* remains on the roadmap. APIs
-> may change before 0.1.0.
+> may change before 1.0.
 
 ## Quickstart
 
@@ -179,6 +192,19 @@ bytes; Nema tells you what the agent cited and that a human signed off. The `/tr
 as a reader-facing dashboard. *(Durable substrate — the long-term audit/compliance surface — not the
 day-one hook.)*
 
+That trail is queryable from the CLI — `nema prov <page>` for one page's chain, `nema audit` for the
+whole corpus:
+
+```text
+$ nema audit
+2026-01-01  reviewed  guide  — by alberto via github-pr-approval  pr#1
+2026-01-01  draft     guide  — by ai  0b05f2a
+
+2 transition(s).
+```
+
+`--json` emits the same rows for CI; `--actor`, `--status`, and `--since/--until` filter the trail.
+
 ## What the gates catch
 
 `nema check` runs every gate and tells you exactly what to fix — for a human at a terminal and for an
@@ -257,9 +283,9 @@ ships (see above). What's still ahead, built in the open:
 
 ## Status
 
-**v0.1 alpha.** The producer loop runs end to end and renders; **multi-agent concurrent authoring
+**v0.3 alpha.** The producer loop runs end to end and renders; **multi-agent concurrent authoring
 (slot leasing + merge-time coherence) ships** and is exercised in CI. The engine is green (tests,
-lint, typecheck, build). Expect breaking changes before 0.1.0.
+lint, typecheck, build). Expect breaking changes before 1.0.
 
 ## Contributing
 
