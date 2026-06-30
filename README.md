@@ -64,6 +64,9 @@ same corpus at once without clobbering — something a single closed-agent SaaS 
   of your agents work one corpus without clobbering each other.
 - ✅ **Gate-checked before the PR** — `nema check` catches broken links, orphans, stale frontmatter, and
   self-promotion, with a fix hint per failure — the same report for a human and for an agent in a loop.
+- 🩺 **Docs that stay honest about the code** — bind a page to the source it documents, and `nema drift`
+  flags it the moment the code's public surface moves past its approved baseline — stale reference docs
+  surface as a warning, not silent rot.
 - 🔓 **Renderer-agnostic and self-hostable** — renders through [Fumadocs](https://fumadocs.dev); your
   agents, your corpus, your infra. Apache-2.0, no SaaS lock-in.
 
