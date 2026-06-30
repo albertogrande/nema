@@ -11,12 +11,16 @@ import { errOut, out } from '../util.js';
 
 /** A url/filesystem-safe id base derived from a source path: `src/server.ts` → `cb-server`. */
 function deriveId(source: string): string {
-  const base = (source.split(/[/\\]/).pop() ?? source).replace(/\.[^.]+$/, '');
+  const file = source.split(/[/\\]/).pop() ?? source;
+  const dot = file.lastIndexOf('.');
+  const stem = dot > 0 ? file.slice(0, dot) : file;
+  // split on non-alphanumerics (linear; no `$`-anchored backtracking on input)
   const slug =
-    base
+    stem
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '') || 'binding';
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean)
+      .join('-') || 'binding';
   return `cb-${slug}`;
 }
 

@@ -37,7 +37,7 @@ function normalizeFile(s: string): string {
   return s
     .replace(/\r\n?/g, '\n')
     .split('\n')
-    .map((line) => line.replace(/\s+$/, ''))
+    .map((line) => line.trimEnd()) // not `/\s+$/` — keep it linear over file input
     .join('\n')
     .trim();
 }
