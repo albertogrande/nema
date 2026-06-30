@@ -201,7 +201,8 @@ gates across draft branches at merge time (see above).
 To bootstrap a corpus from existing code, `nema generate <src>` ingests a source repo (package
 metadata, README intro, exported symbols) and writes a seeded, gate-green diátaxis doc set — a
 factual skeleton your agent then fills with prose through the draft loop. It never writes prose
-itself.
+itself. When the source lives under your `codeRoot` (the docs-beside-code case), the generated API
+reference is also **bound to the entry file**, so it is drift-tracked from birth (see below).
 
 ## Docs that stay fresh (code-drift)
 

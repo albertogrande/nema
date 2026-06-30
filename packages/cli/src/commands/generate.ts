@@ -51,7 +51,13 @@ export const generateCommand = defineCommand({
         }
       : undefined;
 
-    const result = generateCorpus({ repoDir, contentRoot, model, dryRun });
+    const result = generateCorpus({
+      repoDir,
+      contentRoot,
+      codeRoot: config.codeRoot,
+      model,
+      dryRun,
+    });
 
     const verb = dryRun ? 'Would generate' : 'Generated';
     out(

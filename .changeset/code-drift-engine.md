@@ -31,5 +31,8 @@ drift (a `file` strategy hashes whole non-code files).
   code fingerprint when a human promotes a page, exactly as they stamp the freshness dates. Agents
   never stamp a reviewed baseline.
 - **`codeRoot` config** — the root that `code:` bindings resolve against (default the repo root).
+- **`nema generate` seeds a binding** — when the source entry file lives under `codeRoot`
+  (docs-beside-code), the generated API reference page is bound to it with a stamped baseline, so
+  generated docs are drift-tracked from birth. Cross-repo generates emit no binding.
 
 Run `pnpm demo:drift` for the self-verifying end-to-end walkthrough.

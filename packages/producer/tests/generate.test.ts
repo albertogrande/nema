@@ -88,6 +88,48 @@ describe('generateCorpus', () => {
     rmSync(root, { recursive: true, force: true });
   });
 
+  it('binds the API reference to the entry file when the source is under codeRoot', async () => {
+    // A monorepo / docs-beside-code layout: source and docs share a root, so the
+    // generated reference page is drift-tracked from birth.
+    const root = mkdtempSync(join(tmpdir(), 'nema-generate-bind-'));
+    mkdirSync(join(root, 'src'), { recursive: true });
+    writeFileSync(
+      join(root, 'src', 'index.ts'),
+      'export function widget(n: number): string { return String(n); }\n',
+    );
+
+    generateCorpus({
+      repoDir: root,
+      contentRoot: join(root, 'docs'),
+      codeRoot: root,
+      model: { name: 'claude-opus-4-8', vendor: 'anthropic' },
+      clock: CLOCK,
+    });
+
+    const ref = readFileSync(join(root, 'docs', 'api', 'reference.md'), 'utf8');
+    expect(ref).toContain('id: cb-exports');
+    expect(ref).toContain('source: src/index.ts');
+    expect(ref).toMatch(/fingerprint: sha256:/);
+
+    // The seeded baseline matches the current code, so `nema check` is drift-clean.
+    const gate = await checkContent(root, { today: CLOCK(), config: { contentDir: 'docs' } });
+    expect(gate.diagnostics.filter((d) => d.rule === 'code-drift')).toEqual([]);
+    expect(gate.ok).toBe(true);
+
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it('emits no binding for a cross-repo generate (source outside codeRoot)', () => {
+    const root = mkdtempSync(join(tmpdir(), 'nema-generate-xrepo-'));
+    const contentRoot = join(root, 'docs');
+    mkdirSync(contentRoot, { recursive: true });
+    // repoDir (the source) is a *different* temp dir, so it is not under codeRoot=root.
+    generateCorpus({ repoDir, contentRoot, codeRoot: root, clock: CLOCK });
+    const ref = readFileSync(join(contentRoot, 'api', 'reference.md'), 'utf8');
+    expect(ref).not.toContain('code:');
+    rmSync(root, { recursive: true, force: true });
+  });
+
   it('seeds human authorship when no model is named', () => {
     const root = mkdtempSync(join(tmpdir(), 'nema-generate-human-'));
     const contentRoot = join(root, 'docs');
