@@ -92,6 +92,28 @@ describe('draftPage', () => {
     expect(prov?.transitions[0]?.to).toBe('draft');
     expect(prov?.transitions.some((t) => t.to === 'reviewed')).toBe(false);
   });
+
+  it('surfaces existing pages a new draft resembles (dedup heads-up)', async () => {
+    const { rootDir, contentRoot } = newRepo();
+    const engine = new ProducerEngine({ rootDir, contentRoot, host: new FakeHost(), clock: CLOCK });
+    const model = { name: 'claude-opus-4-8', vendor: 'anthropic' };
+
+    const first = await engine.draftPage({
+      path: 'install',
+      title: 'Install the CLI',
+      body: 'Install the nema CLI with npm and run nema check to validate your docs.',
+      model,
+    });
+    expect(first.similar).toEqual([]); // nothing to resemble yet
+
+    const dup = await engine.draftPage({
+      path: 'setup',
+      title: 'Set up the CLI',
+      body: 'Set up the nema CLI: install it with npm, then run nema check to validate your docs.',
+      model,
+    });
+    expect(dup.similar.map((s) => s.path)).toContain('install');
+  });
 });
 
 describe('proposeChanges', () => {

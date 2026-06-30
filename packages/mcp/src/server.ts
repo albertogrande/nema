@@ -73,6 +73,7 @@ const draftResultShape = {
   filePath: z.string(),
   ok: z.boolean(),
   diagnostics: z.array(diagnosticShape),
+  similar: z.array(z.object({ path: z.string(), title: z.string(), score: z.number() })),
 };
 
 const driftFindingShape = z.object({
@@ -285,6 +286,7 @@ function registerWriteTools(server: McpServer, tools: NemaTools): void {
           filePath: res.filePath,
           ok: res.ok,
           diagnostics: res.diagnostics,
+          similar: res.similar,
         },
         ...(res.ok ? {} : { isError: true }),
       };

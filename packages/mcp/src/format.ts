@@ -24,12 +24,17 @@ export function formatSearchHits(hits: SearchHit[], query: string): string {
 
 export function formatDraftResult(res: DraftResult): string {
   const head = `Drafted ${res.path} (${res.filePath}).`;
+  const dupBlock =
+    res.similar.length > 0
+      ? '\n⚠ similar existing pages — consider updating one instead of adding a duplicate:\n' +
+        res.similar.map((s) => `    ${s.score.toFixed(2)}  ${s.path} — ${s.title}`).join('\n')
+      : '';
   if (res.ok) {
-    return `${head}\n✓ nema check passed for this page. You can now propose_changes.`;
+    return `${head}\n✓ nema check passed for this page. You can now propose_changes.${dupBlock}`;
   }
   const lines = res.diagnostics.flatMap((d) => {
     const row = `  ✗ [${d.rule}] ${d.message}`;
     return d.hint ? [row, `      help: ${d.hint}`] : [row];
   });
-  return `${head}\nnema check found issues to fix before proposing:\n${lines.join('\n')}`;
+  return `${head}\nnema check found issues to fix before proposing:\n${lines.join('\n')}${dupBlock}`;
 }

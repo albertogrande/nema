@@ -51,7 +51,9 @@ The `provenance-consistency` gate checks: `reviewed ⇒ reviewed_by + a reviewed
 - **Near-duplicate**: before drafting a new page, check what already covers the topic with
   `nema similar <path>` / `nema similar --query "<text>"` (or the `find_similar` MCP tool). If a
   strong match exists, **update that page** instead of writing a duplicate — the `near-duplicate`
-  gate **warns** (never fails) when two pages are too similar.
+  gate **warns** (never fails) when two pages are too similar. You don't have to remember to ask:
+  `draft_page` (and `nema draft`) also report the existing pages your new draft most resembles, so the
+  heads-up reaches you the moment you author.
 - **Code-drift**: a page may bind to the source it documents via a frontmatter `code:` block. When
   that code's public surface moves past the page's reviewed baseline, the `code-drift` gate
   **warns** (never fails) and `nema drift` lists the stale pages. You may add/refresh bindings on a

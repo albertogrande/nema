@@ -110,6 +110,7 @@ describe('formatDraftResult', () => {
       diagnostics: [
         { rule: 'footnotes', severity: 'error', path: 'p', message: 'x', hint: 'do the thing' },
       ],
+      similar: [],
     });
     expect(text).not.toContain('forge');
     expect(text).toContain('nema check found issues');

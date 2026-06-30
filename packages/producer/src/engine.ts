@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
+import { type SimilarPage, createContentSource, findSimilar } from '@getnema/core';
 import { type Diagnostic, checkContent } from '@getnema/gates';
 import {
   composeContent,
@@ -47,7 +48,16 @@ export interface DraftResult {
   /** Diagnostics for THIS page from an in-process `nema check`. */
   diagnostics: Diagnostic[];
   ok: boolean;
+  /**
+   * Existing pages this draft closely resembles (TF-IDF similarity ≥ a hint
+   * threshold), most similar first. A heads-up to update an existing page
+   * instead of writing a duplicate — empty when the draft is distinctive.
+   */
+  similar: SimilarPage[];
 }
+
+/** Below the gate's threshold: an early, advisory heads-up at draft time. */
+const SIMILAR_HINT_THRESHOLD = 0.4;
 
 export interface ProposeInput {
   paths: string[];
@@ -125,11 +135,22 @@ export class ProducerEngine {
       config: { contentDir },
     });
     const diagnostics = result.diagnostics.filter((d) => d.path === input.path);
+
+    // Dedup heads-up: the near-duplicate gate only warns on one side of a pair
+    // (and at a stricter threshold), so surface the pages this draft most
+    // resembles directly, regardless of which side it lands on.
+    const source = await createContentSource(this.cfg.rootDir, { contentDir });
+    const similar = findSimilar(source.pages, input.path, {
+      limit: 3,
+      minScore: SIMILAR_HINT_THRESHOLD,
+    });
+
     return {
       path: input.path,
       filePath,
       diagnostics,
       ok: diagnostics.every((d) => d.severity !== 'error'),
+      similar,
     };
   }
 

@@ -66,5 +66,9 @@ export const draftCommand = defineCommand({
       for (const d of res.diagnostics) out(`  ✗ [${d.rule}] ${d.message}`);
       process.exitCode = 1;
     }
+    if (res.similar.length > 0) {
+      out('\n⚠ similar existing pages — consider updating one instead of duplicating:');
+      for (const s of res.similar) out(`    ${s.score.toFixed(2)}  ${s.path} — ${s.title}`);
+    }
   },
 });
