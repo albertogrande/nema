@@ -35,6 +35,14 @@
 
 <hr>
 
+<p align="center">
+  <img alt="Nema's /trust provenance dashboard — agent-authored pages awaiting human review" src="assets/demo-trust.png" width="840">
+  <br>
+  <sub><b>The <code>/trust</code> dashboard, live.</b> Three pages an agent drafted from the
+  <a href="https://github.com/colinhacks/zod">zod</a> source — each <code>draft</code>, AI-authored,
+  and <b>pending a human review</b>. Provenance read straight from the data the gates validate.</sub>
+</p>
+
 **Nema is the open, self-hostable docs platform built for the agentic era.** Point your own coding
 agents at it and they write, slot, link, and maintain your docs — a human approves every page, and
 each one carries a git-diffable record of who wrote it, from which sources, and who signed off. It
