@@ -48,7 +48,7 @@ export const driftCommand = defineCommand({
     );
 
     if (report.findings.length === 0) {
-      out(`  ✓ every bound page tracks its code`);
+      out('  ✓ every bound page tracks its code');
       return;
     }
 
