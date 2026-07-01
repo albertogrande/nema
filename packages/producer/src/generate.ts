@@ -54,6 +54,80 @@ function readmeIntro(markdown: string): string | undefined {
   return undefined;
 }
 
+/**
+ * Star re-exports in a barrel file. `export * from './x'` flattens all of x's
+ * exports into this module; `export * as ns from './x'` exposes a single
+ * namespace `ns`. Named re-exports (`export { A } from './x'`) are already
+ * captured by `extractExports`' list pattern, so they're not handled here.
+ */
+function extractStarReExports(source: string): { spec: string; as?: string }[] {
+  const re = /export\s*\*\s*(?:as\s+([A-Za-z_$][\w$]*)\s+)?from\s*['"]([^'"]+)['"]/g;
+  const out: { spec: string; as?: string }[] = [];
+  for (const m of source.matchAll(re)) out.push({ spec: m[2]!, as: m[1] });
+  return out;
+}
+
+/**
+ * Resolve a module specifier (e.g. `./types.js`) relative to the file that
+ * imports it, into a repo-relative path that exists on disk. TS source cites
+ * `.js` specifiers that map to `.ts` files, so we probe the usual extensions.
+ */
+function resolveModule(repoDir: string, fromFile: string, spec: string): string | undefined {
+  if (!spec.startsWith('.')) return undefined; // skip bare/package specifiers
+  const baseDir = dirname(join(repoDir, fromFile));
+  const stem = spec.replace(/\.[mc]?[jt]sx?$/, '');
+  const candidates = [
+    `${stem}.ts`,
+    `${stem}.tsx`,
+    `${stem}.js`,
+    `${stem}.mjs`,
+    `${stem}/index.ts`,
+    `${stem}/index.js`,
+    spec,
+  ];
+  for (const c of candidates) {
+    const abs = join(baseDir, c);
+    if (existsSync(abs)) return relative(repoDir, abs);
+  }
+  return undefined;
+}
+
+/**
+ * Collect a file's exports, following `export *` barrel re-exports so a pure
+ * re-export index (the common monorepo entry shape) still yields a real export
+ * table. Bounded depth + a visited set guard against deep or cyclic barrels.
+ */
+function collectExports(
+  repoDir: string,
+  relFile: string,
+  seen: Set<string> = new Set(),
+  depth = 0,
+): RepoExport[] {
+  if (depth > 4 || seen.has(relFile)) return [];
+  seen.add(relFile);
+  const abs = join(repoDir, relFile);
+  if (!existsSync(abs)) return [];
+  const source = readFileSync(abs, 'utf8');
+
+  const found = new Map<string, string>();
+  for (const e of extractExports(source)) found.set(e.name, e.kind);
+
+  for (const { spec, as } of extractStarReExports(source)) {
+    if (as) {
+      // `export * as ns from './x'` — a single namespace export, no flattening.
+      if (!found.has(as)) found.set(as, 'namespace');
+      continue;
+    }
+    const target = resolveModule(repoDir, relFile, spec);
+    if (!target) continue;
+    for (const e of collectExports(repoDir, target, seen, depth + 1)) {
+      if (!found.has(e.name)) found.set(e.name, e.kind);
+    }
+  }
+
+  return [...found].map(([name, kind]) => ({ name, kind }));
+}
+
 function firstExisting(repoDir: string, candidates: string[]): string | undefined {
   for (const rel of candidates) {
     if (existsSync(join(repoDir, rel))) return rel;
@@ -85,7 +159,7 @@ export function ingestRepo(repoDir: string): IngestedRepo {
     : undefined;
 
   const entryFile = firstExisting(repoDir, ENTRY_CANDIDATES);
-  const exports = entryFile ? extractExports(readFileSync(join(repoDir, entryFile), 'utf8')) : [];
+  const exports = entryFile ? collectExports(repoDir, entryFile) : [];
 
   return { name, description, readmeIntro: intro, readmeFile, entryFile, exports };
 }
