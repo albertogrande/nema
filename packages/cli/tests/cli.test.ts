@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { runCommand } from 'citty';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import pkg from '../package.json' with { type: 'json' };
+import { parseSourceArgs, withSourceFootnotes } from '../src/commands/draft.js';
 import { preconditionHint } from '../src/commands/open-pr.js';
 import { main } from '../src/main.js';
 
@@ -125,6 +126,125 @@ describe('nema draft without --model-* flags', () => {
 
     const prov = await nema('prov', 'guide/manual', '--dir', rootDir);
     expect(prov).toContain('authored_by: human');
+  });
+});
+
+describe('parseSourceArgs', () => {
+  it('accepts a single string and a string[] (one vs many --source flags)', () => {
+    expect(parseSourceArgs('a=README.md')).toEqual([
+      { id: 'a', title: 'README.md', kind: 'reference' },
+    ]);
+    expect(parseSourceArgs(['a=x', 'b=y']).map((s) => s.id)).toEqual(['a', 'b']);
+    expect(parseSourceArgs(undefined)).toEqual([]);
+  });
+  it('records an http(s) ref as the url too', () => {
+    expect(parseSourceArgs('spec=https://example.com/x')).toEqual([
+      {
+        id: 'spec',
+        title: 'https://example.com/x',
+        kind: 'reference',
+        url: 'https://example.com/x',
+      },
+    ]);
+  });
+  it('throws on a malformed spec or a duplicate id', () => {
+    expect(() => parseSourceArgs('noequals')).toThrow('<id>=<ref>');
+    expect(() => parseSourceArgs('=empty')).toThrow('<id>=<ref>');
+    expect(() => parseSourceArgs(['a=x', 'a=y'])).toThrow('duplicate');
+  });
+});
+
+describe('withSourceFootnotes', () => {
+  it('appends a Sources section with a definition per source', () => {
+    const out = withSourceFootnotes('Body[^a].', [
+      { id: 'a', title: 'README.md', kind: 'reference' },
+    ]);
+    expect(out).toContain('## Sources');
+    expect(out).toContain('[^a]: README.md');
+  });
+  it('does not duplicate a url as both title and target', () => {
+    const out = withSourceFootnotes('Body[^u].', [
+      { id: 'u', title: 'https://x.com', kind: 'reference', url: 'https://x.com' },
+    ]);
+    expect(out).toContain('[^u]: https://x.com\n');
+    expect(out).not.toContain('https://x.com — https://x.com');
+  });
+  it('leaves an already-defined footnote alone and reuses an existing heading', () => {
+    const body = 'Body[^a].\n\n## Sources\n\n[^a]: mine';
+    expect(withSourceFootnotes(body, [{ id: 'a', title: 'other', kind: 'reference' }])).toBe(body);
+  });
+});
+
+describe('nema draft --source', () => {
+  it('records cited sources in provenance and self-defines their footnotes', async () => {
+    await nema('init', rootDir);
+    const draft = await nema(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'guide/sourced',
+      '--title',
+      'Sourced',
+      '--body',
+      'Chalk styles strings.[^readme] See [home](/index).',
+      '--diataxis',
+      'reference',
+      '--model-name',
+      'claude-opus-4-8',
+      '--source',
+      'readme=https://github.com/chalk/chalk#readme',
+    );
+    // The cited source didn't trip the footnotes gate — the flag defined it.
+    expect(draft).toContain('Drafted guide/sourced');
+    expect(draft).not.toContain('[footnotes]');
+    expect(draft).not.toContain('[provenance-consistency]');
+
+    const prov = await nema('prov', 'guide/sourced', '--dir', rootDir);
+    expect(prov).toContain('readme');
+    expect(prov).toContain('https://github.com/chalk/chalk#readme');
+  });
+
+  it('fails the provenance gate when a source is declared but never cited', async () => {
+    await nema('init', rootDir);
+    const draft = await nema(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'guide/uncited',
+      '--title',
+      'Uncited',
+      '--body',
+      'No citation. See [home](/index).',
+      '--diataxis',
+      'reference',
+      '--model-name',
+      'claude-opus-4-8',
+      '--source',
+      'spec=README.md',
+    );
+    expect(draft).toContain('provenance-consistency');
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('rejects a malformed --source with a clear message, not a stack trace', async () => {
+    await nema('init', rootDir);
+    await nema(
+      'draft',
+      '--dir',
+      rootDir,
+      '--path',
+      'guide/bad',
+      '--title',
+      'Bad',
+      '--body',
+      'x[^a]. See [home](/index).',
+      '--source',
+      'noequals',
+    );
+    expect(capturedErr).toContain('--source must be "<id>=<ref>"');
+    expect(process.exitCode).toBe(1);
   });
 });
 
