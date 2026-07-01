@@ -2,8 +2,8 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/nema-wordmark-dark.svg">
-    <img alt="Nema" src="assets/nema-wordmark.svg" width="300">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/nema-wordmark-dark.svg?v=2">
+    <img alt="Nema" src="assets/nema-wordmark.svg?v=2" width="300">
   </picture>
 </p>
 
