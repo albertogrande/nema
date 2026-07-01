@@ -2,17 +2,20 @@
 
 /**
  * The dependency ranges the scaffold pins for the `@getnema/*` packages, in one
- * place so the minimal and app templates can never drift apart. Keep these in
- * sync with the published versions on npm — the CLI is released ahead of the
- * engine packages, so it carries a different range. A stale pin here silently
- * hands new users an old, less-capable release (they miss `generate`, `claim`,
- * `release`, `coherence`), which is exactly the kind of thing the scaffold test
- * guards against.
+ * place so the minimal and app templates can never drift apart. These must track
+ * the versions we publish: the packages are *not* lockstep (the CLI and engine
+ * release on different lines), and a caret range on a `0.x` version pins the
+ * *minor* — so `^0.3.0` caps at `0.3.x` and silently hands new users an older
+ * line than the release they should get (missing `generate`, `claim`, `release`,
+ * `coherence`, `drift`, ...). When a release bumps a package's minor, bump its
+ * pin here too — the `scaffold.test.ts` guard reads the live workspace versions
+ * and **fails CI** if any pin would cap below what ships, so a stale pin can't
+ * reach npm.
  */
 export const NEMA_DEP_VERSIONS = {
-  '@getnema/cli': '^0.3.0',
-  '@getnema/core': '^0.1.0',
-  '@getnema/schema': '^0.1.0',
+  '@getnema/cli': '^0.4.0',
+  '@getnema/core': '^0.2.0',
+  '@getnema/schema': '^0.2.0',
   '@getnema/adapter-fumadocs': '^0.1.0',
 } as const;
 

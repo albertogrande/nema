@@ -39,21 +39,28 @@ describe('templates', () => {
     expect(files['.github/workflows/nema-check.yml']).toContain('nema check');
   });
 
-  it('pins @getnema/cli to a range that reaches the current release, not an old one', () => {
-    // Regression for the DX finding: `^0.1.0` caps @getnema/cli at 0.1.x, so a
-    // freshly scaffolded repo silently installs an old CLI and never sees
-    // generate/claim/release/coherence. The CLI is published ahead of the engine
-    // packages, so its range must not sit below the current major.minor.
-    const cliRange = NEMA_DEP_VERSIONS['@getnema/cli'];
-    const [major = 0, minor = 0] = cliRange.replace(/^\^/, '').split('.').map(Number);
-    // Floor must reach 0.3 (where generate/claim/release/coherence landed).
-    expect(major > 0 || (major === 0 && minor >= 3)).toBe(true);
-
-    // Both the minimal (devDep) and app (devDep) templates must carry that range.
-    const minimal = templates({ name: 'my-docs' });
-    const app = templates({ name: 'my-docs', app: true });
-    expect(minimal['package.json']).toContain(`"@getnema/cli": "${cliRange}"`);
-    expect(app['package.json']).toContain(`"@getnema/cli": "${cliRange}"`);
+  it('never pins a @getnema/* dep below the version we actually publish', () => {
+    // The DX-finding regression: a caret range on a 0.x version pins the *minor*,
+    // so a pin left behind a release (`^0.3.0` after cli ships 0.4.0) silently
+    // hands new users an older line — missing generate/claim/release/coherence.
+    // Read the live workspace versions and prove every pin reaches its package:
+    // same major, and a caret floor at or above the shipped minor. This fails CI
+    // the moment a release bumps a minor without the matching pin bump here.
+    const both =
+      (templates({ name: 'x' })['package.json'] ?? '') +
+      (templates({ name: 'x', app: true })['package.json'] ?? '');
+    for (const [dep, range] of Object.entries(NEMA_DEP_VERSIONS)) {
+      const dir = dep.replace('@getnema/', '');
+      const shipped = JSON.parse(
+        readFileSync(join(process.cwd(), '..', dir, 'package.json'), 'utf8'),
+      ).version as string;
+      const [pMajor = 0, pMinor = 0] = range.replace(/^\^/, '').split('.').map(Number);
+      const [wMajor = 0, wMinor = 0] = shipped.split('.').map(Number);
+      expect({ dep, pinnedMajor: pMajor }).toEqual({ dep, pinnedMajor: wMajor });
+      expect({ dep, floor: pMinor >= wMinor }).toEqual({ dep, floor: true });
+      // …and both templates actually carry that exact range.
+      expect(both).toContain(`"${dep}": "${range}"`);
+    }
   });
 
   it('reminds agents to restart their session after `claude mcp add`', () => {
