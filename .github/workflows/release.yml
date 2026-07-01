@@ -5,6 +5,14 @@ name: Release
 # `pnpm release` (changeset publish) to publish @getnema/* + nema + create-nema to
 # npm with provenance. Requires the NPM_TOKEN repo secret — an npm *Automation*
 # token, which satisfies the getnema org's 2FA from CI.
+#
+# RELEASE_PAT (optional but recommended): a fine-grained PAT with this repo's
+# Contents:write + Pull requests:write. Changesets pushes the "Version Packages"
+# branch with whatever token it's given; commits pushed by the default GITHUB_TOKEN
+# do NOT trigger other workflows (GitHub's recursion guard), so the required CI
+# checks never run on that PR and it sits un-mergeable. Pushing with a PAT makes
+# CI fire normally. Without the secret set, this falls back to GITHUB_TOKEN — the
+# release still works, but the Version PR needs a manual close/reopen to run CI.
 on:
   workflow_dispatch:
   push:
@@ -25,6 +33,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Push the Version Packages branch with the PAT (when set) so the
+          # required CI checks trigger on that PR. Falls back to GITHUB_TOKEN.
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
@@ -42,7 +54,9 @@ jobs:
           # job red on main right after a release. `version:packages` re-formats them.
           version: pnpm run version:packages
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # PAT (when set) so the Version Packages PR's push triggers CI; else the
+          # default token, which leaves that PR without check runs until reopened.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
           # changesets/action only uses token-based publishing when it finds an env
           # var literally named NPM_TOKEN; without it, it falls back to OIDC trusted
           # publishing, which is not configured for these (first-publish) packages.
