@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { scaffold } from '../src/scaffold.js';
-import { templates } from '../src/templates.js';
+import { NEMA_DEP_VERSIONS, templates } from '../src/templates.js';
 
 const roots: string[] = [];
 function newDir(): string {
@@ -37,6 +37,30 @@ describe('templates', () => {
     expect(files['docs/index.md']).toContain('status: draft');
     // The gate that enforces the invariant must be wired into CI.
     expect(files['.github/workflows/nema-check.yml']).toContain('nema check');
+  });
+
+  it('pins @getnema/cli to a range that reaches the current release, not an old one', () => {
+    // Regression for the DX finding: `^0.1.0` caps @getnema/cli at 0.1.x, so a
+    // freshly scaffolded repo silently installs an old CLI and never sees
+    // generate/claim/release/coherence. The CLI is published ahead of the engine
+    // packages, so its range must not sit below the current major.minor.
+    const cliRange = NEMA_DEP_VERSIONS['@getnema/cli'];
+    const [major = 0, minor = 0] = cliRange.replace(/^\^/, '').split('.').map(Number);
+    // Floor must reach 0.3 (where generate/claim/release/coherence landed).
+    expect(major > 0 || (major === 0 && minor >= 3)).toBe(true);
+
+    // Both the minimal (devDep) and app (devDep) templates must carry that range.
+    const minimal = templates({ name: 'my-docs' });
+    const app = templates({ name: 'my-docs', app: true });
+    expect(minimal['package.json']).toContain(`"@getnema/cli": "${cliRange}"`);
+    expect(app['package.json']).toContain(`"@getnema/cli": "${cliRange}"`);
+  });
+
+  it('reminds agents to restart their session after `claude mcp add`', () => {
+    // DX finding #5: MCP tools bind at session start, so a running agent won't
+    // see them until it restarts. The scaffolded contract must say so.
+    const agents = templates({ name: 'my-docs' })['AGENTS.md'] ?? '';
+    expect(agents.toLowerCase()).toContain('restart');
   });
 
   it('ships the human-approval (promotion) workflow so `nema doctor` passes', () => {

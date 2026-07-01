@@ -1,5 +1,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
+/**
+ * The dependency ranges the scaffold pins for the `@getnema/*` packages, in one
+ * place so the minimal and app templates can never drift apart. Keep these in
+ * sync with the published versions on npm — the CLI is released ahead of the
+ * engine packages, so it carries a different range. A stale pin here silently
+ * hands new users an old, less-capable release (they miss `generate`, `claim`,
+ * `release`, `coherence`), which is exactly the kind of thing the scaffold test
+ * guards against.
+ */
+export const NEMA_DEP_VERSIONS = {
+  '@getnema/cli': '^0.3.0',
+  '@getnema/core': '^0.1.0',
+  '@getnema/schema': '^0.1.0',
+  '@getnema/adapter-fumadocs': '^0.1.0',
+} as const;
+
 export interface TemplateOptions {
   /** Project name, written into the scaffolded package.json. */
   name: string;
@@ -39,8 +55,8 @@ function baseTemplates(opts: TemplateOptions): Record<string, string> {
       'open-pr': 'nema open-pr',
     },
     devDependencies: {
-      '@getnema/cli': '^0.1.0',
-      '@getnema/core': '^0.1.0',
+      '@getnema/cli': NEMA_DEP_VERSIONS['@getnema/cli'],
+      '@getnema/core': NEMA_DEP_VERSIONS['@getnema/core'],
     },
   };
 
@@ -107,9 +123,9 @@ function appTemplates(opts: TemplateOptions): Record<string, string> {
       'open-pr': 'nema open-pr',
     },
     dependencies: {
-      '@getnema/adapter-fumadocs': '^0.1.0',
-      '@getnema/core': '^0.1.0',
-      '@getnema/schema': '^0.1.0',
+      '@getnema/adapter-fumadocs': NEMA_DEP_VERSIONS['@getnema/adapter-fumadocs'],
+      '@getnema/core': NEMA_DEP_VERSIONS['@getnema/core'],
+      '@getnema/schema': NEMA_DEP_VERSIONS['@getnema/schema'],
       'fumadocs-core': '^15.8.5',
       'fumadocs-ui': '^15.8.5',
       marked: '^14.1.4',
@@ -118,7 +134,7 @@ function appTemplates(opts: TemplateOptions): Record<string, string> {
       'react-dom': '^19.0.0',
     },
     devDependencies: {
-      '@getnema/cli': '^0.1.0',
+      '@getnema/cli': NEMA_DEP_VERSIONS['@getnema/cli'],
       '@tailwindcss/postcss': '^4.3.1',
       '@types/node': '^22.10.2',
       '@types/react': '^19.0.1',
@@ -712,6 +728,10 @@ page.** Follow this contract.
 \`\`\`sh
 claude mcp add nema -- npx -y @getnema/cli mcp .
 \`\`\`
+
+**Restart your agent session after adding the server.** MCP clients bind their tools at session
+start, so the Nema tools won't appear in an already-running session. (No restart? Use the
+equivalent CLI verbs \`nema draft\`, \`nema check\`, \`nema open-pr\`; they do the same work.)
 
 The MCP server lets an agent list, search, read, **draft**, and **propose** — but it exposes **no**
 tool that promotes a page to \`reviewed\`. Only a human PR approval can.
