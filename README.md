@@ -14,9 +14,8 @@
 
 <p align="center">
   <a href="#quickstart">Quickstart</a> &nbsp;·&nbsp;
-  <a href="#why-not-mintlify--why-not-diy">Why Nema</a> &nbsp;·&nbsp;
-  <a href="#the-producer-loop">Producer loop</a> &nbsp;·&nbsp;
-  <a href="#architecture">Architecture</a> &nbsp;·&nbsp;
+  <a href="#use-it-with-your-agent">Use it with your agent</a> &nbsp;·&nbsp;
+  <a href="#learn-more">Learn more</a> &nbsp;·&nbsp;
   <a href="CLAUDE.md">Agent contract</a>
 </p>
 
@@ -43,16 +42,11 @@
   and <b>pending a human review</b>. Provenance read straight from the data the gates validate.</sub>
 </p>
 
-**Nema is the open, self-hostable docs platform built for the agentic era.** Point your own coding
-agents at it and they write, slot, link, and maintain your docs — a human approves every page, and
-each one carries a git-diffable record of who wrote it, from which sources, and who signed off. It
-renders through [Fumadocs](https://fumadocs.dev), so you're never locked into one vendor's closed agent
-or closed SaaS.
-
-Mintlify is a docs platform built *pre-agent* — it bolts one closed agent onto a closed SaaS. Nema is
-built **agent-native from the ground up**: the agents are *yours*, the corpus is *yours*, the infra is
-*yours*. The structural moat is **multi-agent concurrent authoring** — many of your agents working the
-same corpus at once without clobbering — something a single closed-agent SaaS cannot follow.
+**Nema is an open, self-hostable docs platform for teams who want their coding agents to write the
+docs — safely.** Point your own agents (Claude Code, Cursor, your own pipeline) at your repo and they
+draft, link, and maintain pages with full context of the existing corpus. Every page is gated by a
+human PR approval and carries a git-diffable record of who wrote it, from which sources, and who
+signed off — all rendered through [Fumadocs](https://fumadocs.dev), on infrastructure you control.
 
 **What you get:**
 
@@ -60,30 +54,24 @@ same corpus at once without clobbering — something a single closed-agent SaaS 
   without a human PR approval. That gate is the one invariant.
 - 🔍 **Provenance as git-diffable data** — who wrote it, which model, which sources, which reviewer —
   recorded as structured, queryable data, not free-text footnotes.
-- 🧵 **Multi-agent concurrent authoring** — slot leasing plus a merge-time coherence gate let a *fleet*
-  of your agents work one corpus without clobbering each other.
+- 🧵 **Multi-agent authoring without clobbering** — point a fleet of agents at one corpus; slot leasing
+  and a merge-time coherence gate keep them from overwriting each other's pages.
 - ✅ **Gate-checked before the PR** — `nema check` catches broken links, orphans, stale frontmatter, and
   self-promotion, with a fix hint per failure — the same report for a human and for an agent in a loop.
 - 🩺 **Docs that stay honest about the code** — bind a page to the source it documents, and `nema drift`
-  flags it the moment the code's public surface moves past its approved baseline — stale reference docs
-  surface as a warning, not silent rot.
+  flags it the moment the code's public surface moves past its approved baseline.
 - 🔓 **Renderer-agnostic and self-hostable** — renders through [Fumadocs](https://fumadocs.dev); your
   agents, your corpus, your infra. Apache-2.0, no SaaS lock-in.
 
-> **Alpha — honest status.** What ships today: an agent writes a page that lands *in your nav, linked,
-> and cited*, self-checks against the gates, and opens a PR you approve — rendered live. The
-> **multi-agent moat now ships** too: page-level slot leasing stops two live agents clobbering a page,
-> and a **merge-time coherence gate** refuses a merge that would break the doc-graph
-> (`pnpm demo:concurrent` runs it end to end). A *hosted control plane* remains on the roadmap. APIs
-> may change before 1.0.
+> **Alpha — honest status.** Today an agent drafts a page that lands in your nav, linked and cited,
+> self-checks against the gates, and opens a PR you approve — rendered live. Multi-agent authoring
+> (slot leasing + a merge-time coherence gate) ships and runs in CI. A hosted control plane is still
+> ahead, and APIs may change before 1.0.
 
 ## Quickstart
 
 Stand up a brand-new, agent-native docs site — from nothing to a rendered, provenance-badged page in
 about five minutes. **You need Node 22+.** No git, no account, no agent required to get there.
-
-*(Already have docs? Don't scaffold — see [QUICKSTART.md](QUICKSTART.md) to bring an existing repo
-under Nema with `nema migrate`.)*
 
 ### 1. Scaffold and run
 
@@ -132,194 +120,40 @@ nema open-pr         # the first step that needs git + a GitHub remote + the `gh
 A human approves the PR on GitHub — the **only** path to `reviewed`. An Action runs `nema approve`,
 flips `draft → reviewed`, stamps freshness, and merges. That approval gate is the one invariant.
 
-## Point your agent at it
+## Use it with your agent
 
-Nema is built to be run *by* coding agents (Claude Code, Cursor, your own pipeline — the MCP interface
-is agent-agnostic). Register the server straight from npm:
+Nema is meant to be run *by* your coding agent — the MCP interface is agent-agnostic (Claude Code,
+Cursor, your own pipeline). Register it against any Nema repo:
 
 ```bash
 claude mcp add nema -- npx -y @getnema/cli mcp /path/to/your-docs
 ```
 
-Your agent can now list, search, read, and **draft** pages with full corpus context — but it **cannot**
-promote a page to `reviewed`. Only your PR approval can. The contract every agent must follow lives in
-[CLAUDE.md](CLAUDE.md) (and applies via [AGENTS.md](AGENTS.md)).
+Your agent can now search, read, and **draft** pages with full corpus context — but it **cannot**
+promote a page to `reviewed`. Only your PR approval can. The rules every agent must follow live in
+[CLAUDE.md](CLAUDE.md) (applied via [AGENTS.md](AGENTS.md)).
 
-## Why not Mintlify / why not DIY?
+## Learn more
 
-- **vs Mintlify.** Mintlify runs *its* one agent behind a closed SaaS for ~$300/mo. Nema runs *your*
-  agents, on infra you control, with your provenance as data in your repo. If you want one vendor to do
-  everything and you're fine with its agent, Mintlify is a fine choice — we don't pursue that market.
-  We're for teams that won't route doc-authoring through a closed single-vendor system.
-- **vs DIY (GitHub + Fumadocs).** DIY is genuinely right for most small teams — and we'll say so. Fuma
-  is excellent and a PR is a fine gate. But GitHub + Fuma gives your agents **zero** corpus context:
-  they write in a vacuum, and you spend review time cleaning up duplicate pages, broken links, orphans,
-  and misfiled nav. Nema gives the agent the context to write a page that *fits* — not one you clean up.
-- **vs do nothing.** The honest, most common alternative. Teams are annoyed, not blocked. The reason to
-  move now is the window: establish an open, agent-native docs workflow before the market consolidates
-  to one-closed-agent-per-team and migrating out gets painful.
-
-## The producer loop
-
-```
-1. An agent drafts a page with full corpus context (status: draft, seeded provenance).
-2. It opens a PR on a nema/draft/* branch with a Nema-Provenance commit trailer.
-3. CI runs `nema check` — every gate passes; a PR may not self-promote to `reviewed`.
-4. A human approves the PR in GitHub.  ← the approval gate, the one invariant
-5. An Action runs `nema approve`: flips draft→reviewed, stamps freshness, records the
-   provenance transition, and merges.
-```
-
-The result: a page whose entire authorship chain — *AI-authored → which model → which sources → which
-human reviewer → timestamps and commits* — is recorded as queryable, git-diffable data.
-
-## Multi-agent concurrent authoring (the moat)
-
-Point a *fleet* of your agents at one corpus. Two mechanisms keep them from stepping on each other:
-
-- **Page-level slot leasing.** `nema claim <path> --agent <id>` (and the `claim_slot` MCP tool)
-  reserves a page; a second agent's write to a held page is refused. Acquisition is an atomic
-  `O_EXCL` create — racing agents resolve to one winner with no coordination server, and leases
-  expire so a dead agent never strands a page. The single-agent path stays lease-free.
-- **Merge-time coherence.** Each draft branch is gate-green alone, but merging several can still
-  break the corpus. `nema coherence` 3-way merges the open `nema/draft/*` branches against `main`
-  and refuses the merge on a **`slot-collision`** (the same page authored on two branches) or
-  **`merge-coherence`** failure (a link or page one branch breaks for another). Independent edits to
-  a shared page — e.g. two agents each adding a nav link — merge cleanly, exactly as git would.
-
-```bash
-nema coherence                         # auto-discover nema/draft/* branches, check vs main
-nema coherence ./a ./b --base ./main   # or explicit directories / git refs
-```
-
-See [`examples/concurrent`](examples/concurrent) for the two-terminal walkthrough, or run
-`pnpm demo:concurrent` for the self-verifying end-to-end demo.
-
-## Provenance as data
-
-Every page records `authored_by`, `model`, **structured** `sources`, review `transitions`, and the
-reviewer — queryable and git-diffable, not free-text footnotes. Git blame tells you who committed the
-bytes; Nema tells you what the agent cited and that a human signed off. The `/trust` route renders this
-as a reader-facing dashboard. *(Durable substrate — the long-term audit/compliance surface — not the
-day-one hook.)*
-
-That trail is queryable from the CLI — `nema prov <page>` for one page's chain, `nema audit` for the
-whole corpus:
-
-```text
-$ nema audit
-2026-01-01  reviewed  guide  — by alberto via github-pr-approval  pr#1
-2026-01-01  draft     guide  — by ai  0b05f2a
-
-2 transition(s).
-```
-
-`--json` emits the same rows for CI; `--actor`, `--status`, and `--since/--until` filter the trail.
-
-## What the gates catch
-
-`nema check` runs every gate and tells you exactly what to fix — for a human at a terminal and for an
-agent in a loop:
-
-```text
-nema check — 3 error(s), 0 warning(s) · 2 pages
-  ✗ [links-resolve] guide/intro: broken internal link -> ./missing.md
-      help: Fix the link path, or create the page it points to.
-  ✗ [reachability] guide/intro: orphan — not linked from any other page
-      help: Link to the page from another page, or list its path in `rootExempt`.
-  ✗ [draft-pages-not-reviewed] index: status=reviewed without recorded human approval
-      help: Set the page back to `status: draft`. Promotion happens only on human PR approval.
-```
-
-`--json` emits a stable machine-readable report for CI and agents; `nema explain <rule>` says why a
-gate fires; `nema doctor` preflights Node / git / gh / auth / config; `nema coherence` extends the
-gates across draft branches at merge time (see above).
-
-To bootstrap a corpus from existing code, `nema generate <src>` ingests a source repo (package
-metadata, README intro, exported symbols) and writes a seeded, gate-green diátaxis doc set — a
-factual skeleton your agent then fills with prose through the draft loop. It never writes prose
-itself. When the source lives under your `codeRoot` (the docs-beside-code case), the generated API
-reference is also **bound to the entry file**, so it is drift-tracked from birth (see below).
-
-## Docs that stay fresh (code-drift)
-
-A page can declare the **code it documents** in a frontmatter `code:` block. Nema fingerprints that
-code's *public surface* and, on human approval, stamps it as the page's baseline. When the code
-later moves past that baseline, `nema drift` tells you exactly which pages are now behind — and your
-agent fixes them through the normal draft loop.
-
-```bash
-nema bind api/reference src/api.ts --symbols createServer   # bind + stamp a baseline
-nema drift                                                  # which pages fell behind their code?
-nema drift --json --strict                                  # machine-readable; non-zero on drift (CI)
-```
-
-Drift tracks the **API surface, not the implementation**: a changed signature, a removed export, or
-a deleted source counts; a body-only edit or reformatting does not. It also shows up in `nema check`
-as a **warning** (never a build break — code racing ahead of the docs is the signal to act on), and
-the `drift` MCP tool returns it as structured data an agent can act on. A human approval re-stamps
-the baseline, exactly as it stamps the freshness dates — agents never stamp it themselves. See
-[`examples/drift`](examples/drift) or run `pnpm demo:drift` for the self-verifying walkthrough.
-
-## Writes a page that *fits* (near-duplicate detection)
-
-Point a fleet of agents at a corpus and the failure mode is duplication: an agent
-re-documents a topic that already has a page instead of updating it. Nema scores every page pair by
-**TF-IDF cosine similarity** — shared *distinctive* vocabulary, not filler — and the `near-duplicate`
-gate **warns** when two pages look like duplicates. Before drafting, an agent (or you) can ask what
-already covers the topic:
-
-```bash
-nema similar api/reference                       # pages most like an existing one
-nema similar --query "how to install the CLI"    # …or like text you're about to write
-```
-
-The `find_similar` MCP tool gives an agent the same check inline, so it updates the closest page
-instead of adding a near-duplicate. It's a **warning**, never a build break — a tutorial and its
-reference can legitimately overlap.
-
-## Architecture
-
-A pnpm + Turborepo monorepo. The engine is **renderer-agnostic**: the core packages
-(`schema, core, provenance, gates, producer, mcp`) read content files directly and never import a
-renderer. Only `adapter-fumadocs` and the app template touch React/Next.
-
-| Package | Responsibility |
-|---|---|
-| [`@getnema/schema`](packages/schema) | SSOT content model + Zod + provenance shapes |
-| [`@getnema/core`](packages/core) | load / getPage / search (BM25) / renderMarkdown / nav |
-| [`@getnema/provenance`](packages/provenance) | read / merge / recordTransition / verify |
-| [`@getnema/drift`](packages/drift) | fingerprint bound source code + detect doc/code drift |
-| [`@getnema/gates`](packages/gates) | validation rules behind `nema check` |
-| [`@getnema/producer`](packages/producer) | draft → branch → PR → approve → state-flip |
-| [`@getnema/mcp`](packages/mcp) | MCP server: read tools + write tools |
-| [`@getnema/cli`](packages/cli) | the `nema` binary |
-| [`@getnema/adapter-kit`](packages/adapter-kit) | core↔adapter contract + conformance suite |
-| [`@getnema/adapter-fumadocs`](packages/adapter-fumadocs) | reference renderer (Next/React) |
-| [`create-nema`](packages/create-nema) | `npx create-nema [--app]` scaffolder |
-
-## On the roadmap (not yet shipped)
-
-The structural moat — concurrent authoring with slot-leasing and a merge-time coherence gate — now
-ships (see above). What's still ahead, built in the open:
-
-- **A hosted control plane** — optional coordination + cross-repo provenance for teams that want it;
-  the open core always runs fully self-hosted, and git stays the source of truth. A robust
-  distributed lease (replacing the filesystem lease) lives here.
-- **Per-claim provenance** and additional renderer adapters (Starlight/Astro) to prove the
-  renderer-agnostic boundary.
+- **Already have docs?** [QUICKSTART.md](QUICKSTART.md) brings an existing repo under Nema with
+  `nema migrate`.
+- **Runnable walkthroughs** — [`examples/concurrent`](examples/concurrent) (multi-agent authoring),
+  [`examples/drift`](examples/drift) (docs that track code), and [`examples/minimal`](examples/minimal).
+- **The agent contract** — [CLAUDE.md](CLAUDE.md) spells out the producer loop, the provenance rules,
+  and every gate `nema check` enforces.
 
 ## Status
 
-**v0.3 alpha.** The producer loop runs end to end and renders; **multi-agent concurrent authoring
-(slot leasing + merge-time coherence) ships** and is exercised in CI. The engine is green (tests,
-lint, typecheck, build). Expect breaking changes before 1.0.
+**v0.3 alpha.** The producer loop runs end to end and renders; multi-agent authoring (slot leasing +
+merge-time coherence) ships and is exercised in CI. The engine is green (tests, lint, typecheck,
+build). Expect breaking changes before 1.0.
 
 ## Contributing
 
-Contributions are accepted under the [Developer Certificate of Origin](CONTRIBUTING.md) — sign your
-commits with `git commit -s`. Start with [CONTRIBUTING.md](CONTRIBUTING.md); see
-[GOVERNANCE.md](GOVERNANCE.md) for how decisions get made.
+Nema is a pnpm + Turborepo monorepo. Contributions are accepted under the
+[Developer Certificate of Origin](CONTRIBUTING.md) — sign your commits with `git commit -s`. Start with
+[CONTRIBUTING.md](CONTRIBUTING.md) for the package layout and dev setup; see [GOVERNANCE.md](GOVERNANCE.md)
+for how decisions get made.
 
 ## License
 

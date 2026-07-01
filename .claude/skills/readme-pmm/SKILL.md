@@ -52,10 +52,11 @@ Grade each; a README that scores well clears all of these:
 | **Hero one-liner** | First line says what it is + who it's for + the payoff, in plain words — no jargon soup. |
 | **Above the fold** | Value prop, a Highlights bullet list, and the quickstart are visible before any scroll-heavy detail. |
 | **Problem & audience** | The pain and the best-fit user are explicit — a reader self-identifies in seconds. |
-| **Differentiation** | Says what it does that the alternatives don't — grounded, not "blazing-fast" filler. |
+| **Differentiation** | Says what it does that the alternatives don't — **in the reader's terms (what *they* get)**, not by naming competitors or reciting a "vs X" table. Grounded, not "blazing-fast" filler. |
 | **Time-to-first-success** | A copy-pasteable quickstart that actually runs and produces a visible win fast. |
 | **Proof** | Badges, a screenshot/GIF, benchmarks, or adopters — something beyond claims. |
 | **Scannability** | Headers, short paragraphs, bullets; skimmable in ~30s. Not a manifesto. |
+| **README, not a docs site** | The README is the front door, not the manual. Deep reference, internals, architecture tables, and exhaustive feature tours live in the docs and are *linked* (a short "Learn more"), never inlined. |
 | **Accurate** | Every command/flag/claim matches the shipped surface (defer to `docs-freshness` discipline). |
 
 **The two classic failure modes** — flag them by name if present:
@@ -84,5 +85,12 @@ READMEs change — open the link and look; don't trust a remembered version.
 
 - **Never invent or inflate.** No claim the code can't back up; no "phantom" competitors you don't
   actually displace. Honest positioning beats a punchy lie.
+- **Never position by naming a competitor** or reciting a "vs X / why not Y" section. Frame
+  differentiation in the reader's terms — what they get — and let it land implicitly. A developer
+  wants to know what *this* does for them, not a comparison chart.
+- **Never use market-strategy jargon** — "moat", "TAM", "category-defining", "the wedge". That
+  language is for investors, not developers; say the concrete user benefit instead.
+- **Never inline docs-site material.** Deep reference, internals, architecture tables, and exhaustive
+  feature tours belong in the docs — link to them under a short "Learn more", don't paste them in.
 - **Never merge, and never self-promote** a `docs/` page to `reviewed` — that's the human PR approval.
 - Keep it **scoped** — sharpen the README (and the immediate landing path), not a full docs rewrite.
