@@ -1,6 +1,6 @@
 {
   "name": "create-nema",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Scaffold a new Nema-governed documentation repo",
   "license": "Apache-2.0",
   "author": "Alberto Grande",

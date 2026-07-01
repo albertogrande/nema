@@ -1,6 +1,6 @@
 {
   "name": "@getnema/drift",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Nema drift: fingerprint the code a doc page documents and detect when it falls behind",
   "license": "Apache-2.0",
   "type": "module",

@@ -1,5 +1,14 @@
 # @getnema/adapter-kit
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [e33dec3]
+- Updated dependencies [0841274]
+  - @getnema/core@0.2.0
+  - @getnema/schema@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

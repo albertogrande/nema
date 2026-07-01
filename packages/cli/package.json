@@ -1,6 +1,6 @@
 {
   "name": "@getnema/cli",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Nema CLI — the `nema` binary (init/check/draft/open-pr/approve/prov/mcp)",
   "license": "Apache-2.0",
   "type": "module",

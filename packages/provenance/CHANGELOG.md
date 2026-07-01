@@ -1,5 +1,12 @@
 # @getnema/provenance
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies [0841274]
+  - @getnema/schema@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

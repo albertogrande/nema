@@ -1,5 +1,76 @@
 # @getnema/mcp
 
+## 0.4.0
+
+### Minor Changes
+
+- e33dec3: Authoring intelligence — near-duplicate detection so agents write a page that
+  _fits_ instead of re-documenting a topic that already has one.
+
+  - **`@getnema/core` similarity engine** — TF-IDF cosine over the corpus
+    (`findSimilar`, `findSimilarToText`, `nearDuplicates`), reusing the same linear
+    tokenizer as search. Similarity weights rare, topic-defining vocabulary and
+    ignores common filler.
+  - **`near-duplicate` gate** — `nema check` warns (never fails) when two pages
+    exceed a similarity threshold, with `nema explain near-duplicate`. Tuned for
+    precision: real corpora of distinct pages sit well below it.
+  - **`nema similar <path>` / `nema similar --query "<text>"`** — see what already
+    covers a topic before drafting (`--json`, `--limit`, `--min-score`).
+  - **`find_similar` MCP tool** — the same check for agents, returning ranked hits
+    as structured content. Exposed on the read-only server too.
+
+- 0841274: Code-drift engine — docs that stay honest about the code they document.
+
+  A page can now declare the source code it documents in a frontmatter `code:` block (a list of
+  bindings, each pointing at a source file and optionally specific exported symbols). Nema
+  fingerprints that code's **public surface** — the `symbols` strategy ignores implementation-body
+  edits and reformatting, so only a changed signature, a removed export, or a deleted source counts as
+  drift (a `file` strategy hashes whole non-code files).
+
+  - **New `@getnema/drift` package** — symbol/signature extraction (shared with `nema generate`),
+    fingerprint strategies, and `detectDrift` over a corpus.
+  - **`nema drift [dir] [--json] [--strict]`** — report pages whose bound code moved past its reviewed
+    baseline; `--strict` exits non-zero for CI.
+  - **`nema bind <path> <source> [--symbols] [--strategy]`** — bind a page and stamp a baseline;
+    re-binding the same id+source refreshes it.
+  - **`code-drift` gate** — surfaces drift inside `nema check` as a **warning** (never a build break),
+    with `nema explain code-drift`.
+  - **`drift` MCP tool** — returns the structured drift report so an agent can find and re-draft
+    stale pages. Exposed on the read-only server too.
+  - **Approval re-stamps the baseline** — `nema approve` (and the approval Action) stamp the current
+    code fingerprint when a human promotes a page, exactly as they stamp the freshness dates. Agents
+    never stamp a reviewed baseline.
+  - **`codeRoot` config** — the root that `code:` bindings resolve against (default the repo root).
+  - **`nema generate` seeds a binding** — when the source entry file lives under `codeRoot`
+    (docs-beside-code), the generated API reference page is bound to it with a stamped baseline, so
+    generated docs are drift-tracked from birth. Cross-repo generates emit no binding.
+
+  Run `pnpm demo:drift` for the self-verifying end-to-end walkthrough.
+
+- 045020b: Surface near-duplicates at draft time, not just via a separate check.
+
+  `draftPage` now returns `similar` — the existing pages a new draft most closely resembles (TF-IDF
+  similarity ≥ 0.4), most similar first. The near-duplicate _gate_ only warns on one side of a pair
+  and at a stricter threshold, so an agent could miss that its fresh page duplicates an existing one;
+  the draft result now tells it directly. `draft_page` (MCP) includes `similar` in its
+  structuredContent and prose, and `nema draft` prints the heads-up — so "update the existing page
+  instead of writing a duplicate" reaches the author the moment they write, without a separate
+  `find_similar` call.
+
+### Patch Changes
+
+- Updated dependencies [e33dec3]
+- Updated dependencies [0841274]
+- Updated dependencies [045020b]
+- Updated dependencies [86b3e8f]
+- Updated dependencies [cf8644c]
+  - @getnema/core@0.2.0
+  - @getnema/gates@0.4.0
+  - @getnema/drift@0.2.0
+  - @getnema/schema@0.2.0
+  - @getnema/producer@0.4.0
+  - @getnema/provenance@0.1.1
+
 ## 0.3.0
 
 ### Minor Changes
