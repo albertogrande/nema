@@ -8,12 +8,26 @@ export interface CommitOptions {
   trailers?: Record<string, string>;
 }
 
+export interface GitRunnerOptions {
+  /**
+   * Per-invocation `git -c key=value` entries, applied to every command this
+   * runner executes (e.g. a bot committer identity and credential helper).
+   */
+  configArgs?: string[];
+  /** Extra environment for every git subprocess (e.g. a scoped GH_TOKEN). */
+  env?: Record<string, string>;
+}
+
 /** Thin, injection-safe wrapper over the `git` CLI in a fixed working tree. */
 export class GitRunner {
-  constructor(private readonly cwd: string) {}
+  constructor(
+    private readonly cwd: string,
+    private readonly opts: GitRunnerOptions = {},
+  ) {}
 
   private async git(args: string[]): Promise<string> {
-    const { stdout } = await run('git', args, this.cwd);
+    const config = (this.opts.configArgs ?? []).flatMap((c) => ['-c', c]);
+    const { stdout } = await run('git', [...config, ...args], this.cwd, { env: this.opts.env });
     return stdout.trim();
   }
 

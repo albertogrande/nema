@@ -5,6 +5,7 @@ export * from './exec.js';
 export * from './generate.js';
 export * from './git.js';
 export * from './host.js';
+export * from './identity.js';
 export * from './lease.js';
 export * from './migrate.js';
 export * from './slug.js';
