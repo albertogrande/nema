@@ -8,8 +8,8 @@
 </p>
 
 <p align="center">
-  <strong>The open, AI-native docs platform for the agentic era</strong><br>
-  <sub>Your agents write the docs · a human approves every page · provenance is git-diffable data</sub>
+  <strong>Your coding agents write the docs. You approve the PR.</strong><br>
+  <sub>An open-source, self-hostable docs platform built for agent authorship · gates check every draft · provenance is git-diffable data</sub>
 </p>
 
 <p align="center">
@@ -42,29 +42,30 @@
   and <b>pending a human review</b>. Provenance read straight from the data the gates validate.</sub>
 </p>
 
-**Nema is an open, self-hostable docs platform for teams who want their coding agents to write the
-docs — safely.** Point your own agents (Claude Code, Cursor, your own pipeline) at your repo and they
-draft, link, and maintain pages with full context of the existing corpus. Every page is gated by a
-human PR approval and carries a git-diffable record of who wrote it, from which sources, and who
-signed off — all rendered through [Fumadocs](https://fumadocs.dev), on infrastructure you control.
+**Why Nema exists.** Coding agents ship code faster than anyone documents it — and letting them
+write the docs creates a new problem: you either review every word yourself, or publish text nobody
+can vouch for. Docs platforms assume a human author; linters check style, not trust.
+
+**Nema restructures the job.** Point your own agents (Claude Code, Cursor, your own pipeline) at
+your repo and they draft, link, and maintain pages with full context of the existing corpus. Gates
+catch what's broken before a PR ever opens, and every page carries a git-diffable record of who
+wrote it, from which sources, and who signed off. You do the one thing only a human can — approve —
+and nothing reaches `reviewed` without it. All rendered through [Fumadocs](https://fumadocs.dev),
+on infrastructure you control.
 
 **What you get:**
 
 - 🤖 **Agents author, humans approve** — every page is agent-written, and nothing reaches `reviewed`
   without a human PR approval. That gate is the one invariant.
-- 🔍 **Provenance as git-diffable data** — who wrote it, which model, which sources, which reviewer —
-  recorded as structured, queryable data, not free-text footnotes.
-- 🧵 **Multi-agent authoring without clobbering** — point a fleet of agents at one corpus; slot leasing
-  and a merge-time coherence gate keep them from overwriting each other's pages.
-- 📥 **Docs from your code** — `nema generate <repo>` reads a codebase's public API and scaffolds
-  seeded `draft` pages (export tables, install snippet — a factual skeleton) for your agent to flesh
-  out. It never invents prose; the explanation is the agent's job.
 - ✅ **Gate-checked before the PR** — `nema check` catches broken links, orphans, stale frontmatter, and
   self-promotion, with a fix hint per failure — the same report for a human and for an agent in a loop.
-- 🩺 **Docs that stay honest about the code** — bind a page to the source it documents, and `nema drift`
-  flags it the moment the code's public surface moves past its approved baseline.
-- 🔓 **Renderer-agnostic and self-hostable** — renders through [Fumadocs](https://fumadocs.dev); your
-  agents, your corpus, your infra. Apache-2.0, no SaaS lock-in.
+- 🔍 **Provenance as git-diffable data** — who wrote it, which model, which sources, which reviewer —
+  recorded as structured, queryable data, not free-text footnotes.
+- 🩺 **Docs born from the code, and honest about it** — `nema generate <repo>` scaffolds seeded `draft`
+  pages from a codebase's public API (a factual skeleton — it never invents prose), pages bind to the
+  source they document, and `nema drift` flags them the moment that code moves past its approved baseline.
+- 🧵 **Multi-agent authoring without clobbering** — point a fleet of agents at one corpus; slot leasing
+  and a merge-time coherence gate keep them from overwriting each other's pages.
 
 > **Alpha — honest status.** Today an agent drafts a page that lands in your nav, linked and cited,
 > self-checks against the gates, and opens a PR you approve — rendered live. Multi-agent authoring
