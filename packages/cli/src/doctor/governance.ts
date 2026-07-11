@@ -223,6 +223,8 @@ export interface ProposeIdentityFacts {
   userLogin: string | null;
   /** Login the propose token authenticates as, if resolvable. */
   tokenLogin: string | null;
+  /** Whether a `/nema approve` comment-command workflow is wired (solo mode). */
+  commandWorkflowWired?: boolean;
 }
 
 /**
@@ -234,10 +236,16 @@ export interface ProposeIdentityFacts {
 export function assessProposeIdentity(facts: ProposeIdentityFacts): Check {
   const approver = facts.userLogin ? `@${facts.userLogin}` : 'your gh identity';
   if (!facts.tokenSet) {
+    if (facts.commandWorkflowWired) {
+      return {
+        level: 'ok',
+        label: `propose identity: solo mode — draft PRs authored by ${approver}, approved via the \`/nema approve\` comment-command (native review approvals need ${PROPOSE_TOKEN_ENV})`,
+      };
+    }
     return {
       level: 'warn',
       label: `propose identity: draft PRs will be authored by ${approver} — an author cannot approve their own PR, so a solo maintainer cannot promote anything`,
-      fix: `Set ${PROPOSE_TOKEN_ENV} to a machine-user PAT or GitHub-App installation token so proposals are authored by a bot you can approve.`,
+      fix: `Wire the \`/nema approve\` comment-command workflow (solo mode, zero setup), or set ${PROPOSE_TOKEN_ENV} to a machine-user/App token so proposals are authored by a bot you can approve.`,
     };
   }
   if (facts.tokenLogin && facts.userLogin && facts.tokenLogin === facts.userLogin) {
@@ -280,7 +288,23 @@ export async function proposeIdentityCheck(
   };
   const userLogin = await login();
   const tokenLogin = token ? await login({ GH_TOKEN: token }) : null;
-  return assessProposeIdentity({ tokenSet: Boolean(token), userLogin, tokenLogin });
+  return assessProposeIdentity({
+    tokenSet: Boolean(token),
+    userLogin,
+    tokenLogin,
+    commandWorkflowWired: approveCommandWorkflowWired(rootDir),
+  });
+}
+
+/** Whether a `/nema approve` comment-command (issue_comment) workflow is wired. */
+export function approveCommandWorkflowWired(rootDir: string): boolean {
+  const dir = join(rootDir, '.github', 'workflows');
+  if (!existsSync(dir)) return false;
+  const files = readdirSync(dir).filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'));
+  return files.some((file) => {
+    const raw = readFileSync(join(dir, file), 'utf8');
+    return /issue_comment/.test(raw) && /\/nema\s+approve/.test(raw);
+  });
 }
 
 // ── branch protection (best-effort via gh) ───────────────────────────────────

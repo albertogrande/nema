@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Nema Approve Command
+
+# The solo-maintainer approval gate: an explicit `/nema approve` comment on a
+# draft PR by a user with write/admin permission promotes the PR's draft pages
+# to reviewed (method: maintainer-command) and merges. This exists because
+# GitHub forbids review-approving your own PR — when an agent proposes under
+# the maintainer's identity, the review button never appears, but the
+# maintainer's permission-checked command is the same human gate.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  promote:
+    name: promote draft → reviewed (by command)
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/nema approve')
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the DEFAULT branch first: the code we build and execute is
+      # trusted; the PR branch is checked out later, as data, by the action.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          # NEMA_PROMOTE_TOKEN (a PAT/App token that re-triggers CI on the
+          # promotion push) when configured; the workflow token otherwise —
+          # enough for unprotected repos, where the fallback direct merge applies.
+          token: ${{ secrets.NEMA_PROMOTE_TOKEN || github.token }}
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @getnema/actions build
+      - name: Configure git identity
+        run: |
+          git config user.name "nema-bot"
+          git config user.email "nema-bot@users.noreply.github.com"
+      - name: Verify permission, promote, and merge
+        run: node packages/actions/dist/approve-command-action.js
+        env:
+          GH_TOKEN: ${{ secrets.NEMA_PROMOTE_TOKEN || github.token }}

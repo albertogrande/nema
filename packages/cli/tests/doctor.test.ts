@@ -182,4 +182,27 @@ describe('nema doctor — propose identity (issue #93)', () => {
     });
     expect(check.level).toBe('ok');
   });
+
+  it('treats no-token as OK solo mode when the /nema approve command workflow is wired', () => {
+    const check = assessProposeIdentity({
+      tokenSet: false,
+      userLogin: 'alice',
+      tokenLogin: null,
+      commandWorkflowWired: true,
+    });
+    expect(check.level).toBe('ok');
+    expect(check.label).toContain('/nema approve');
+  });
+
+  it('points the no-token warn at both the command workflow and the bot token', () => {
+    const check = assessProposeIdentity({
+      tokenSet: false,
+      userLogin: 'alice',
+      tokenLogin: null,
+      commandWorkflowWired: false,
+    });
+    expect(check.level).toBe('warn');
+    expect(check.fix).toContain('/nema approve');
+    expect(check.fix).toContain('NEMA_PROPOSE_TOKEN');
+  });
 });

@@ -167,10 +167,12 @@ export const RULE_CATALOG: Record<string, RuleDoc> = {
       'This is the platform invariant, enforced structurally: an agent may only move a page ' +
       '`stub → draft` or `draft → draft`. A `reviewed` page must carry proof of the human gate — a ' +
       '`provenance.reviewed_by` record and a `reviewed` transition (referencing the approving PR for ' +
-      'the `github-pr-approval` method).\n\n' +
+      'the `github-pr-approval` and `maintainer-command` methods).\n\n' +
       'Fix: if you are authoring, keep `status: draft`; the approval-triggered Action runs ' +
-      '`nema approve` to promote it after a human approves the PR. A human importing an existing ' +
-      'corpus can assert reviewed pages via `nema migrate` (method `migration`).',
+      '`nema approve` to promote it after a human approves the PR — via a review approval, or via ' +
+      'an explicit `/nema approve` comment by a maintainer (the solo-maintainer loop, since GitHub ' +
+      'forbids review-approving your own PR). A human importing an existing corpus can assert ' +
+      'reviewed pages via `nema migrate` (method `migration`).',
   },
   'code-drift': {
     id: 'code-drift',

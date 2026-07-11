@@ -117,10 +117,12 @@ Now new docs get written the Nema way — agents draft, you approve:
    flips `draft → reviewed`, stamps freshness dates, records the transition, and merges.
 
 > **Solo maintainer?** GitHub will not let the author of a PR approve it — so if proposals run
-> with *your* `gh` login (the default), you can never approve your agent's PRs. Set
-> **`NEMA_PROPOSE_TOKEN`** to a machine-user PAT or GitHub-App installation token: the draft
-> branch and PR are then authored by the bot, and your approval works. `nema doctor` warns when
-> the propose identity and the approver would collide.
+> with *your* `gh` login (the default), the review button never appears on your agent's PRs.
+> Comment **`/nema approve`** on the PR instead: a permission-checked workflow (scaffolded repos
+> ship it out of the box) promotes the draft pages — recorded in provenance as
+> `method: maintainer-command` — and merges. Prefer native review approvals? Set
+> **`NEMA_PROPOSE_TOKEN`** to a machine-user/App token so draft PRs are authored by a bot
+> identity. `nema doctor` tells you which mode you're in.
 
 The full agent contract lives in [CLAUDE.md](CLAUDE.md).
 

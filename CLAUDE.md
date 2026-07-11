@@ -22,7 +22,9 @@ gate and the approval-triggered Action own that transition. A PR that self-promo
 2. **Propose** (`propose_changes` / `nema open-pr`): creates a `nema/draft/<slug>-<sha>` branch,
    commits with a `Nema-Provenance:` trailer, pushes, and opens a PR labeled `nema:draft`.
 3. **CI** runs `nema check` — all gates plus `draft-pages-not-reviewed`.
-4. **A human approves** the PR in GitHub. ← the gate. Not you.
+4. **A human approves** the PR in GitHub — a review approval, or a `/nema approve` comment from
+   a maintainer (the solo-maintainer path when the PR is authored under their own identity).
+   ← the gate. Not you.
 5. The approval Action runs `nema approve`, which flips `draft → reviewed`, stamps freshness
    dates, appends a `reviewed` transition, and merges.
 

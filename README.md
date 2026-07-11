@@ -137,12 +137,19 @@ Your agent can now search, read, and **draft** pages with full corpus context �
 promote a page to `reviewed`. Only your PR approval can. The rules every agent must follow live in
 [CLAUDE.md](CLAUDE.md) (applied via [AGENTS.md](AGENTS.md)).
 
-**Solo maintainer?** Set **`NEMA_PROPOSE_TOKEN`** to a machine-user PAT or GitHub-App installation
-token. Draft PRs are then authored by that bot identity instead of your own `gh` login — which
-matters because GitHub does not let a PR's author approve it, so without a distinct propose
-identity a solo maintainer can never promote anything. `NEMA_BOT_NAME` / `NEMA_BOT_EMAIL` override
-the bot's committer identity, and `nema doctor` warns when the propose identity and the approver
-would collide.
+**Solo maintainer?** GitHub does not let a PR's author approve it — and when your agent proposes
+with *your* `gh` login, you are the author. Two ways through, both human-gated:
+
+- **Zero setup (the default):** comment **`/nema approve`** on the draft PR. A permission-checked
+  workflow promotes the PR's draft pages (recorded honestly in provenance as
+  `method: maintainer-command`) and merges. Scaffolded repos ship this out of the box.
+- **GitHub-native reviews:** set **`NEMA_PROPOSE_TOKEN`** to a machine-user PAT or GitHub-App
+  installation token — draft PRs are then authored by that bot identity, so the normal
+  review-approve flow works. `NEMA_BOT_NAME` / `NEMA_BOT_EMAIL` override the bot's committer
+  identity.
+
+`nema doctor` tells you which mode your repo is in and warns when the propose identity and the
+approver would collide.
 
 ## Learn more
 
