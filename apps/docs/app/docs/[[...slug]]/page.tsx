@@ -2,10 +2,15 @@
 import { ProvenanceBadge } from '@getnema/adapter-fumadocs';
 import { getTableOfContents } from 'fumadocs-core/server';
 import { DocsBody, DocsPage } from 'fumadocs-ui/page';
-import { marked } from 'marked';
+import { Marked } from 'marked';
+import markedFootnote from 'marked-footnote';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getSource, slugToPath } from '@/lib/source';
+
+// A dedicated instance so the footnote extension doesn't stack onto the global
+// marked singleton across renders.
+const md = new Marked(markedFootnote());
 
 export async function generateStaticParams() {
   const source = await getSource();
@@ -21,7 +26,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug?: str
   // renderMarkdown is the parity source (same bytes the .md route serves); the HTML
   // and the table of contents are derived from it for the human-facing view.
   const markdown = source.renderMarkdown(page);
-  const html = marked.parse(markdown, { async: false }) as string;
+  const html = md.parse(markdown, { async: false }) as string;
   const toc = getTableOfContents(markdown);
   const provenance = source.provenanceOf(page.path);
 
