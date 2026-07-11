@@ -3,6 +3,24 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
+/* Make Tailwind's `dark:` variant follow fumadocs' class-based theme toggle. */
+@custom-variant dark (&:is(.dark *));
+
+/* Homepage: blinking terminal-cursor block (brand accent). */
+@keyframes nema-blink {
+  50% {
+    opacity: 0;
+  }
+}
+.nema-cursor {
+  animation: nema-blink 1.2s steps(1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nema-cursor {
+    animation: none;
+  }
+}
+
 /* Nema provenance badge + trust dashboard — carried over from the hand-rolled site. */
 .nema-badge {
   display: inline-block;
