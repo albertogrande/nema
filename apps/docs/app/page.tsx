@@ -4,9 +4,9 @@ import type { ReactNode } from 'react';
 import { CopyCommand } from '@/components/copy-command';
 
 export const metadata = {
-  title: 'Nema — agents write the docs, humans approve every page',
+  title: 'Nema — your coding agents write the docs, you approve the PR',
   description:
-    'An open, self-hostable, AI-native documentation platform. Coding agents draft, link, and maintain pages; nothing reaches reviewed without a human PR approval. Provenance is git-diffable data.',
+    'Your coding agents write the docs; you approve the PR. Open-source docs platform with human-gated review, git-diffable provenance, gate checks, and code-drift tracking.',
 };
 
 const GITHUB_URL = 'https://github.com/albertogrande/nema';
@@ -83,14 +83,14 @@ const FEATURES: { token: string; title: string; body: string }[] = [
     body: 'Point Claude Code, Cursor, or your own pipeline at the repo. Every page records who — and what — wrote it, and nothing ships without a human PR approval.',
   },
   {
-    token: 'provenance:',
-    title: 'Authorship as git-diffable data',
-    body: 'Model, sources, reviewer, and every status transition live in frontmatter — structured and queryable, not free-text footnotes.',
-  },
-  {
     token: 'nema check',
     title: 'Green before the PR',
     body: 'Broken links, orphans, stale frontmatter, self-promotion — every diagnostic carries a fix hint an agent can act on, on the CLI or over MCP.',
+  },
+  {
+    token: 'provenance:',
+    title: 'Authorship as git-diffable data',
+    body: 'Model, sources, reviewer, and every status transition live in frontmatter — structured and queryable, not free-text footnotes.',
   },
   {
     token: 'nema generate',
@@ -143,18 +143,19 @@ export default function Home() {
             open source · self-hostable · apache-2.0 · v0.4 alpha
           </p>
           <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-[2.6rem] sm:leading-[1.15]">
-            Agents write the docs.
-            <br />A human approves every page.
+            Your coding agents write the docs.
+            <br />
+            You approve the PR.
             <span
               aria-hidden
               className="nema-cursor ml-2 inline-block h-[0.85em] w-[0.5em] translate-y-[0.08em] bg-[#fb923c]"
             />
           </h1>
           <p className="mt-8 max-w-2xl text-sm leading-relaxed text-fd-muted-foreground sm:text-base">
-            Nema is an open, AI-native documentation platform. Your coding agents draft, link, and
-            maintain pages with full context of the corpus — and nothing reaches{' '}
-            <code className="text-fd-foreground">reviewed</code> without a human PR approval.
-            Provenance is git-diffable data, not a footnote.
+            Nema is an open-source, self-hostable docs platform built for agent authorship. Your
+            agents draft, link, and maintain pages with full context of the corpus — and nothing
+            reaches <code className="text-fd-foreground">reviewed</code> without a human PR
+            approval. Provenance is git-diffable data, not a footnote.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4 text-sm">
             <Link
@@ -176,6 +177,37 @@ export default function Home() {
             <p className="mt-3 text-xs text-fd-muted-foreground">
               node 22+ · no git, no account, no agent required to get to a rendered site
             </p>
+          </div>
+        </section>
+
+        {/* problem */}
+        <section className="border-t border-fd-border py-20">
+          <SectionLabel index="00">the problem</SectionLabel>
+          <h2 className="max-w-2xl text-2xl font-semibold tracking-tight">
+            Agents made shipping fast. Docs didn’t get faster.
+          </h2>
+          <div className="mt-10 grid gap-px overflow-hidden rounded-sm border border-fd-border bg-fd-border sm:grid-cols-3">
+            <div className="bg-fd-background p-6">
+              <p className="text-xs text-[#fb923c]">the current way</p>
+              <p className="mt-3 text-[13px] leading-relaxed text-fd-muted-foreground">
+                Your agents ship code faster than anyone documents it. So you ask them to write the
+                docs too — and commit whatever comes out.
+              </p>
+            </div>
+            <div className="bg-fd-background p-6">
+              <p className="text-xs text-[#fb923c]">the limitation</p>
+              <p className="mt-3 text-[13px] leading-relaxed text-fd-muted-foreground">
+                Raw agent output has no review gate, no record of which model or sources produced
+                it, and no check that links resolve or that the code still matches.
+              </p>
+            </div>
+            <div className="bg-fd-background p-6">
+              <p className="text-xs text-[#fb923c]">the pain</p>
+              <p className="mt-3 text-[13px] leading-relaxed text-fd-muted-foreground">
+                You choose between reviewing every word yourself or publishing pages nobody can
+                vouch for. Most teams quietly choose neither — and the docs rot.
+              </p>
+            </div>
           </div>
         </section>
 

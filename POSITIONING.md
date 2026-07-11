@@ -96,3 +96,26 @@ platform built for agent authorship; gates check every draft; provenance is git-
 
 > Your coding agents write the docs; you approve the PR. Open-source docs platform with
 > human-gated review, git-diffable provenance, gate checks, and code-drift tracking.
+
+## Homepage (apps/docs root, getnema.vercel.app)
+
+The landing page (`apps/docs/app/page.tsx`) follows Fletch's top-half template — Hero → Problem →
+Solution intro → Value props — with the flexible bottom half used for differentiation proof.
+Page metadata mirrors the GitHub repo description.
+
+1. **Hero** — the canonical header/subheader (above), eyebrow badges
+   (`open source · self-hostable · apache-2.0 · alpha`), `npx create-nema my-docs --app`
+   copy-command, docs/GitHub CTAs. No customer logos at alpha — credibility is the OSS badges
+   and the live `/trust` dashboard.
+2. **Problem (`00`)** — Fletch's current-way / limitation / pain triad: agents ship code faster
+   than anyone documents it → raw agent output has no gate, no record, no checks → review every
+   word or vouch for nothing, so docs rot.
+3. **Solution intro (`01 / the producer loop`)** — draft → check → propose → a human approves,
+   rendered as a terminal walkthrough. Signature line: "The whole loop is designed to be driven
+   by an agent — except the last step, which is designed so it can't be."
+4. **Value props (`03 / what you get`)** — six feature tiles in canvas order: `authored_by: ai` →
+   `nema check` → `provenance:` → `nema generate` → `nema drift` → `slot leasing`. (The grid keeps
+   generate and drift as separate tiles; the README merges them into one bullet — a prose
+   constraint, not a positioning difference.)
+5. **Bottom half** — the invariant table (`02`), "Approval is a diff" provenance diff (`04`),
+   bring-your-own-agent over MCP (`05`), footer.
