@@ -140,7 +140,7 @@ export default function Home() {
         {/* hero */}
         <section className="py-20 sm:py-28">
           <p className="mb-6 text-xs uppercase tracking-[0.2em] text-fd-muted-foreground">
-            open source · self-hostable · apache-2.0 · v0.4 alpha
+            open source · self-hostable · apache-2.0 · alpha
           </p>
           <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-[2.6rem] sm:leading-[1.15]">
             Your coding agents write the docs.
@@ -171,6 +171,12 @@ export default function Home() {
             >
               github ↗
             </a>
+            <Link
+              href="/trust"
+              className="text-fd-muted-foreground underline underline-offset-4 transition-colors hover:text-fd-foreground"
+            >
+              see the live /trust dashboard
+            </Link>
           </div>
           <div className="mt-10 max-w-2xl">
             <CopyCommand command="npx create-nema my-docs --app" />
@@ -260,9 +266,25 @@ export default function Home() {
           </div>
         </section>
 
+        {/* features */}
+        <section className="border-t border-fd-border py-20">
+          <SectionLabel index="02">what you get</SectionLabel>
+          <div className="grid gap-px overflow-hidden rounded-sm border border-fd-border bg-fd-border sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <div key={f.token} className="bg-fd-background p-6">
+                <p className="text-xs text-[#fb923c]">{f.token}</p>
+                <h3 className="mt-3 text-sm font-semibold">{f.title}</h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-fd-muted-foreground">
+                  {f.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* the invariant */}
         <section className="border-t border-fd-border py-20">
-          <SectionLabel index="02">the one invariant</SectionLabel>
+          <SectionLabel index="03">the one invariant</SectionLabel>
           <div className="rounded-sm border border-fd-border">
             <dl className="divide-y divide-fd-border text-sm">
               <div className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -295,22 +317,6 @@ export default function Home() {
             Enforced in CI by the <code>draft-pages-not-reviewed</code> gate. A PR that
             self-promotes fails.
           </p>
-        </section>
-
-        {/* features */}
-        <section className="border-t border-fd-border py-20">
-          <SectionLabel index="03">what you get</SectionLabel>
-          <div className="grid gap-px overflow-hidden rounded-sm border border-fd-border bg-fd-border sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div key={f.token} className="bg-fd-background p-6">
-                <p className="text-xs text-[#fb923c]">{f.token}</p>
-                <h3 className="mt-3 text-sm font-semibold">{f.title}</h3>
-                <p className="mt-2 text-[13px] leading-relaxed text-fd-muted-foreground">
-                  {f.body}
-                </p>
-              </div>
-            ))}
-          </div>
         </section>
 
         {/* provenance diff */}

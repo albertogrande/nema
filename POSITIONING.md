@@ -113,9 +113,9 @@ Page metadata mirrors the GitHub repo description.
 3. **Solution intro (`01 / the producer loop`)** — draft → check → propose → a human approves,
    rendered as a terminal walkthrough. Signature line: "The whole loop is designed to be driven
    by an agent — except the last step, which is designed so it can't be."
-4. **Value props (`03 / what you get`)** — six feature tiles in canvas order: `authored_by: ai` →
+4. **Value props (`02 / what you get`)** — six feature tiles in canvas order: `authored_by: ai` →
    `nema check` → `provenance:` → `nema generate` → `nema drift` → `slot leasing`. (The grid keeps
    generate and drift as separate tiles; the README merges them into one bullet — a prose
    constraint, not a positioning difference.)
-5. **Bottom half** — the invariant table (`02`), "Approval is a diff" provenance diff (`04`),
+5. **Bottom half** — the invariant table (`03`), "Approval is a diff" provenance diff (`04`),
    bring-your-own-agent over MCP (`05`), footer.
