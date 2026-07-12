@@ -1,6 +1,6 @@
 ---
 title: CLI reference
-status: reviewed
+status: draft
 diataxis: reference
 provenance:
   schema: 1
@@ -24,12 +24,9 @@ provenance:
       ts: 2026-07-12T06:38:08.726Z
       commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
       pr: 92
-  reviewed_by:
-    login: albertogrande
-    method: maintainer-command
-    pr: 92
-last_reviewed: 2026-07-12
-review_by: 2027-01-08
+    - to: draft
+      by: ai
+      ts: 2026-07-12T07:05:00.000Z
 ---
 
 Everything the platform does is reachable from one binary. Run `nema <command> --help` for
@@ -64,7 +61,7 @@ flags; this table is the map.[^cli]
 | Command | What it does |
 | --- | --- |
 | `nema open-pr` | Open the draft PR: branch, provenance-trailer commit, push, PR (requires `gh`) |
-| `nema approve` | Promote `draft → reviewed` — run by the approval Action, not by hand |
+| `nema approve` | Promote `draft → reviewed` — run by the approval Actions (review approval or `/nema approve` comment), not by hand; records the method via `--method` |
 
 ## Trust
 

@@ -1,6 +1,6 @@
 ---
 title: The producer loop
-status: reviewed
+status: draft
 diataxis: explanation
 provenance:
   schema: 1
@@ -24,12 +24,9 @@ provenance:
       ts: 2026-07-12T06:38:08.738Z
       commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
       pr: 92
-  reviewed_by:
-    login: albertogrande
-    method: maintainer-command
-    pr: 92
-last_reviewed: 2026-07-12
-review_by: 2027-01-08
+    - to: draft
+      by: ai
+      ts: 2026-07-12T07:05:00.000Z
 ---
 
 Every page on this site is written through the same loop: an agent authors, the gates check,
@@ -47,7 +44,10 @@ content ships.[^contract]
 3. **Propose** — `nema open-pr` (or the `propose_changes` tool) creates a `nema/draft/<slug>`
    branch, commits with a `Nema-Provenance:` trailer, pushes, and opens a PR labeled
    `nema:draft`.
-4. **A human approves** the PR in GitHub. This is the gate. Not the agent.
+4. **A human approves** the PR in GitHub — a review approval, or an explicit `/nema approve`
+   comment from a maintainer with write access (the solo-maintainer path: GitHub forbids
+   review-approving your own PR, so when the agent proposes under your identity, the command is
+   your approval — recorded as `method: maintainer-command`). This is the gate. Not the agent.
 5. **Promote** — the approval Action runs `nema approve`, which flips `draft → reviewed`,
    stamps freshness dates, appends a `reviewed` transition, and merges.
 

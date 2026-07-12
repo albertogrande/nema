@@ -1,6 +1,6 @@
 ---
 title: Use it with your agent (MCP)
-status: reviewed
+status: draft
 diataxis: how-to
 provenance:
   schema: 1
@@ -24,12 +24,9 @@ provenance:
       ts: 2026-07-12T06:38:08.735Z
       commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
       pr: 92
-  reviewed_by:
-    login: albertogrande
-    method: maintainer-command
-    pr: 92
-last_reviewed: 2026-07-12
-review_by: 2027-01-08
+    - to: draft
+      by: ai
+      ts: 2026-07-12T07:05:00.000Z
 ---
 
 Nema is meant to be run *by* your coding agent. The MCP server exposes the whole authoring
@@ -68,8 +65,8 @@ nema mcp --http --read-only        # read tools only — no write/git surface
 
 There is deliberately **no promote tool**: an agent cannot flip a page to `reviewed` over MCP.
 `update_page` refuses to write that status, and the `draft-pages-not-reviewed` gate backstops
-both in CI. Approval stays a human PR review — see
-[The producer loop](producer-loop.md#the-one-invariant).
+both in CI. Approval stays a human act on the PR — a review approval, or a maintainer's
+`/nema approve` comment — see [The producer loop](producer-loop.md#the-one-invariant).
 
 ## The contract
 

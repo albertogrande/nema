@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-status: reviewed
+status: draft
 diataxis: tutorial
 provenance:
   schema: 1
@@ -25,12 +25,9 @@ provenance:
       ts: 2026-07-12T06:38:08.734Z
       commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
       pr: 92
-  reviewed_by:
-    login: albertogrande
-    method: maintainer-command
-    pr: 92
-last_reviewed: 2026-07-12
-review_by: 2027-01-08
+    - to: draft
+      by: ai
+      ts: 2026-07-12T07:05:00.000Z
 ---
 
 From nothing to a rendered, provenance-badged docs site in about five minutes — then your
@@ -77,9 +74,10 @@ the page is there, badged *pending review*.
 nema open-pr         # the first step that needs git, a GitHub remote, and the gh CLI
 ```
 
-A human approves the PR — the **only** path to `reviewed`. An Action flips
-`draft → reviewed`, stamps freshness dates, and merges. That approval gate is the one
-invariant of [the producer loop](producer-loop.md).
+A human approves the PR — the **only** path to `reviewed`: click **Approve** on the review,
+or, as a solo maintainer (GitHub won't let you review-approve your own PR), comment
+**`/nema approve`**. Either way an Action flips `draft → reviewed`, stamps freshness dates, and
+merges. That approval gate is the one invariant of [the producer loop](producer-loop.md).
 
 ## Where to next
 

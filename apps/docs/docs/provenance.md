@@ -1,6 +1,6 @@
 ---
 title: Provenance
-status: reviewed
+status: draft
 diataxis: explanation
 provenance:
   schema: 1
@@ -24,12 +24,9 @@ provenance:
       ts: 2026-07-12T06:38:08.739Z
       commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
       pr: 92
-  reviewed_by:
-    login: albertogrande
-    method: maintainer-command
-    pr: 92
-last_reviewed: 2026-07-12
-review_by: 2027-01-08
+    - to: draft
+      by: ai
+      ts: 2026-07-12T07:05:00.000Z
 ---
 
 Every page carries a `provenance` block in its frontmatter: who authored it, with which model,
@@ -60,7 +57,10 @@ provenance:
 - **`sources`** — structured citations. Every `sources[].id` must be referenced in the body as
   a `[^id]` footnote, and vice versa.
 - **`transitions`** — the lifecycle trail. A `reviewed` page must have a `reviewed` transition
-  and a `reviewed_by` record; only the approval Action writes those.
+  and a `reviewed_by` record; only the approval Actions write those. The `reviewed_by.method`
+  says how the human gate was recorded: `github-pr-approval` (a review approval),
+  `maintainer-command` (an explicit `/nema approve` comment by a maintainer — the solo path), or
+  `migration` (a human asserting an imported corpus).
 
 ## Reading the trail
 
