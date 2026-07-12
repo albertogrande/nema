@@ -117,5 +117,8 @@ Page metadata mirrors the GitHub repo description.
    `nema check` → `provenance:` → `nema generate` → `nema drift` → `slot leasing`. (The grid keeps
    generate and drift as separate tiles; the README merges them into one bullet — a prose
    constraint, not a positioning difference.)
-5. **Bottom half** — the invariant table (`03`), "Approval is a diff" provenance diff (`04`),
-   bring-your-own-agent over MCP (`05`), footer.
+5. **Bottom half** — the invariant state-machine diagram (`03`), "Approval is a diff" provenance
+   diff (`04`), bring-your-own-agent over MCP (`05`), footer.
+6. **FAQ (`06`)** — six `details` items; every answer stays backed by shipped code (the three
+   enforcement points of the invariant, drafts render badged, Apache-2.0/self-host, alpha status).
+7. **Closing CTA** — "Start in a minute." with the `create-nema` command and docs/GitHub links.
