@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { run } from './exec.js';
-import { type CommitOptions, GitRunner } from './git.js';
+import { type CommitOptions, GitRunner, type GitRunnerOptions } from './git.js';
+import { type ProposeIdentity, proposeGitConfigArgs } from './identity.js';
 
 export interface PullRequestRef {
   number: number;
@@ -54,8 +55,11 @@ export interface NemaHost {
 /** Git-only host. PR creation is unsupported — use {@link GitHubHost}. */
 export class LocalGitHost implements NemaHost {
   protected readonly git: GitRunner;
-  constructor(readonly cwd: string) {
-    this.git = new GitRunner(cwd);
+  constructor(
+    readonly cwd: string,
+    gitOptions: GitRunnerOptions = {},
+  ) {
+    this.git = new GitRunner(cwd, gitOptions);
   }
   currentBranch = () => this.git.currentBranch();
   headSha = () => this.git.headSha();
@@ -91,8 +95,37 @@ export function ghMergeArgs(pr: number, opts: MergeOptions = {}): string[] {
   return args;
 }
 
+export interface GitHubHostOptions {
+  /**
+   * Propose as this bot identity instead of the ambient git/gh auth: commits,
+   * the branch push, and the PR creation all authenticate with the identity's
+   * token, so the PR is authored by the bot and a (solo) human maintainer can
+   * approve it. Resolve one from the environment with
+   * {@link resolveProposeIdentity}.
+   */
+  identity?: ProposeIdentity | null;
+}
+
 /** GitHub host: git operations plus PR creation/merge through the `gh` CLI. */
 export class GitHubHost extends LocalGitHost {
+  private readonly identity: ProposeIdentity | null;
+
+  constructor(cwd: string, opts: GitHubHostOptions = {}) {
+    const identity = opts.identity ?? null;
+    super(
+      cwd,
+      identity
+        ? { configArgs: proposeGitConfigArgs(identity), env: { GH_TOKEN: identity.token } }
+        : {},
+    );
+    this.identity = identity;
+  }
+
+  /** Scoped env for `gh` calls: the bot token when proposing as a bot. */
+  private ghEnv(): { env?: Record<string, string> } {
+    return this.identity ? { env: { GH_TOKEN: this.identity.token } } : {};
+  }
+
   override async createPullRequest(input: CreatePullRequestInput): Promise<PullRequestRef> {
     const args = [
       'pr',
@@ -108,14 +141,14 @@ export class GitHubHost extends LocalGitHost {
     ];
     for (const label of input.labels ?? []) args.push('--label', label);
 
-    const { stdout } = await run('gh', args, this.cwd);
+    const { stdout } = await run('gh', args, this.cwd, this.ghEnv());
     const url = stdout.trim().split('\n').filter(Boolean).pop() ?? '';
     const number = Number.parseInt(url.split('/').pop() ?? '', 10);
     return { number: Number.isFinite(number) ? number : 0, url };
   }
 
   override async merge(pr: number, opts: MergeOptions = {}): Promise<void> {
-    await run('gh', ghMergeArgs(pr, opts), this.cwd);
+    await run('gh', ghMergeArgs(pr, opts), this.cwd, this.ghEnv());
   }
 }
 

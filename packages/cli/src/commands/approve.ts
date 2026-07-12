@@ -13,6 +13,11 @@ export const approveCommand = defineCommand({
     path: { type: 'string', required: true, description: 'Route path of the approved page' },
     reviewer: { type: 'string', required: true, description: 'Approving reviewer login' },
     pr: { type: 'string', required: true, description: 'Approving PR number' },
+    method: {
+      type: 'string',
+      description:
+        'How the approval was recorded: github-pr-approval (default) | maintainer-command',
+    },
     commit: { type: 'string', description: 'SHA to record on the reviewed transition' },
     'sla-days': { type: 'string', description: 'Override review SLA in days' },
     dir: { type: 'string', description: 'Repo root (default: cwd)' },
@@ -23,7 +28,11 @@ export const approveCommand = defineCommand({
     const engine = await makeEngine(rootDir, new LocalGitHost(rootDir), { reviewSlaDays });
     const res = await engine.approve({
       path: String(args.path),
-      reviewer: { login: String(args.reviewer), pr: Number(args.pr) },
+      reviewer: {
+        login: String(args.reviewer),
+        pr: Number(args.pr),
+        method: args.method === 'maintainer-command' ? 'maintainer-command' : 'github-pr-approval',
+      },
       commit: args.commit ? String(args.commit) : undefined,
     });
     out(`Promoted ${res.path} → reviewed`);

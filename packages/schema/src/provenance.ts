@@ -13,10 +13,15 @@ export type SourceKind = (typeof SOURCE_KINDS)[number];
 
 /**
  * How a human review was recorded. `github-pr-approval` is the standard loop;
- * `migration` marks a page that a human asserted as reviewed when importing an
- * existing corpus with `nema migrate` (no PR — the migrating human is the gate).
+ * `maintainer-command` is the solo-maintainer loop — an explicit `/nema approve`
+ * comment on the PR by a user with write/admin permission (GitHub forbids
+ * review-approving your own PR, so a solo maintainer whose agent proposes under
+ * their identity approves by command instead — same human gate, recorded
+ * honestly); `migration` marks a page that a human asserted as reviewed when
+ * importing an existing corpus with `nema migrate` (no PR — the migrating human
+ * is the gate).
  */
-export const REVIEW_METHODS = ['github-pr-approval', 'migration'] as const;
+export const REVIEW_METHODS = ['github-pr-approval', 'maintainer-command', 'migration'] as const;
 export type ReviewMethod = (typeof REVIEW_METHODS)[number];
 
 export const ModelInfoSchema = z.object({

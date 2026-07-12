@@ -7,9 +7,12 @@ import type { Diagnostic, GateContext } from '../types.js';
  * record AND a `reviewed` transition. The agent-facing surfaces (MCP write-tools,
  * `nema draft`) never write either, so an agent cannot self-promote.
  *
- * Two recognized forms of evidence:
+ * Three recognized forms of evidence:
  *   - `github-pr-approval` — the standard loop; the `reviewed` transition must
  *     reference the approving PR (`pr`).
+ *   - `maintainer-command` — the solo-maintainer loop: an explicit, permission-
+ *     checked `/nema approve` comment on the PR. Same evidence requirement: the
+ *     `reviewed` transition must reference the PR the command was issued on.
  *   - `migration` — a human importing an existing corpus with `nema migrate`
  *     asserted the page as reviewed; no PR is required (the migrating human is
  *     the gate). Because that assertion lives only in frontmatter, it is trusted
@@ -46,11 +49,15 @@ export function draftNotReviewedRules(ctx: GateContext): Diagnostic[] {
       continue;
     }
     if (
-      prov.reviewed_by.method === 'github-pr-approval' &&
+      (prov.reviewed_by.method === 'github-pr-approval' ||
+        prov.reviewed_by.method === 'maintainer-command') &&
       !prov.transitions.some((t) => t.to === 'reviewed' && t.pr != null)
     ) {
       out.push(
-        err(page.path, 'github-pr-approval requires a `reviewed` transition referencing the PR'),
+        err(
+          page.path,
+          `${prov.reviewed_by.method} requires a \`reviewed\` transition referencing the PR`,
+        ),
       );
     }
     if (

@@ -69,6 +69,7 @@ function baseTemplates(opts: TemplateOptions): Record<string, string> {
     'package.json': `${JSON.stringify(pkg, null, 2)}\n`,
     '.github/workflows/nema-check.yml': NEMA_CHECK_WORKFLOW,
     '.github/workflows/nema-approve.yml': NEMA_APPROVE_WORKFLOW,
+    '.github/workflows/nema-approve-command.yml': NEMA_APPROVE_COMMAND_WORKFLOW,
     'AGENTS.md': AGENTS_CONTRACT,
     'CLAUDE.md': CLAUDE_POINTER,
     '.gitignore': 'node_modules\n',
@@ -688,6 +689,86 @@ jobs:
           git push origin "HEAD:\${{ github.event.pull_request.head.ref }}"
           # Enable auto-merge: completes once the re-triggered nema check passes.
           gh pr merge "$PR" --squash --auto
+`;
+
+const NEMA_APPROVE_COMMAND_WORKFLOW = `# SPDX-License-Identifier: Apache-2.0
+name: nema approve command
+# The solo-maintainer approval gate: an explicit \`/nema approve\` comment on a
+# draft PR by a user with write/admin permission promotes its draft pages to
+# reviewed (method: maintainer-command) and merges. GitHub forbids
+# review-approving your own PR, so when your agent proposes under YOUR
+# identity, this command is how you — the human — approve. Zero setup.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  promote:
+    name: promote draft → reviewed (by command)
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/nema approve')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # NEMA_PROMOTE_TOKEN (re-triggers CI on the promotion push; needed on
+          # protected branches) when configured; the workflow token otherwise.
+          token: \${{ secrets.NEMA_PROMOTE_TOKEN || github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - name: Configure git identity
+        run: |
+          git config user.name "nema-bot"
+          git config user.email "nema-bot@users.noreply.github.com"
+      - name: Verify permission, promote draft pages, and merge
+        env:
+          GH_TOKEN: \${{ secrets.NEMA_PROMOTE_TOKEN || github.token }}
+          PR: \${{ github.event.issue.number }}
+          REVIEWER: \${{ github.event.comment.user.login }}
+        run: |
+          set -euo pipefail
+          # Only accounts that could merge anyway may approve by command.
+          perm="$(gh api "repos/\${{ github.repository }}/collaborators/$REVIEWER/permission" -q .permission)"
+          case "$perm" in admin|maintain|write) ;; *)
+            echo "@$REVIEWER has '$perm' permission — not authorized to approve."; exit 0;;
+          esac
+          # Never promote across repositories (fork heads).
+          cross="$(gh pr view "$PR" --json isCrossRepository -q .isCrossRepository)"
+          if [ "$cross" = "true" ]; then echo "PR #$PR comes from a fork — refusing."; exit 0; fi
+          gh pr checkout "$PR"
+          mapfile -t files < <(gh pr view "$PR" --json files -q '.files[].path' \\
+            | grep -E '^docs/.*\\.md$' || true)
+          if [ "\${#files[@]}" -eq 0 ]; then
+            echo "No docs/*.md changes in this PR — nothing to promote."
+            exit 0
+          fi
+          head_sha="$(git rev-parse HEAD)"
+          draft_routes="$(npx -y @getnema/cli prov --status draft 2>/dev/null | sed -E 's/ —.*//' || true)"
+          promoted=0
+          for f in "\${files[@]}"; do
+            route="\${f#docs/}"; route="\${route%.md}"
+            if printf '%s\\n' "$draft_routes" | grep -qxF "$route"; then
+              npx -y @getnema/cli approve --path "$route" --reviewer "$REVIEWER" --pr "$PR" \\
+                --commit "$head_sha" --method maintainer-command
+              git add -- "$f"
+              promoted=$((promoted+1))
+            fi
+          done
+          if [ "$promoted" -eq 0 ]; then
+            echo "No draft pages to promote."
+            exit 0
+          fi
+          git commit -s -m "docs: promote approved pages to reviewed (/nema approve by @$REVIEWER)"
+          git push origin "HEAD:$(gh pr view "$PR" --json headRefName -q .headRefName)"
+          # Auto-merge waits on required checks; unprotected repos merge directly.
+          gh pr merge "$PR" --squash --auto || gh pr merge "$PR" --squash
+          gh pr comment "$PR" --body "✅ Promoted $promoted page(s) to \`reviewed\` on behalf of @$REVIEWER (method: \`maintainer-command\`)."
 `;
 
 /**

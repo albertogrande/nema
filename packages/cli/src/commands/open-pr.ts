@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
-import { GitHubHost, precheckProposeCoherence } from '@getnema/producer';
+import {
+  GitHubHost,
+  PROPOSE_TOKEN_ENV,
+  precheckProposeCoherence,
+  resolveProposeIdentity,
+} from '@getnema/producer';
 import { defineCommand } from 'citty';
 import { draftPaths, errOut, makeEngine, out } from '../util.js';
 
@@ -85,7 +90,22 @@ export const openPrCommand = defineCommand({
       errOut('  Proceeding anyway — `nema claim <path> --agent <id>` reserves a page up front.');
     }
 
-    const engine = await makeEngine(rootDir, new GitHubHost(rootDir));
+    const identity = resolveProposeIdentity();
+    if (identity) {
+      out(`Proposing as ${identity.name} (via ${PROPOSE_TOKEN_ENV}).`);
+    } else {
+      errOut(
+        `⚠ propose identity: no ${PROPOSE_TOKEN_ENV} set — this PR will be authored by your own`,
+      );
+      errOut(
+        '  gh identity, and GitHub does not let an author approve their own PR. If you are also',
+      );
+      errOut(
+        `  the approver (solo maintainer), set ${PROPOSE_TOKEN_ENV} to a bot/App token. \`nema doctor\` checks this.`,
+      );
+    }
+
+    const engine = await makeEngine(rootDir, new GitHubHost(rootDir, { identity }));
     try {
       const res = await engine.proposeChanges({
         paths,

@@ -28,6 +28,7 @@ import {
   precheckProposeCoherence,
   readLease,
   releaseLease,
+  resolveProposeIdentity,
 } from '@getnema/producer';
 import { composeContent, MATTER_OPTIONS } from '@getnema/provenance';
 import type { ModelInfo, Source } from '@getnema/schema';
@@ -96,7 +97,10 @@ export class NemaTools {
       rootDir: this.cfg.rootDir,
       contentRoot: config.contentRoot,
       codeRoot: config.codeRoot,
-      host: this.cfg.host ?? new GitHubHost(this.cfg.rootDir),
+      // Propose as the bot identity when NEMA_PROPOSE_TOKEN is configured, so
+      // the draft PR's author differs from the human who must approve it.
+      host:
+        this.cfg.host ?? new GitHubHost(this.cfg.rootDir, { identity: resolveProposeIdentity() }),
       reviewSlaDays: this.cfg.reviewSlaDays,
       clock: this.cfg.clock,
     });

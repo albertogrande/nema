@@ -3,7 +3,12 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { ciScopeCheck, contentModelChecks, promoteTokenCheck } from '../src/doctor/governance.js';
+import {
+  assessProposeIdentity,
+  ciScopeCheck,
+  contentModelChecks,
+  promoteTokenCheck,
+} from '../src/doctor/governance.js';
 
 let root: string;
 beforeEach(() => {
@@ -134,5 +139,70 @@ describe('nema doctor — content model', () => {
     );
     const checks = await contentModelChecks(root);
     expect(checks.some((c) => c.level === 'warn')).toBe(true);
+  });
+});
+
+describe('nema doctor — propose identity (issue #93)', () => {
+  it('warns when no NEMA_PROPOSE_TOKEN is set: the solo-maintainer deadlock', () => {
+    const check = assessProposeIdentity({
+      tokenSet: false,
+      userLogin: 'alice',
+      tokenLogin: null,
+    });
+    expect(check.level).toBe('warn');
+    expect(check.label).toContain('@alice');
+    expect(check.fix).toContain('NEMA_PROPOSE_TOKEN');
+  });
+
+  it('warns when the propose token resolves to the SAME account as the approver', () => {
+    const check = assessProposeIdentity({
+      tokenSet: true,
+      userLogin: 'alice',
+      tokenLogin: 'alice',
+    });
+    expect(check.level).toBe('warn');
+    expect(check.fix).toMatch(/different account/i);
+  });
+
+  it('passes when the token authenticates as a distinct bot account', () => {
+    const check = assessProposeIdentity({
+      tokenSet: true,
+      userLogin: 'alice',
+      tokenLogin: 'nema-bot',
+    });
+    expect(check.level).toBe('ok');
+    expect(check.label).toContain('@nema-bot');
+  });
+
+  it('accepts an App installation token whose identity is not user-resolvable', () => {
+    const check = assessProposeIdentity({
+      tokenSet: true,
+      userLogin: 'alice',
+      tokenLogin: null,
+    });
+    expect(check.level).toBe('ok');
+  });
+
+  it('treats no-token as OK solo mode when the /nema approve command workflow is wired', () => {
+    const check = assessProposeIdentity({
+      tokenSet: false,
+      userLogin: 'alice',
+      tokenLogin: null,
+      commandWorkflowWired: true,
+    });
+    expect(check.level).toBe('ok');
+    expect(check.label).toContain('/nema approve');
+  });
+
+  it('points the no-token warn at both the command workflow and the bot token', () => {
+    const check = assessProposeIdentity({
+      tokenSet: false,
+      userLogin: 'alice',
+      tokenLogin: null,
+      commandWorkflowWired: false,
+    });
+    expect(check.level).toBe('warn');
+    expect(check.fix).toContain('/nema approve');
+    expect(check.fix).toContain('NEMA_PROPOSE_TOKEN');
   });
 });

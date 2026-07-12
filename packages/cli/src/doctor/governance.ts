@@ -2,7 +2,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { type ResolvedConfig, resolveConfig } from '@getnema/core';
-import { run } from '@getnema/producer';
+import { PROPOSE_TOKEN_ENV, run } from '@getnema/producer';
 import { CONTENT_MODEL, type ContentModel, ContentModelSchema } from '@getnema/schema';
 import { load } from 'js-yaml';
 import type { Check } from './types.js';
@@ -20,7 +20,10 @@ export async function governanceChecks(
   checks.push(...(await contentModelChecks(rootDir)));
   checks.push(ciScopeCheck(rootDir));
   checks.push(promoteTokenCheck(rootDir));
-  if (!opts.skipNetwork) checks.push(await branchProtectionCheck(rootDir));
+  if (!opts.skipNetwork) {
+    checks.push(await branchProtectionCheck(rootDir));
+    checks.push(await proposeIdentityCheck(rootDir));
+  }
   return checks;
 }
 
@@ -209,6 +212,99 @@ export function promoteTokenCheck(rootDir: string): Check {
     };
   }
   return { level: 'ok', label: 'promotion gate: approval workflow wired with NEMA_PROMOTE_TOKEN' };
+}
+
+// ── propose identity (author ≠ approver) ────────────────────────────────────
+
+export interface ProposeIdentityFacts {
+  /** Whether NEMA_PROPOSE_TOKEN is set at all. */
+  tokenSet: boolean;
+  /** Login of the ambient `gh` identity (the likely approver), if resolvable. */
+  userLogin: string | null;
+  /** Login the propose token authenticates as, if resolvable. */
+  tokenLogin: string | null;
+  /** Whether a `/nema approve` comment-command workflow is wired (solo mode). */
+  commandWorkflowWired?: boolean;
+}
+
+/**
+ * Pure decision core of the propose-identity check: the one invariant needs
+ * the draft-PR author and the human approver to be DIFFERENT forge accounts,
+ * because GitHub forbids approving your own PR. A solo maintainer whose agent
+ * proposes with their own token deadlocks the loop (issue #93).
+ */
+export function assessProposeIdentity(facts: ProposeIdentityFacts): Check {
+  const approver = facts.userLogin ? `@${facts.userLogin}` : 'your gh identity';
+  if (!facts.tokenSet) {
+    if (facts.commandWorkflowWired) {
+      return {
+        level: 'ok',
+        label: `propose identity: solo mode — draft PRs authored by ${approver}, approved via the \`/nema approve\` comment-command (native review approvals need ${PROPOSE_TOKEN_ENV})`,
+      };
+    }
+    return {
+      level: 'warn',
+      label: `propose identity: draft PRs will be authored by ${approver} — an author cannot approve their own PR, so a solo maintainer cannot promote anything`,
+      fix: `Wire the \`/nema approve\` comment-command workflow (solo mode, zero setup), or set ${PROPOSE_TOKEN_ENV} to a machine-user/App token so proposals are authored by a bot you can approve.`,
+    };
+  }
+  if (facts.tokenLogin && facts.userLogin && facts.tokenLogin === facts.userLogin) {
+    return {
+      level: 'warn',
+      label: `propose identity: ${PROPOSE_TOKEN_ENV} authenticates as ${approver} — the same account that approves, so the deadlock remains`,
+      fix: `Point ${PROPOSE_TOKEN_ENV} at a DIFFERENT account (machine user or GitHub App), not your own PAT.`,
+    };
+  }
+  if (!facts.tokenLogin) {
+    return {
+      level: 'ok',
+      label: `propose identity: ${PROPOSE_TOKEN_ENV} set (identity not user-resolvable — typical for GitHub-App installation tokens)`,
+    };
+  }
+  return {
+    level: 'ok',
+    label: `propose identity: proposals authored as @${facts.tokenLogin}, distinct from ${approver}`,
+  };
+}
+
+/** Resolve the facts via `gh` (network), then assess. */
+export async function proposeIdentityCheck(
+  rootDir: string,
+  env: Record<string, string | undefined> = process.env,
+): Promise<Check> {
+  const token = env[PROPOSE_TOKEN_ENV]?.trim();
+  const login = async (extraEnv?: Record<string, string>): Promise<string | null> => {
+    try {
+      const { stdout } = await run(
+        'gh',
+        ['api', 'user', '-q', '.login'],
+        rootDir,
+        extraEnv ? { env: extraEnv } : {},
+      );
+      return stdout.trim() || null;
+    } catch {
+      return null;
+    }
+  };
+  const userLogin = await login();
+  const tokenLogin = token ? await login({ GH_TOKEN: token }) : null;
+  return assessProposeIdentity({
+    tokenSet: Boolean(token),
+    userLogin,
+    tokenLogin,
+    commandWorkflowWired: approveCommandWorkflowWired(rootDir),
+  });
+}
+
+/** Whether a `/nema approve` comment-command (issue_comment) workflow is wired. */
+export function approveCommandWorkflowWired(rootDir: string): boolean {
+  const dir = join(rootDir, '.github', 'workflows');
+  if (!existsSync(dir)) return false;
+  const files = readdirSync(dir).filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'));
+  return files.some((file) => {
+    const raw = readFileSync(join(dir, file), 'utf8');
+    return /issue_comment/.test(raw) && /\/nema\s+approve/.test(raw);
+  });
 }
 
 // ── branch protection (best-effort via gh) ───────────────────────────────────
