@@ -122,7 +122,9 @@ Now new docs get written the Nema way — agents draft, you approve:
 > ship it out of the box) promotes the draft pages — recorded in provenance as
 > `method: maintainer-command` — and merges. Prefer native review approvals? Set
 > **`NEMA_PROPOSE_TOKEN`** to a machine-user/App token so draft PRs are authored by a bot
-> identity. `nema doctor` tells you which mode you're in.
+> identity. On a protected branch, add **`NEMA_PROMOTE_TOKEN`** (your own PAT works) and enable
+> the repo's auto-merge setting so the promotion merges hands-free. `nema doctor` checks all of
+> this and tells you which mode you're in.
 
 The full agent contract lives in [CLAUDE.md](CLAUDE.md).
 

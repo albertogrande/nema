@@ -148,8 +148,13 @@ with *your* `gh` login, you are the author. Two ways through, both human-gated:
   review-approve flow works. `NEMA_BOT_NAME` / `NEMA_BOT_EMAIL` override the bot's committer
   identity.
 
-`nema doctor` tells you which mode your repo is in and warns when the propose identity and the
-approver would collide.
+On a **protected default branch**, also set **`NEMA_PROMOTE_TOKEN`** (a PAT of your own account
+works) and enable the repo's **"Allow auto-merge"** setting: the token lets the promotion commit
+re-trigger CI, and auto-merge completes the merge once those checks pass. Without them the
+approval still promotes, but the PR waits for a manual merge.
+
+`nema doctor` tells you which mode your repo is in, warns when the propose identity and the
+approver would collide, and checks the auto-merge setting.
 
 ## Learn more
 

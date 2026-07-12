@@ -23,6 +23,7 @@ export async function governanceChecks(
   if (!opts.skipNetwork) {
     checks.push(await branchProtectionCheck(rootDir));
     checks.push(await proposeIdentityCheck(rootDir));
+    checks.push(await autoMergeCheck(rootDir));
   }
   return checks;
 }
@@ -305,6 +306,42 @@ export function approveCommandWorkflowWired(rootDir: string): boolean {
     const raw = readFileSync(join(dir, file), 'utf8');
     return /issue_comment/.test(raw) && /\/nema\s+approve/.test(raw);
   });
+}
+
+// ── repo auto-merge (approval actions depend on it to finish hands-free) ────
+
+/** Pure decision core: `null` means the setting could not be read. */
+export function assessAutoMerge(allowAutoMerge: boolean | null): Check {
+  if (allowAutoMerge === null) {
+    return {
+      level: 'warn',
+      label: 'repo auto-merge: not verified (gh unavailable/unauthenticated or no GitHub remote)',
+    };
+  }
+  if (!allowAutoMerge) {
+    return {
+      level: 'warn',
+      label:
+        'repo auto-merge: disabled — after a human approval the promotion can only merge when checks are already green, so the approval actions may leave the PR promoted-but-unmerged',
+      fix: 'Enable "Allow auto-merge" in the repository settings (and set NEMA_PROMOTE_TOKEN so the promotion push re-triggers CI on protected branches).',
+    };
+  }
+  return { level: 'ok', label: 'repo auto-merge: enabled' };
+}
+
+/** Read the repository's allow_auto_merge setting via `gh` (network), then assess. */
+export async function autoMergeCheck(rootDir: string): Promise<Check> {
+  try {
+    const { stdout } = await run(
+      'gh',
+      ['api', 'repos/{owner}/{repo}', '-q', '.allow_auto_merge'],
+      rootDir,
+    );
+    const v = stdout.trim();
+    return assessAutoMerge(v === 'true' ? true : v === 'false' ? false : null);
+  } catch {
+    return assessAutoMerge(null);
+  }
 }
 
 // ── branch protection (best-effort via gh) ───────────────────────────────────

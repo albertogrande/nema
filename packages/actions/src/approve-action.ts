@@ -97,8 +97,21 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
   // which completes the squash merge through normal branch protection once those required
   // checks pass. No `--admin`, no bypass: a human approval AND a green promotion build are
   // both required for a page to reach `reviewed`.
-  await host.merge(pr, { method: 'squash', auto: true });
-  log(`enabled auto-merge for PR #${pr} — it merges once the promotion build passes`);
+  // Best-effort merge: the promotion is already durable. Never fail the run
+  // over a blocked merge (issue #96).
+  try {
+    await host.merge(pr, { method: 'squash', auto: true });
+    log(`enabled auto-merge for PR #${pr} — it merges once the promotion build passes`);
+  } catch {
+    try {
+      await host.merge(pr, { method: 'squash' });
+      log(`merged PR #${pr}`);
+    } catch {
+      log(
+        `merge of PR #${pr} is blocked (checks pending or auto-merge disabled) — merge manually once green`,
+      );
+    }
+  }
 }
 
 // Entry point when executed as the action's main script.

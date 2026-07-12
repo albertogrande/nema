@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+  assessAutoMerge,
   assessProposeIdentity,
   ciScopeCheck,
   contentModelChecks,
@@ -204,5 +205,18 @@ describe('nema doctor — propose identity (issue #93)', () => {
     expect(check.level).toBe('warn');
     expect(check.fix).toContain('/nema approve');
     expect(check.fix).toContain('NEMA_PROPOSE_TOKEN');
+  });
+});
+
+describe('nema doctor — repo auto-merge (issue #96)', () => {
+  it('warns when auto-merge is disabled: approvals may leave the PR promoted-but-unmerged', () => {
+    const check = assessAutoMerge(false);
+    expect(check.level).toBe('warn');
+    expect(check.fix).toContain('Allow auto-merge');
+  });
+
+  it('passes when auto-merge is enabled and stays advisory when unreadable', () => {
+    expect(assessAutoMerge(true).level).toBe('ok');
+    expect(assessAutoMerge(null).level).toBe('warn');
   });
 });

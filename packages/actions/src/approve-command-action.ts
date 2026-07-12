@@ -162,15 +162,26 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
   );
   await host.push(branch);
 
-  // Prefer auto-merge (waits on required checks); on repos without branch
-  // protection / auto-merge, fall back to a direct squash merge.
+  // The promotion above is the durable outcome; the merge is best-effort and
+  // must never turn a successful promotion into a red run. Prefer auto-merge
+  // (waits on required checks); fall back to a direct squash merge; report a
+  // blocked merge instead of failing (issue #96).
+  let mergeNote: string;
   try {
     await host.merge(pr, { method: 'squash', auto: true });
-    log(`enabled auto-merge for PR #${pr} — it merges once checks pass`);
+    mergeNote = 'Auto-merge enabled — the PR merges once required checks pass.';
   } catch {
-    await host.merge(pr, { method: 'squash' });
-    log(`merged PR #${pr}`);
+    try {
+      await host.merge(pr, { method: 'squash' });
+      mergeNote = 'Merged.';
+    } catch {
+      mergeNote =
+        'Merge is blocked (required checks pending, or repo auto-merge disabled). Merge manually ' +
+        'once checks are green — or enable auto-merge in the repo settings and configure ' +
+        'NEMA_PROMOTE_TOKEN so the promotion push re-triggers CI.';
+    }
   }
+  log(mergeNote);
 
   await run(
     'gh',
@@ -179,7 +190,7 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
       'comment',
       String(pr),
       '--body',
-      `✅ Promoted ${toFlip.length} page(s) to \`reviewed\` on behalf of @${reviewer} (method: \`maintainer-command\`): ${toFlip.join(', ')}.`,
+      `✅ Promoted ${toFlip.length} page(s) to \`reviewed\` on behalf of @${reviewer} (method: \`maintainer-command\`): ${toFlip.join(', ')}.\n\n${mergeNote}`,
     ],
     gitRoot,
   );
