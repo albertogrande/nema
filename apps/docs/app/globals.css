@@ -6,6 +6,26 @@
 /* Make Tailwind's `dark:` variant follow fumadocs' class-based theme toggle. */
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Brand tokens.
+ * - `nema-brand` is the terminal-block orange from the lockup — solid glyphs, both themes.
+ * - `nema-accent` is the same hue tuned for *text*: darker in light mode so small
+ *   labels keep AA contrast on white, the lockup orange in dark mode.
+ */
+:root {
+  --nema-accent: #c2410c;
+}
+.dark {
+  --nema-accent: #fb923c;
+}
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-nema-accent: var(--nema-accent);
+}
+@theme {
+  --color-nema-brand: #fb923c;
+}
+
 /* Homepage: blinking terminal-cursor block (brand accent). */
 @keyframes nema-blink {
   50% {
@@ -15,9 +35,31 @@
 .nema-cursor {
   animation: nema-blink 1.2s steps(1) infinite;
 }
+
+/*
+ * Homepage: scroll-reveal. Both classes are added client-side by <Reveal/> after
+ * hydration, so content is never hidden without JS (or when already in view).
+ */
+.nema-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
+}
+.nema-reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nema-cursor {
     animation: none;
+  }
+  .nema-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 
