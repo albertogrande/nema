@@ -1,6 +1,6 @@
 ---
 title: Provenance
-status: draft
+status: reviewed
 diataxis: explanation
 provenance:
   schema: 1
@@ -27,6 +27,17 @@ provenance:
     - to: draft
       by: ai
       ts: 2026-07-12T07:05:00.000Z
+    - to: reviewed
+      by: albertogrande
+      ts: 2026-07-12T07:16:06.656Z
+      commit: a8c222ae5da04392cfbd69f3eb27dec0d416030b
+      pr: 97
+  reviewed_by:
+    login: albertogrande
+    method: maintainer-command
+    pr: 97
+last_reviewed: 2026-07-12
+review_by: 2027-01-08
 ---
 
 Every page carries a `provenance` block in its frontmatter: who authored it, with which model,

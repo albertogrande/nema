@@ -1,6 +1,6 @@
 ---
 title: CLI reference
-status: draft
+status: reviewed
 diataxis: reference
 provenance:
   schema: 1
@@ -27,6 +27,17 @@ provenance:
     - to: draft
       by: ai
       ts: 2026-07-12T07:05:00.000Z
+    - to: reviewed
+      by: albertogrande
+      ts: 2026-07-12T07:16:06.649Z
+      commit: a8c222ae5da04392cfbd69f3eb27dec0d416030b
+      pr: 97
+  reviewed_by:
+    login: albertogrande
+    method: maintainer-command
+    pr: 97
+last_reviewed: 2026-07-12
+review_by: 2027-01-08
 ---
 
 Everything the platform does is reachable from one binary. Run `nema <command> --help` for
