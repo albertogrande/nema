@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { describe, expect, it } from 'vitest';
 import { isAuthorizedToApprove, parseApproveCommand } from '../src/approve-command-action.js';
+import { resolveActionRoots } from '../src/roots.js';
 
 describe('parseApproveCommand', () => {
   it('matches the bare command and command-with-trailing-words', () => {
@@ -31,5 +32,17 @@ describe('isAuthorizedToApprove', () => {
     expect(isAuthorizedToApprove('none')).toBe(false);
     expect(isAuthorizedToApprove('triage')).toBe(false);
     expect(isAuthorizedToApprove(undefined)).toBe(false);
+  });
+});
+
+describe('resolveActionRoots', () => {
+  it('defaults the nema root to the git root (single-repo scaffold)', () => {
+    const roots = resolveActionRoots({ GITHUB_WORKSPACE: '/w' });
+    expect(roots).toEqual({ gitRoot: '/w', nemaRoot: '/w' });
+  });
+
+  it('resolves NEMA_ROOT below the git root (monorepo layout)', () => {
+    const roots = resolveActionRoots({ GITHUB_WORKSPACE: '/w', NEMA_ROOT: 'apps/docs' });
+    expect(roots).toEqual({ gitRoot: '/w', nemaRoot: '/w/apps/docs' });
   });
 });

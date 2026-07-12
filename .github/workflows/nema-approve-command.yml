@@ -44,4 +44,6 @@ jobs:
       - name: Verify permission, promote, and merge
         run: node packages/actions/dist/approve-command-action.js
         env:
+          # The dogfood corpus lives below the git root (monorepo layout).
+          NEMA_ROOT: apps/docs
           GH_TOKEN: ${{ secrets.NEMA_PROMOTE_TOKEN || github.token }}

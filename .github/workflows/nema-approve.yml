@@ -41,6 +41,8 @@ jobs:
       - name: Promote and merge
         run: node packages/actions/dist/approve-action.js
         env:
+          # The dogfood corpus lives below the git root (monorepo layout).
+          NEMA_ROOT: apps/docs
           # Same elevated token so `gh pr merge --auto` can enable auto-merge and the
           # promotion push (above) re-triggers CI. Requires repo auto-merge enabled and
           # branch protection requiring the nema check.

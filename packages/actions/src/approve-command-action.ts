@@ -10,6 +10,7 @@ import {
 } from '@getnema/producer';
 import { readProvenance } from '@getnema/provenance';
 import { fileToRoute, planApprovals } from './plan.js';
+import { resolveActionRoots } from './roots.js';
 
 function log(message: string): void {
   process.stdout.write(`[nema-approve-command] ${message}\n`);
@@ -67,14 +68,14 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
   const reviewer = event.comment?.user?.login;
   if (pr == null || !reviewer) throw new Error('could not determine PR number or commenter');
 
-  const repoRoot = env.GITHUB_WORKSPACE ?? process.cwd();
+  const { gitRoot, nemaRoot } = resolveActionRoots(env);
 
   // The command carries approval authority only from accounts that could merge
   // anyway. Everyone else gets a log line, not a promotion.
   const { stdout: permissionOut } = await run(
     'gh',
     ['api', `repos/{owner}/{repo}/collaborators/${reviewer}/permission`, '-q', '.permission'],
-    repoRoot,
+    gitRoot,
   );
   const permission = permissionOut.trim();
   if (!isAuthorizedToApprove(permission)) {
@@ -87,7 +88,7 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
   const { stdout: prInfoOut } = await run(
     'gh',
     ['pr', 'view', String(pr), '--json', 'isCrossRepository,headRefName,state'],
-    repoRoot,
+    gitRoot,
   );
   const prInfo = JSON.parse(prInfoOut) as {
     isCrossRepository?: boolean;
@@ -108,22 +109,22 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
   // Move the working tree to the PR branch. The action's own code was built
   // from the default branch BEFORE this checkout, so PR content is data, not
   // code we execute.
-  await run('gh', ['pr', 'checkout', String(pr)], repoRoot);
+  await run('gh', ['pr', 'checkout', String(pr)], gitRoot);
 
-  const config = await resolveConfig(repoRoot);
+  const config = await resolveConfig(nemaRoot);
   const { stdout } = await run(
     'gh',
     ['pr', 'view', String(pr), '--json', 'files', '-q', '.files[].path'],
-    repoRoot,
+    gitRoot,
   );
   const changedFiles = stdout
     .split('\n')
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const source = await createContentSource(repoRoot);
+  const source = await createContentSource(nemaRoot);
   const changedRoutes = changedFiles
-    .map((f) => fileToRoute(f, config.contentRoot, repoRoot))
+    .map((f) => fileToRoute(f, config.contentRoot, gitRoot))
     .filter((r): r is string => r != null);
   const toFlip = planApprovals(changedRoutes, source.pages);
 
@@ -132,9 +133,9 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
     return;
   }
 
-  const host = new GitHubHost(repoRoot);
+  const host = new GitHubHost(gitRoot);
   const engine = new ProducerEngine({
-    rootDir: repoRoot,
+    rootDir: nemaRoot,
     contentRoot: config.contentRoot,
     codeRoot: config.codeRoot,
     host,
@@ -180,7 +181,7 @@ export async function runApproveCommandAction(env: NodeJS.ProcessEnv = process.e
       '--body',
       `✅ Promoted ${toFlip.length} page(s) to \`reviewed\` on behalf of @${reviewer} (method: \`maintainer-command\`): ${toFlip.join(', ')}.`,
     ],
-    repoRoot,
+    gitRoot,
   );
 }
 

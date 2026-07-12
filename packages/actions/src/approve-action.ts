@@ -10,6 +10,7 @@ import {
 } from '@getnema/producer';
 import { readProvenance } from '@getnema/provenance';
 import { fileToRoute, planApprovals } from './plan.js';
+import { resolveActionRoots } from './roots.js';
 
 function log(message: string): void {
   process.stdout.write(`[nema-approve] ${message}\n`);
@@ -41,22 +42,22 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
   const reviewer = event.review?.user?.login ?? env.GITHUB_ACTOR;
   if (pr == null || !reviewer) throw new Error('could not determine PR number or reviewer');
 
-  const repoRoot = env.GITHUB_WORKSPACE ?? process.cwd();
-  const config = await resolveConfig(repoRoot);
+  const { gitRoot, nemaRoot } = resolveActionRoots(env);
+  const config = await resolveConfig(nemaRoot);
 
   const { stdout } = await run(
     'gh',
     ['pr', 'view', String(pr), '--json', 'files', '-q', '.files[].path'],
-    repoRoot,
+    gitRoot,
   );
   const changedFiles = stdout
     .split('\n')
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const source = await createContentSource(repoRoot);
+  const source = await createContentSource(nemaRoot);
   const changedRoutes = changedFiles
-    .map((f) => fileToRoute(f, config.contentRoot, repoRoot))
+    .map((f) => fileToRoute(f, config.contentRoot, gitRoot))
     .filter((r): r is string => r != null);
   const toFlip = planApprovals(changedRoutes, source.pages);
 
@@ -65,9 +66,9 @@ export async function runApproveAction(env: NodeJS.ProcessEnv = process.env): Pr
     return;
   }
 
-  const host = new GitHubHost(repoRoot);
+  const host = new GitHubHost(gitRoot);
   const engine = new ProducerEngine({
-    rootDir: repoRoot,
+    rootDir: nemaRoot,
     contentRoot: config.contentRoot,
     codeRoot: config.codeRoot,
     host,
