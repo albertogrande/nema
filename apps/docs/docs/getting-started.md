@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-status: draft
+status: reviewed
 diataxis: tutorial
 provenance:
   schema: 1
@@ -20,6 +20,17 @@ provenance:
       by: ai
       ts: 2024-01-02T09:00:00Z
       commit: a1b2c3d
+    - to: reviewed
+      by: albertogrande
+      ts: 2026-07-12T06:38:08.734Z
+      commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
+      pr: 92
+  reviewed_by:
+    login: albertogrande
+    method: maintainer-command
+    pr: 92
+last_reviewed: 2026-07-12
+review_by: 2027-01-08
 ---
 
 From nothing to a rendered, provenance-badged docs site in about five minutes — then your

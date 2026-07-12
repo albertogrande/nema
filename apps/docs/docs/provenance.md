@@ -1,6 +1,6 @@
 ---
 title: Provenance
-status: draft
+status: reviewed
 diataxis: explanation
 provenance:
   schema: 1
@@ -14,11 +14,22 @@ provenance:
       title: packages/schema/src/provenance.ts — provenance schema
       url: https://github.com/albertogrande/nema/blob/main/packages/schema/src/provenance.ts
       kind: reference
-      retrieved: '2026-07-11'
+      retrieved: 2026-07-11
   transitions:
     - to: draft
       by: ai
       ts: 2026-07-11T14:43:24.484Z
+    - to: reviewed
+      by: albertogrande
+      ts: 2026-07-12T06:38:08.739Z
+      commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
+      pr: 92
+  reviewed_by:
+    login: albertogrande
+    method: maintainer-command
+    pr: 92
+last_reviewed: 2026-07-12
+review_by: 2027-01-08
 ---
 
 Every page carries a `provenance` block in its frontmatter: who authored it, with which model,

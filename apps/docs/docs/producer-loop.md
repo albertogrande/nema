@@ -1,6 +1,6 @@
 ---
 title: The producer loop
-status: draft
+status: reviewed
 diataxis: explanation
 provenance:
   schema: 1
@@ -14,11 +14,22 @@ provenance:
       title: CLAUDE.md — the agent contract
       url: https://github.com/albertogrande/nema/blob/main/CLAUDE.md
       kind: reference
-      retrieved: '2026-07-11'
+      retrieved: 2026-07-11
   transitions:
     - to: draft
       by: ai
       ts: 2026-07-11T14:42:52.134Z
+    - to: reviewed
+      by: albertogrande
+      ts: 2026-07-12T06:38:08.738Z
+      commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
+      pr: 92
+  reviewed_by:
+    login: albertogrande
+    method: maintainer-command
+    pr: 92
+last_reviewed: 2026-07-12
+review_by: 2027-01-08
 ---
 
 Every page on this site is written through the same loop: an agent authors, the gates check,

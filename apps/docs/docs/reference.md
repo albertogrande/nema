@@ -1,6 +1,6 @@
 ---
 title: Reference
-status: draft
+status: reviewed
 diataxis: reference
 provenance:
   schema: 1
@@ -15,6 +15,18 @@ provenance:
       url: https://www.apache.org/licenses/LICENSE-2.0
       kind: primary
       retrieved: 2024-01-02
+  transitions:
+    - to: reviewed
+      by: albertogrande
+      ts: 2026-07-12T06:38:08.740Z
+      commit: b0b8b8279cbff1b2310c5e6b837f23bce95a380b
+      pr: 92
+  reviewed_by:
+    login: albertogrande
+    method: maintainer-command
+    pr: 92
+last_reviewed: 2026-07-12
+review_by: 2027-01-08
 ---
 
 The moving parts, by name. Start from a task-shaped page if you have a task — this hub is for
