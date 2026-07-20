@@ -9,7 +9,7 @@
 
 <p align="center">
   <strong>Your coding agents write the docs. You approve the PR.</strong><br>
-  <sub>An open-source, self-hostable docs platform built for agent authorship · gates check every draft · provenance is git-diffable data</sub>
+  <sub>The open-source, self-hostable docs platform for teams whose coding agents outrun their docs — every draft gate-checked, every page's provenance a git-diffable record.</sub>
 </p>
 
 <p align="center">
@@ -20,16 +20,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/albertogrande/nema/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/albertogrande/nema/actions/workflows/ci.yml/badge.svg?branch=main"></a>
-  <a href="https://github.com/albertogrande/nema/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://github.com/albertogrande/nema/actions/workflows/codeql.yml/badge.svg?branch=main"></a>
-  <a href="https://securityscorecards.dev/viewer/?uri=github.com/albertogrande/nema"><img alt="OpenSSF Scorecard" src="https://api.securityscorecards.dev/projects/github.com/albertogrande/nema/badge"></a>
-</p>
-
-<p align="center">
-  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-1b1b1f?style=flat-square&labelColor=1b1b1f"></a>
-  <img alt="Status: alpha" src="https://img.shields.io/badge/status-alpha-d99a06?style=flat-square&labelColor=1b1b1f">
-  <img alt="Node 22+" src="https://img.shields.io/badge/node-22%2B-1b1b1f?style=flat-square&labelColor=1b1b1f">
-  <img alt="MCP server" src="https://img.shields.io/badge/MCP-server-1b1b1f?style=flat-square&labelColor=1b1b1f">
+  <a href="https://github.com/albertogrande/nema/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/albertogrande/nema/ci.yml?branch=main&label=CI&style=flat-square"></a>
+  <a href="https://github.com/albertogrande/nema/actions/workflows/codeql.yml"><img alt="CodeQL" src="https://img.shields.io/github/actions/workflow/status/albertogrande/nema/codeql.yml?branch=main&label=CodeQL&style=flat-square"></a>
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/albertogrande/nema"><img alt="OpenSSF Scorecard" src="https://img.shields.io/ossf-scorecard/github.com/albertogrande/nema?label=scorecard&style=flat-square"></a>
+  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square"></a>
+  <a href=".nvmrc"><img alt="Node 22+" src="https://img.shields.io/badge/node-22%2B-5FA04E?style=flat-square"></a>
 </p>
 
 <hr>
@@ -42,30 +37,26 @@
   and <b>pending a human review</b>. Provenance read straight from the data the gates validate.</sub>
 </p>
 
-**Why Nema exists.** Coding agents ship code faster than anyone documents it — and letting them
-write the docs creates a new problem: you either review every word yourself, or publish text nobody
-can vouch for. Docs platforms assume a human author; linters check style, not trust.
+**Why Nema exists.** Coding agents ship code faster than anyone documents it. Let them write the
+docs and you either review every word yourself or publish text nobody can vouch for.
 
-**Nema restructures the job.** Point your own agents (Claude Code, Cursor, your own pipeline) at
-your repo and they draft, link, and maintain pages with full context of the existing corpus. Gates
-catch what's broken before a PR ever opens, and every page carries a git-diffable record of who
-wrote it, from which sources, and who signed off. You do the one thing only a human can — approve —
-and nothing reaches `reviewed` without it. All rendered through [Fumadocs](https://fumadocs.dev),
-on infrastructure you control.
+Docs platforms assume a human author. Linters check style, not trust.
+
+**Nema restructures the job.** Point your own agents (Claude Code, Cursor, your own pipeline) at your
+repo and they draft, link, and maintain pages with full context of the existing corpus. Gates catch
+what's broken before a PR opens, and every page carries a git-diffable record of who wrote it, from
+which sources, and who signed off.
+
+You do the one thing only a human can — approve — and nothing reaches `reviewed` without it. It all
+renders through [Fumadocs](https://fumadocs.dev), on infrastructure you control.
 
 **What you get:**
 
-- 🤖 **Agents author, humans approve** — every page is agent-written, and nothing reaches `reviewed`
-  without a human PR approval. That gate is the one invariant.
-- ✅ **Gate-checked before the PR** — `nema check` catches broken links, orphans, stale frontmatter, and
-  self-promotion, with a fix hint per failure — the same report for a human and for an agent in a loop.
-- 🔍 **Provenance as git-diffable data** — who wrote it, which model, which sources, which reviewer —
-  recorded as structured, queryable data, not free-text footnotes.
-- 🩺 **Docs born from the code, and honest about it** — `nema generate <repo>` scaffolds seeded `draft`
-  pages from a codebase's public API (a factual skeleton — it never invents prose), pages bind to the
-  source they document, and `nema drift` flags them the moment that code moves past its approved baseline.
-- 🧵 **Multi-agent authoring without clobbering** — point a fleet of agents at one corpus; slot leasing
-  and a merge-time coherence gate keep them from overwriting each other's pages.
+- 🤖 **Agents author, humans approve** — every page is agent-written, and nothing reaches `reviewed` without a human PR approval.
+- ✅ **Gate-checked before the PR** — `nema check` flags broken links, orphans, stale frontmatter, and self-promotion, each with a fix hint.
+- 🔍 **Provenance as git-diffable data** — who wrote it, which model, which sources, which reviewer, recorded as structured data.
+- 🩺 **Docs born from the code** — `nema generate <repo>` seeds `draft` pages from a repo's public API (never invented prose), and `nema drift` flags them when the code moves past its baseline.
+- 🧵 **Multi-agent authoring without clobbering** — slot leasing and a merge-time coherence gate keep a fleet of agents from overwriting each other's pages.
 
 > **Alpha — honest status.** Today an agent drafts a page that lands in your nav, linked and cited,
 > self-checks against the gates, and opens a PR you approve — rendered live. Multi-agent authoring
