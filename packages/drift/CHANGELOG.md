@@ -1,5 +1,12 @@
 # @getnema/drift
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [e287c2a]
+  - @getnema/schema@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes

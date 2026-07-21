@@ -1,6 +1,6 @@
 {
   "name": "@getnema/actions",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "description": "Nema composite GitHub Actions: gate, approval→flip, freshness",
   "license": "Apache-2.0",

@@ -1,6 +1,6 @@
 {
   "name": "@getnema/adapter-fumadocs",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Nema reference renderer adapter for Fumadocs (Next/React): render + .md route + nav + provenance badge",
   "license": "Apache-2.0",
   "type": "module",

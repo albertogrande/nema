@@ -1,5 +1,23 @@
 # @getnema/adapter-fumadocs
 
+## 0.2.0
+
+### Minor Changes
+
+- abc6d37: New `docHref(href, pagePath, basePath?)`: map corpus-style relative `.md`
+  links (with `./`/`../` segments and `#anchors`) to canonical rendered
+  routes. Page bodies link the way agents read them — relative `.md` paths —
+  and emitting those verbatim in HTML 404s from the docs index and yields
+  non-canonical URLs elsewhere. The raw `.md`/MCP surfaces keep the verbatim
+  links (agent parity); only the human-facing HTML rewrites them.
+
+### Patch Changes
+
+- Updated dependencies [e287c2a]
+  - @getnema/schema@0.3.0
+  - @getnema/adapter-kit@0.1.2
+  - @getnema/core@0.2.1
+
 ## 0.1.1
 
 ### Patch Changes
