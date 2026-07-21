@@ -1,5 +1,65 @@
 # nema
 
+## 0.5.0
+
+### Minor Changes
+
+- 53b99d1: Harden the approval flow after a human approves (#96): the approval actions
+  treat the merge as best-effort — the durable outcome is the promotion, so a
+  blocked merge (checks pending, repo auto-merge disabled) is reported in the
+  confirmation comment instead of failing the run. `nema doctor` gains a repo
+  auto-merge governance check and the docs spell out the protected-branch
+  requirements (`NEMA_PROMOTE_TOKEN` + "Allow auto-merge").
+- e287c2a: Solo-maintainer approval: the `/nema approve` comment-command (#93).
+
+  GitHub forbids review-approving your own pull request, so when an agent
+  proposes under the maintainer's identity the review button never appears —
+  the solo maintainer could never promote anything. An explicit, permission-
+  checked `/nema approve` comment on the PR is the same human gate, recorded
+  honestly:
+
+  - schema: new `maintainer-command` review method; the `draft-pages-not-reviewed`
+    gate requires it to carry a PR-referencing `reviewed` transition, exactly like
+    `github-pr-approval`.
+  - cli: `nema approve --method maintainer-command`; `nema doctor`'s
+    propose-identity check now recognizes a wired comment-command workflow as a
+    valid solo mode instead of warning.
+  - create-nema: scaffolded repos ship `.github/workflows/nema-approve-command.yml`
+    out of the box — commenting `/nema approve` (write/admin only, fork-guarded)
+    promotes the PR's draft pages and merges. Zero setup for solo maintainers.
+
+- e287c2a: Bot identity for the propose step — fixes the solo-maintainer deadlock (#93).
+
+  The one invariant needs the draft-PR author and the human approver to be different
+  forge accounts, because GitHub forbids approving your own pull request. When
+  `nema open-pr` / `propose_changes` run with the maintainer's own `gh` auth — the
+  default for a solo maintainer driving an agent — the loop deadlocks: nothing can
+  ever be promoted.
+
+  - `NEMA_PROPOSE_TOKEN` (machine-user PAT or GitHub-App installation token): when
+    set, propose commits, the branch push, and the PR creation all authenticate as
+    the bot, so any human maintainer can approve. `NEMA_BOT_NAME` / `NEMA_BOT_EMAIL`
+    override the committer identity (default `nema-bot`).
+  - `resolveProposeIdentity()` / `GitHubHost(cwd, { identity })` in the producer;
+    the CLI and MCP server pick the env up automatically.
+  - `nema open-pr` prints which identity it proposes with, and warns about the
+    deadlock when proposing with the ambient identity.
+  - `nema doctor` gains a propose-identity governance check: warns when no
+    `NEMA_PROPOSE_TOKEN` is set or when it resolves to the same account that
+    approves.
+
+### Patch Changes
+
+- Updated dependencies [e287c2a]
+- Updated dependencies [e287c2a]
+  - @getnema/schema@0.3.0
+  - @getnema/gates@0.5.0
+  - @getnema/producer@0.5.0
+  - @getnema/mcp@0.4.1
+  - @getnema/core@0.2.1
+  - @getnema/drift@0.2.1
+  - @getnema/provenance@0.1.2
+
 ## 0.4.0
 
 ### Minor Changes

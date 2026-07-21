@@ -1,5 +1,35 @@
 # @getnema/gates
 
+## 0.5.0
+
+### Minor Changes
+
+- e287c2a: Solo-maintainer approval: the `/nema approve` comment-command (#93).
+
+  GitHub forbids review-approving your own pull request, so when an agent
+  proposes under the maintainer's identity the review button never appears —
+  the solo maintainer could never promote anything. An explicit, permission-
+  checked `/nema approve` comment on the PR is the same human gate, recorded
+  honestly:
+
+  - schema: new `maintainer-command` review method; the `draft-pages-not-reviewed`
+    gate requires it to carry a PR-referencing `reviewed` transition, exactly like
+    `github-pr-approval`.
+  - cli: `nema approve --method maintainer-command`; `nema doctor`'s
+    propose-identity check now recognizes a wired comment-command workflow as a
+    valid solo mode instead of warning.
+  - create-nema: scaffolded repos ship `.github/workflows/nema-approve-command.yml`
+    out of the box — commenting `/nema approve` (write/admin only, fork-guarded)
+    promotes the PR's draft pages and merges. Zero setup for solo maintainers.
+
+### Patch Changes
+
+- Updated dependencies [e287c2a]
+  - @getnema/schema@0.3.0
+  - @getnema/core@0.2.1
+  - @getnema/drift@0.2.1
+  - @getnema/provenance@0.1.2
+
 ## 0.4.0
 
 ### Minor Changes
