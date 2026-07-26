@@ -25,11 +25,11 @@
   },
   "devDependencies": {
     "@getnema/cli": "workspace:*",
-    "@tailwindcss/postcss": "^4.3.1",
-    "@types/node": "^26.0.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.1",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
-    "tailwindcss": "^4.3.1",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.7.2"
   }
 }
