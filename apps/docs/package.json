@@ -19,16 +19,16 @@
     "fumadocs-ui": "^15.8.5",
     "marked": "^14.1.4",
     "marked-footnote": "^1.4.0",
-    "next": "^16.2.9",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "next": "^16.3.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@getnema/cli": "workspace:*",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^26.0.1",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "tailwindcss": "^4.3.1",
     "typescript": "^5.7.2"
   }
