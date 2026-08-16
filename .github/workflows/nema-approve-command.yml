@@ -31,7 +31,7 @@ jobs:
           # enough for unprotected repos, where the fallback direct merge applies.
           token: ${{ secrets.NEMA_PROMOTE_TOKEN || github.token }}
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm

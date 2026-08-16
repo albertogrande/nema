@@ -28,7 +28,7 @@ jobs:
           # instead of bypassing branch protection with --admin.
           token: ${{ secrets.NEMA_PROMOTE_TOKEN }}
       - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
